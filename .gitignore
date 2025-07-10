@@ -1,0 +1,75 @@
+# Visual Studio / Rider
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+out/
+
+# ASP.NET Core secrets
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/appsettings.*.Secrets.json
+secrets.json
+
+# Publish folder
+publish/
+*.Publish.xml
+
+# Dotnet tools
+.dotnet/
+tools/
+
+# NuGet packages
+*.nupkg
+# Package directories
+packages/
+# NuGet v3
+project.lock.json
+project.assets.json
+# Dotnet restore cache
+**/project.lock.json
+**/project.assets.json
+
+# Logs
+*.log
+logs/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Rider
+.idea/
+*.sln.iml
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Azure Functions
+.local.settings.json
+
+# Docker
+docker-compose.override.yml
+.env
+.env.*
+
+# User-specific files
+*.swp
+*.bak
+*.tmp
+
+# Test results
+TestResults/
+
+# Optional: remove if you commit migrations
+Migrations/
+
+# Optional: remove if you want appsettings.json in repo
+**/appsettings.json
