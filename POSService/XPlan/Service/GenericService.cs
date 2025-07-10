@@ -18,10 +18,9 @@ namespace XPlan.Service
             _repository = repository;
         }
 
-        public async Task<TEntity?> CreateAsync(TEntity entity)
+        public async Task CreateAsync(TEntity entity)
         {
             await _repository.CreateAsync(entity);
-            return entity;
         }
 
         public async Task<IEnumerable<TEntity?>?> GetAllAsync()

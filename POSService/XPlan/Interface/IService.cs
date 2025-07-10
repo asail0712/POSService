@@ -10,7 +10,7 @@ namespace XPlan.Interface
     {
         Task<IEnumerable<TEntity?>?> GetAllAsync();
         Task<TEntity?> GetByIdAsync(string id);
-        Task<TEntity?> CreateAsync(TEntity entity);
+        Task CreateAsync(TEntity entity);
         Task<bool> UpdateAsync(string id, TEntity entity);
         Task<bool> DeleteAsync(string id);
     }

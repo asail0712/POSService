@@ -12,10 +12,9 @@ namespace XPlan.Repository
             _dataAccess = dataAccess;
         }
 
-        public async Task<TEntity?> CreateAsync(TEntity entity)
+        public async Task CreateAsync(TEntity entity)
         {
             await _dataAccess.InsertAsync(entity);
-            return entity;
         }
 
         public Task<IEnumerable<TEntity?>?> GetAllAsync()

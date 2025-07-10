@@ -30,9 +30,9 @@ namespace XPlan.Controller
         public virtual async Task<IActionResult> Create([FromBody] TRequest requestDto)
         {
             var entity  = _mapper.Map<TEntity>(requestDto);
-            var result  = await _service.CreateAsync(entity);
+            await _service.CreateAsync(entity);
 
-            return Ok(result);
+            return Ok();
         }
 
         // R - Read All

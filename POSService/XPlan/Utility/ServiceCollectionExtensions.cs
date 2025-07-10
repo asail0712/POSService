@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using XPlan.Cache;
 using XPlan.Exceptions;
 
 namespace XPlan.Utility
@@ -20,6 +24,17 @@ namespace XPlan.Utility
 
             return services;
         }
+
+        public static IServiceCollection AddCacheSettings(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<CacheSettings>(configuration.GetSection("CacheSettings"));
+            services.AddMemoryCache();
+            return services;
+        }
+
+
+
+
     }
 
 }
