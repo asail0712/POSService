@@ -1,4 +1,5 @@
-﻿using XPlan.DataAccess;
+﻿using MongoDB.Bson;
+using XPlan.DataAccess;
 using XPlan.Interface;
 
 namespace XPlan.Repository
@@ -29,6 +30,8 @@ namespace XPlan.Repository
 
         public Task<bool> UpdateAsync(string id, TEntity entity)
         {
+            entity.Id = new ObjectId(id);             // Ensure the ID is set for the update operation
+
             return _dataAccess.UpdateAsync(id, entity);
         }
 

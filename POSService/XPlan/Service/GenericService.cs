@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoMapper;
+using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,33 +10,42 @@ using XPlan.Interface;
 
 namespace XPlan.Service
 {
-    public abstract class GenericService<TEntity>
-        : IService<TEntity> where TEntity : class, IEntity
+    public abstract class GenericService<TEntity, TRequest, TResponse>
+        : IService<TRequest, TResponse> where TEntity : class, IEntity
     {
         private readonly IRepository<TEntity> _repository;
+        private readonly IMapper _mapper;
 
-        public GenericService(IRepository<TEntity> repository)
+        public GenericService(IRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper     = mapper;
         }
 
-        public async Task CreateAsync(TEntity entity)
+        public async Task CreateAsync(TRequest request)
         {
+            var entity = _mapper.Map<TEntity>(request);
+
             await _repository.CreateAsync(entity);
+
+            return;
         }
 
-        public async Task<IEnumerable<TEntity?>?> GetAllAsync()
+        public async Task<IEnumerable<TResponse?>?> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            var entities = await _repository.GetAllAsync();
+            return _mapper.Map<IEnumerable<TResponse>>(entities);
         }
 
-        public async Task<TEntity?> GetByIdAsync(string id)
+        public async Task<TResponse?> GetByIdAsync(string id)
         {
-            return await _repository.GetByIdAsync(id);
+            var entity = await _repository.GetByIdAsync(id);
+            return _mapper.Map<TResponse>(entity);
         }
 
-        public async Task<bool> UpdateAsync(string id, TEntity entity)
+        public async Task<bool> UpdateAsync(string id, TRequest request)
         {
+            var entity  = _mapper.Map<TEntity>(request);
             return await _repository.UpdateAsync(id, entity);
         }
 

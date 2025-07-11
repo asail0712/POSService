@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace XPlan.Interface
 {
-    public interface IService<TEntity> where TEntity : IEntity
+    public interface IService<TRequest, TResponse>
     {
-        Task<IEnumerable<TEntity?>?> GetAllAsync();
-        Task<TEntity?> GetByIdAsync(string id);
-        Task CreateAsync(TEntity entity);
-        Task<bool> UpdateAsync(string id, TEntity entity);
+        Task<IEnumerable<TResponse?>?> GetAllAsync();
+        Task<TResponse?> GetByIdAsync(string id);
+        Task CreateAsync(TRequest entity);
+        Task<bool> UpdateAsync(string id, TRequest entity);
         Task<bool> DeleteAsync(string id);
     }
 }

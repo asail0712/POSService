@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using System;
 using System.Collections;
@@ -13,24 +12,21 @@ using XPlan.Interface;
 
 namespace XPlan.Controller
 {
-    public abstract class GenericController<TEntity, TRequest, TResponse> 
-        : ControllerBase where TEntity : class, IEntity
+    public abstract class GenericController<TRequest, TResponse> 
+        : ControllerBase
     {
-        protected readonly IService<TEntity> _service;
-        protected readonly IMapper _mapper;
+        protected readonly IService<TRequest, TResponse> _service;
 
-        public GenericController(IService<TEntity> service, IMapper mapper)
+        public GenericController(IService<TRequest, TResponse> service)
         {
-            _service    = service;
-            _mapper     = mapper;
+            _service = service;
         }
 
         // C - Create
         [HttpPost]
         public virtual async Task<IActionResult> Create([FromBody] TRequest requestDto)
         {
-            var entity  = _mapper.Map<TEntity>(requestDto);
-            await _service.CreateAsync(entity);
+            await _service.CreateAsync(requestDto);
 
             return Ok();
         }
@@ -40,8 +36,7 @@ namespace XPlan.Controller
         public virtual async Task<IActionResult> GetAll()
         {
             var result          = await _service.GetAllAsync();
-            var responseDTOs    = _mapper.Map<IEnumerable<TResponse>>(result);
-            return Ok(responseDTOs);
+            return Ok(result);
         }
 
         // R - Read by Id
@@ -55,17 +50,14 @@ namespace XPlan.Controller
                 return NotFound();
             }
 
-            var responseDto = _mapper.Map<TResponse>(result);
-
-            return Ok(responseDto);
+            return Ok(result);
         }
 
         // U - Update
         [HttpPut("{id}")]
         public virtual async Task<IActionResult> Update(string id, [FromBody] TRequest requestDto)
         {
-            var entity      = _mapper.Map<TEntity>(requestDto);
-            bool bResult    = await _service.UpdateAsync(id, entity);
+            bool bResult    = await _service.UpdateAsync(id, requestDto);
             if (!bResult)
             {
                 return NotFound();
