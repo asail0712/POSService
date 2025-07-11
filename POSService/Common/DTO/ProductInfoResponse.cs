@@ -1,0 +1,20 @@
+﻿using Common.Entity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Common.DTO
+{
+    public class ProductInfoResponse
+    {
+        public DateTime CreatedAt { get; set; }                 // 建立時間
+        public DateTime UpdatedAt { get; set; }                 // 更新時間
+        public string Name { get; set; }                        // 分類名稱 / 產品名稱
+        public bool IsVisible { get; set; }                     // 是否顯示
+        public decimal? Discount { get; set; }                  // 可選：群組折扣 (0~1)
+        public decimal? OverridePrice { get; set; }             // 可選：統一設定價格
+        public IEnumerable<string> Items { get; set; }          // 菜單項目清單
+    }
+}

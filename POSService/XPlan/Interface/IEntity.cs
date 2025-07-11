@@ -9,6 +9,6 @@ namespace XPlan.Interface
 {
     public interface IEntity
     {
-        ObjectId Id { get; set; }
+        ObjectId Id { get; set; }           // 唯一識別碼
     }
 }

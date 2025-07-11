@@ -1,4 +1,5 @@
-﻿using DataAccess;
+﻿using Common.Profiles;
+using DataAccess;
 using DataAccess.Interface;
 using Repository;
 using Repository.Interface;
@@ -25,6 +26,15 @@ builder.Services.AddCacheSettings(builder.Configuration);
  * 加上Database Settings
  * ******************************************/
 builder.Services.InitialMongoDB(builder.Configuration);
+
+/********************************************
+ * 註冊AutoMapper
+ * ******************************************/
+builder.Services.AddAutoMapper(typeof(MenuItemProfile));
+builder.Services.AddAutoMapper(typeof(ProductInfoProfile));
+builder.Services.AddAutoMapper(typeof(OrderDetailProfile));
+builder.Services.AddAutoMapper(typeof(StaffDataProfile));
+builder.Services.AddAutoMapper(typeof(SoldItemProfile));
 
 /********************************************
  * 加上Data Access
