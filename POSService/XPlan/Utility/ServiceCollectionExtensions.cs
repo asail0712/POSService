@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -47,7 +49,17 @@ namespace XPlan.Utility
             return services;
         }
 
+        public static IServiceCollection AddAutoMapperProfiles(this IServiceCollection services, ILoggerFactory loggerFactory)
+        {
+            var configExpression    = new MapperConfigurationExpression();
+            configExpression.AddMaps(AppDomain.CurrentDomain.GetAssemblies());
 
+            var mapperConfig        = new MapperConfiguration(configExpression, loggerFactory);
+            var mapper              = mapperConfig.CreateMapper();
+
+            services.AddSingleton<IMapper>(mapper);
+            return services;
+        }
     }
 
 }

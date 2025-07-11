@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace XPlan.DataAccess
+namespace XPlan.Interface
 {
-    public interface IDataAccess<TEntity> where TEntity : class
+    public interface IDataAccess<TEntity> where TEntity : class, IEntity
     {
         Task InsertAsync(TEntity entity);
         Task<IEnumerable<TEntity?>?> QueryAllAsync();

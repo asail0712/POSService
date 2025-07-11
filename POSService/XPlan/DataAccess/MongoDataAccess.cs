@@ -8,17 +8,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using XPlan.Database;
 using XPlan.Interface;
 
 namespace XPlan.DataAccess
 {
-    public abstract class GenericDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : class, IEntity
+    public abstract class MongoDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : class, IEntity
     {
         private readonly IMongoCollection<TEntity> _collection;
 
-        public GenericDataAccess(IMongoDatabase database)
+        public MongoDataAccess(IMongoClient mongoClient, IDBSetting dbSettings)
         {
-            _collection = database.GetCollection<TEntity>(typeof(TEntity).Name);
+            var database        = mongoClient.GetDatabase(dbSettings.DatabaseName);
+            this._collection    = database.GetCollection<TEntity>(typeof(TEntity).Name);
         }
 
         public async Task InsertAsync(TEntity entity)
