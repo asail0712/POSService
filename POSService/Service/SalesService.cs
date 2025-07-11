@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Service.Interface;
+
 namespace Service
 {
-    public class SalesService
+    public class SalesService : ISalesService
     {
     }
 }

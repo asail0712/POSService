@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Repository.Interface;
+
 namespace Repository
 {
-    public class ManagementRepository
+    public class ManagementRepository : IManagementRepository
     {
     }
 }

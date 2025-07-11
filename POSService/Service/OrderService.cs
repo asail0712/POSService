@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Service.Interface;
+
 namespace Service
 {
-    public class OrderService
+    public class OrderService : IOrderService
     {
     }
 }

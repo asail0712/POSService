@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Repository.Interface;
+using DataAccess.Interface;
 
-namespace Repository
+namespace DataAccess
 {
-    public class SalesRepository : ISalesRepository
+    public class ManagementDataAccess : IManagementDataAccess
     {
     }
 }

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Repository.Interface;
-
-namespace Repository
+namespace Service.Interface
 {
-    public class SalesRepository : ISalesRepository
+    public interface IProductService
     {
     }
 }
