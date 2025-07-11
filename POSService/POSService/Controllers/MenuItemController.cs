@@ -17,5 +17,12 @@ namespace POSService.Controllers
         {
 
         }
+
+        // R - Read All
+        [NonAction]
+        public override async Task<IActionResult> GetAll()
+        {
+            return await base.GetAll();
+        }
     }
 }

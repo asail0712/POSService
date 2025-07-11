@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Common.DTO;
+
+using XPlan.Interface;
+
 namespace Service.Interface
 {
-    public interface IProductService
+    public interface IProductService : IService<ProductInfoRequest, ProductInfoResponse>
     {
     }
 }

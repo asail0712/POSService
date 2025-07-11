@@ -4,11 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Common.Entity;
 using DataAccess.Interface;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+
+using XPlan.DataAccess;
+using XPlan.Database;
 
 namespace DataAccess
 {
-    public class SalesDataAccess : ISalesDataAccess
+    public class SalesDataAccess : MongoDataAccess<SoldItem>, ISalesDataAccess
     {
+        public SalesDataAccess(IMongoClient database, IOptions<MongoDbSettings> dbSettings)
+            : base(database, dbSettings.Value)
+        {
+
+        }
     }
 }

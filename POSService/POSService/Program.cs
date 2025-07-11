@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 /********************************************
  * 加上Exception Filter 
  * ******************************************/
-//builder.Services.AddGlobalExceptionHandling();
+builder.Services.AddGlobalExceptionHandling();
 
 /********************************************
  * 加上Cache Settings

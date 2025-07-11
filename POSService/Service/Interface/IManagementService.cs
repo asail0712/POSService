@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Common.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XPlan.Interface;
 
 namespace Service.Interface
 {
-    public interface IManagementService
+    public interface IManagementService : IService<StaffDataRequest, StaffDataResponse>
     {
     }
 }

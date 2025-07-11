@@ -23,13 +23,13 @@ namespace Common.Entity
         public ObjectId Id { get; set; }
         public DateTime CreatedAt { get; set; }                 // 建立時間
         public DateTime UpdatedAt { get; set; }                 // 更新時間
-        public List<Guid> ProductIds { get; set; }              // 產品ID清單
+        public List<string> ProductIds { get; set; }            // 產品ID清單
         public decimal TotalPrice { get; set; }                 // 總售價
         public OrderStatus Status { get; set; }                 // 訂單狀態
 
         public OrderDetail()
         {
-            ProductIds  = new List<Guid>();
+            ProductIds  = new List<string>();
             CreatedAt   = DateTime.UtcNow;
             UpdatedAt   = DateTime.UtcNow;
             Status      = OrderStatus.Pending;
