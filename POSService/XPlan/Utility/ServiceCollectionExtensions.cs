@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using XPlan.Cache;
+using XPlan.Database;
 using XPlan.Exceptions;
 
 namespace XPlan.Utility
@@ -32,7 +35,17 @@ namespace XPlan.Utility
             return services;
         }
 
+        public static IServiceCollection InitialMongoDB(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<MongoDbSettings>(configuration.GetSection("MongoDBSetting"));
+            services.AddSingleton<IMongoClient>((sp) =>
+            {
+                var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+                return new MongoClient(settings.ConnectionString);
+            });
 
+            return services;
+        }
 
 
     }
