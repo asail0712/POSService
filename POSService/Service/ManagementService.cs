@@ -16,7 +16,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class ManagementService : GenericService<StaffData, StaffDataRequest, StaffDataResponse>, IManagementService
+    public class ManagementService : GenericService<StaffData, StaffDataRequest, StaffDataResponse, IManagementRepository>, IManagementService
     {
         public ManagementService(IManagementRepository repo
             , IMapper mapper)

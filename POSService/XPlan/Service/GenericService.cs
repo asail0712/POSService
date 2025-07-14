@@ -11,13 +11,13 @@ using XPlan.Repository;
 
 namespace XPlan.Service
 {
-    public abstract class GenericService<TEntity, TRequest, TResponse>
-        : IService<TRequest, TResponse> where TEntity : class, IEntity
+    public abstract class GenericService<TEntity, TRequest, TResponse, TRepository>
+        : IService<TRequest, TResponse> where TEntity : class, IEntity where TRepository : IRepository<TEntity>
     {
-        private readonly IRepository<TEntity> _repository;
-        private readonly IMapper _mapper;
+        protected readonly TRepository _repository;
+        protected readonly IMapper _mapper;
 
-        public GenericService(IRepository<TEntity> repository, IMapper mapper)
+        public GenericService(TRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper     = mapper;

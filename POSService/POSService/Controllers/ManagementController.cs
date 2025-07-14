@@ -10,7 +10,7 @@ namespace POSService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ManagementController : GenericController<StaffDataRequest, StaffDataResponse>
+    public class ManagementController : GenericController<StaffDataRequest, StaffDataResponse, IManagementService>
     {
         public ManagementController(IManagementService service)
             : base(service)

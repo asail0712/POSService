@@ -14,7 +14,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class ProductService : GenericService<ProductInfo, ProductInfoRequest, ProductInfoResponse>, IProductService
+    public class ProductService : GenericService<ProductInfo, ProductInfoRequest, ProductInfoResponse, IProductRepository>, IProductService
     {
         public ProductService(IProductRepository repo, IMapper mapper)
             : base(repo, mapper)

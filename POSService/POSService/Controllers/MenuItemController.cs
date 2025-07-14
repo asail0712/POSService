@@ -10,7 +10,7 @@ namespace POSService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class MenuItemController : GenericController<MenuItemRequest, MenuItemResponse>
+    public class MenuItemController : GenericController<MenuItemRequest, MenuItemResponse, IMenuItemService>
     {
         public MenuItemController(IMenuItemService service) 
             : base(service)

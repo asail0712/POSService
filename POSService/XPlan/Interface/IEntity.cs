@@ -10,5 +10,6 @@ namespace XPlan.Interface
     public interface IEntity
     {
         ObjectId Id { get; set; }           // 唯一識別碼
+        DateTime CreatedAt { get; set; }    // 建立時間
     }
 }

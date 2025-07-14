@@ -15,7 +15,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class OrderService : GenericService<OrderDetail, OrderDetailRequest, OrderDetailResponse>, IOrderService
+    public class OrderService : GenericService<OrderDetail, OrderDetailRequest, OrderDetailResponse, IOrderRepository>, IOrderService
     {
         public OrderService(IOrderRepository repo
             , IMapper mapper)

@@ -15,7 +15,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class MenuItemService : GenericService<MenuItem, MenuItemRequest, MenuItemResponse>, IMenuItemService
+    public class MenuItemService : GenericService<MenuItem, MenuItemRequest, MenuItemResponse, IMenuItemRepository>, IMenuItemService
     {
         public MenuItemService(IMenuItemRepository repo
             , IMapper mapper) 

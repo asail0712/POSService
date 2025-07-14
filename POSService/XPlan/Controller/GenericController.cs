@@ -13,14 +13,14 @@ using XPlan.Utility.Error;
 
 namespace XPlan.Controller
 {
-    public abstract class GenericController<TRequest, TResponse> 
-        : ControllerBase
+    public abstract class GenericController<TRequest, TResponse, TService> 
+        : ControllerBase where TService : IService<TRequest, TResponse>
     {
-        protected readonly IService<TRequest, TResponse> _service;
+        protected readonly TService _service;
 
-        public GenericController(IService<TRequest, TResponse> service)
+        public GenericController(TService service)
         {
-            _service            = service;
+            _service = service;
         }
 
         // C - Create

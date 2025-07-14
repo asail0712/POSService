@@ -10,14 +10,14 @@ using XPlan.Utility.Caches;
 
 namespace XPlan.Repository
 {
-    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+    public class GenericRepository<TEntity, TDataAccess> : IRepository<TEntity> where TEntity : class, IEntity where TDataAccess : IDataAccess<TEntity>
     {
-        private readonly IDataAccess<TEntity> _dataAccess;
+        protected readonly TDataAccess _dataAccess;
         private readonly IMemoryCache _cache;
         private readonly int _cacheDurationMinutes;
         private readonly string _cachePrefix = typeof(TEntity).Name;
 
-        public GenericRepository(IDataAccess<TEntity> dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings)
+        public GenericRepository(TDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings)
         {
             _dataAccess             = dataAccess;
             _cache                  = memoryCache;
@@ -47,6 +47,32 @@ namespace XPlan.Repository
             _cache.Set(cacheKey, cachedList, TimeSpan.FromMinutes(_cacheDurationMinutes));
 
             return cachedList;
+        }
+
+        public async Task<IEnumerable<TEntity?>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null, bool bCache = true)
+        {
+            IEnumerable<TEntity?>? allData = await GetAllAsync(bCache);
+
+            if (allData == null)
+            {
+                return Enumerable.Empty<TEntity?>();
+            }
+
+            // 如果 startTime 和 endTime 都沒設定，直接回傳全部
+            if (startTime == null && endTime == null)
+            {
+                return allData;
+            }
+
+            // 在記憶體中過濾時間
+            var filteredData = allData.Where(e =>
+                e != null && (
+                    (startTime == null || e.CreatedAt >= startTime.Value) &&
+                    (endTime == null || e.CreatedAt <= endTime.Value)
+                )
+            );
+
+            return filteredData;
         }
 
         public async Task<TEntity?> GetByIdAsync(string id, bool bCache = true)

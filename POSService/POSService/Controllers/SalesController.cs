@@ -9,7 +9,7 @@ namespace POSService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SalesController : GenericController<SoldItemRequest, SoldItemResponse>
+    public class SalesController : GenericController<SoldItemRequest, SoldItemResponse, ISalesService>
     {
         public SalesController(ISalesService service)
             : base(service)
@@ -18,11 +18,11 @@ namespace POSService.Controllers
         }
 
         [HttpPost("GetTotalSalesAmount")]
-        public async Task<IActionResult> GetTotalSalesAmount()
+        public async Task<IActionResult> GetTotalSalesAmount(SoldItemRequest request)
         {
-            // ED TODO
+            var result = await _service.GetTotalSalesAmount(request);
 
-            return Ok();
+            return Ok(result);
         }
 
         [HttpPost("{id}/GeConsumptionCount")]
@@ -43,6 +43,16 @@ namespace POSService.Controllers
         {
             return await base.GetAll();
         }
+
+        // R - Read by Id
+        [NonAction]
+        public override async Task<IActionResult> GetById(string id)
+        {
+            var result = await _service.GetByIdAsync(id);
+
+            return Ok(result);
+        }
+
         // U - Update
         [NonAction]
         public override async Task<IActionResult> Update(string id, [FromBody] SoldItemRequest requestDto)

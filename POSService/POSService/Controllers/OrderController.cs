@@ -9,7 +9,7 @@ namespace POSService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OrderController : GenericController<OrderDetailRequest, OrderDetailResponse>
+    public class OrderController : GenericController<OrderDetailRequest, OrderDetailResponse, IOrderService>
     {
         public OrderController(IOrderService service)
             : base(service)

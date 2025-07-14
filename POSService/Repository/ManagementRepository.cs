@@ -16,7 +16,7 @@ using XPlan.Utility.Caches;
 
 namespace Repository
 {
-    public class ManagementRepository : GenericRepository<StaffData>, IManagementRepository
+    public class ManagementRepository : GenericRepository<StaffData, IManagementDataAccess>, IManagementRepository
     {
         public ManagementRepository(IManagementDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings)
             : base(dataAccess, memoryCache, cacheSettings)
