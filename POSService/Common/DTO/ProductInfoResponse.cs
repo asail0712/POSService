@@ -15,6 +15,6 @@ namespace Common.DTO
         public bool IsVisible { get; set; }                     // 是否顯示
         public decimal? Discount { get; set; }                  // 可選：群組折扣 (0~1)
         public decimal? OverridePrice { get; set; }             // 可選：統一設定價格
-        public IEnumerable<string> Items { get; set; }          // 菜單項目清單
+        public List<string> Items { get; set; }                 // 菜單項目清單
     }
 }

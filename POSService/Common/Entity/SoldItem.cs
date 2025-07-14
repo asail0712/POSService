@@ -11,11 +11,11 @@ namespace Common.Entity
 {
     public class SoldItem : IEntity
     {
-        public ObjectId Id { get; set; }                            // 唯一識別碼 (UUID)
-        public IEnumerator<string>? ProductItemList { get; set; }   // 關聯的餐點 ID
-        public DateTime StartTimeAt { get; set; }                   // 開始時間
-        public DateTime EndTimeAt { get; set; }                     // 結束時間
-        public decimal Amount { get; set; }                         // 銷售金額
-        public DateTime CreatedAt { get; set; }                     // 建立時間
+        public ObjectId Id { get; set; }                        // 唯一識別碼 (UUID)
+        public List<string>? ProductItemList { get; set; }      // 關聯的餐點 ID
+        public DateTime StartTimeAt { get; set; }               // 開始時間
+        public DateTime EndTimeAt { get; set; }                 // 結束時間
+        public decimal Amount { get; set; }                     // 銷售金額
+        public DateTime CreatedAt { get; set; }                 // 建立時間
     }
 }

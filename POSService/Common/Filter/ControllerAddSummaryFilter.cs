@@ -10,7 +10,7 @@ namespace Common.Filter
             {
                 // 額外
                 { "SalesController.GetTotalSalesAmount", "取得銷售總金額" },
-                { "SalesController.GeConsumptionCount", "取得產品消費次數" },
+                { "SalesController.GetConsumptionCount", "取得產品消費次數" },
                 { "OrderController.ModifyOrderStatus", "修改訂單狀態" },
             
                 // 基本

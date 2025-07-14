@@ -25,10 +25,10 @@ namespace POSService.Controllers
             return Ok(result);
         }
 
-        [HttpPost("{id}/GeConsumptionCount")]
-        public async Task<IActionResult> GeConsumptionCount(string id)
+        [HttpPost("{id}/GetConsumptionCount")]
+        public async Task<IActionResult> GetConsumptionCount(string id)
         {
-            // ED TODO
+            var result = await _service.GetConsumptionCount(id);
 
             return Ok();
         }
