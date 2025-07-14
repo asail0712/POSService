@@ -36,6 +36,13 @@ namespace POSService.Controllers
         /*********************************
          * 隱藏的API
          * ******************************/
+        [NonAction]
+        public override async Task<IActionResult> Create([FromBody] SoldItemRequest requestDto)
+        {
+            await _service.CreateAsync(requestDto);
+
+            return Ok();
+        }
 
         // R - Read All
         [NonAction]

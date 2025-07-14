@@ -12,7 +12,7 @@ namespace Common.Entity
 {
     public class StaffData : IEntity
     {
-        public ObjectId Id { get; set; }             // 唯一識別碼 (UUID)
+        public ObjectId Id { get; set; }         // 唯一識別碼 (UUID)
         public string Account { get; set; }      // 帳號
         public string PasswordHash { get; set; } // 密碼（記得存 Hash，不存明文）
         public string Name { get; set; }         // 名字

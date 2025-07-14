@@ -22,8 +22,7 @@ namespace Service
 
         public async Task<int> GetTotalSalesAmount(SoldItemRequest request)
         {
-            SoldItem mappItem               = _mapper.Map<SoldItem>(request);
-            IEnumerable<SoldItem?>? allSold = await _repository.GetByTimeAsync(mappItem.CreatedAt, mappItem.EndTimeAt);
+            IEnumerable<SoldItem?>? allSold = await _repository.GetByTimeAsync(request.StartTimeAt, request.EndTimeAt);
             int totalAmoiunt                = 0;
 
             if(allSold == null || allSold.Count() == 0)
