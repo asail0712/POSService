@@ -20,7 +20,7 @@ namespace POSService.Controllers
         [HttpPost("{orderId}/Status")]
         public async Task<IActionResult> ModifyOrderStatus(string orderId, [FromBody] OrderStatus status)
         {
-            var bResult = await ModifyOrderStatus(orderId, status);
+            var bResult = await _service.ModifyOrderStatus(orderId, status);
 
             return Ok(bResult);
         }

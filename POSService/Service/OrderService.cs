@@ -46,8 +46,7 @@ namespace Service
                         SoldItem soldItem = new SoldItem
                         {
                             ProductItemList     = orderDetail.ProductIds,
-                            Amount              = orderDetail.TotalPrice,
-                            CreatedAt           = DateTime.UtcNow
+                            Amount              = orderDetail.TotalPrice
                         };
 
                         await _saleRepo.CreateAsync(soldItem);

@@ -25,6 +25,8 @@ namespace XPlan.DataAccess
 
         public async Task InsertAsync(TEntity entity)
         {
+            entity.CreatedAt = DateTime.UtcNow;
+
             await _collection.InsertOneAsync(entity);
         }
 

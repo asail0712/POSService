@@ -31,8 +31,6 @@ namespace Common.Entity
         public OrderDetail()
         {
             ProductIds  = new List<string>();
-            CreatedAt   = DateTime.UtcNow;
-            UpdatedAt   = DateTime.UtcNow;
             Status      = OrderStatus.Pending;
         }
     }
