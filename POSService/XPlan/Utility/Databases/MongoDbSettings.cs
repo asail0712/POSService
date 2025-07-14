@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XPlan.Interface;
 
-namespace XPlan.Database
+namespace XPlan.Utility.Databases
 {
     public class MongoDbSettings : IDBSetting
     {

@@ -12,7 +12,7 @@ using Repository.Interface;
 
 using XPlan.Interface;
 using XPlan.Repository;
-using XPlan.Cache;
+using XPlan.Utility.Caches;
 
 namespace Repository
 {

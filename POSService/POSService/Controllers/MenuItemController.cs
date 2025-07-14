@@ -18,6 +18,10 @@ namespace POSService.Controllers
 
         }
 
+
+        /*********************************
+         * 隱藏的API
+         * ******************************/
         // R - Read All
         [NonAction]
         public override async Task<IActionResult> GetAll()

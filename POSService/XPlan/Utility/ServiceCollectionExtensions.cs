@@ -11,10 +11,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using XPlan.Cache;
-using XPlan.Database;
-using XPlan.Exceptions;
+using XPlan.Utility.Caches;
+using XPlan.Utility.Databases;
+using XPlan.Utility.Exceptions;
 
 namespace XPlan.Utility
 {

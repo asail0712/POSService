@@ -4,10 +4,9 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using SharpCompress.Common;
 using System.Collections.Generic;
-
-using XPlan.Cache;
 using XPlan.DataAccess;
 using XPlan.Interface;
+using XPlan.Utility.Caches;
 
 namespace XPlan.Repository
 {

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 using XPlan.DataAccess;
-using XPlan.Database;
+using XPlan.Utility.Databases;
 
 namespace DataAccess
 {

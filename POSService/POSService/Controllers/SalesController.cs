@@ -17,6 +17,26 @@ namespace POSService.Controllers
 
         }
 
+        [HttpPost("GetTotalSalesAmount")]
+        public async Task<IActionResult> GetTotalSalesAmount()
+        {
+            // ED TODO
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/GeConsumptionCount")]
+        public async Task<IActionResult> GeConsumptionCount(string id)
+        {
+            // ED TODO
+
+            return Ok();
+        }
+
+        /*********************************
+         * 隱藏的API
+         * ******************************/
+
         // R - Read All
         [NonAction]
         public override async Task<IActionResult> GetAll()

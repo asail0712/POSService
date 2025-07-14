@@ -7,6 +7,12 @@ namespace Common.Filter
     {
         private readonly Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
         {
+            // 額外
+            { "SalesController.GetTotalSalesAmount", "取得銷售總金額" },
+            { "SalesController.GeConsumptionCount", "取得產品消費次數" },
+            { "OrderController.ModifyOrderStatus", "修改訂單狀態" },
+            
+            // 基本
             { "SalesController.Create", "新增銷售資料" },
             { "SalesController.GetAll", "取得所有銷售資料" },
             { "SalesController.GetById", "依據 ID 取得銷售資料" },
