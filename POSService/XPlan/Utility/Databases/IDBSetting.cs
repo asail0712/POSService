@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XPlan.Interface
+namespace XPlan.Utility.Databases
 {
     public interface IDBSetting
     {

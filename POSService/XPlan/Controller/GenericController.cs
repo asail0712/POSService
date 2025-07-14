@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 using System;
 using System.Collections;
@@ -7,8 +8,8 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-
-using XPlan.Interface;
+using XPlan.Service;
+using XPlan.Utility.Error;
 
 namespace XPlan.Controller
 {
@@ -19,7 +20,7 @@ namespace XPlan.Controller
 
         public GenericController(IService<TRequest, TResponse> service)
         {
-            _service = service;
+            _service            = service;
         }
 
         // C - Create
@@ -35,7 +36,8 @@ namespace XPlan.Controller
         [HttpGet]
         public virtual async Task<IActionResult> GetAll()
         {
-            var result          = await _service.GetAllAsync();
+            var result = await _service.GetAllAsync();
+
             return Ok(result);
         }
 
@@ -45,11 +47,6 @@ namespace XPlan.Controller
         {
             var result = await _service.GetByIdAsync(id);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
             return Ok(result);
         }
 
@@ -57,11 +54,8 @@ namespace XPlan.Controller
         [HttpPut("{id}")]
         public virtual async Task<IActionResult> Update(string id, [FromBody] TRequest requestDto)
         {
-            bool bResult    = await _service.UpdateAsync(id, requestDto);
-            if (!bResult)
-            {
-                return NotFound();
-            }
+            bool bResult = await _service.UpdateAsync(id, requestDto);
+            
             return NoContent();
         }
 
@@ -69,11 +63,8 @@ namespace XPlan.Controller
         [HttpDelete("{id}")]
         public virtual async Task<IActionResult> Delete(string id)
         {
-            bool bResult = await _service.DeleteAsync(id);
-            if (!bResult)
-            {
-                return NotFound();
-            }
+            bool bDeleted = await _service.DeleteAsync(id);
+
             return NoContent();
         }
     }

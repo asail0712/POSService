@@ -1,4 +1,6 @@
-﻿namespace XPlan.Interface
+﻿using XPlan.Interface;
+
+namespace XPlan.Repository
 {
     public interface IRepository<TEntity> where TEntity : class, IEntity
     {

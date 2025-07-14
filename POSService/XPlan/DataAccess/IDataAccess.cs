@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using XPlan.Interface;
 
-namespace XPlan.Interface
+namespace XPlan.DataAccess
 {
     public interface IDataAccess<TEntity> where TEntity : class, IEntity
     {

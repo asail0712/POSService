@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XPlan.Interface
+namespace XPlan.Service
 {
     public interface IService<TRequest, TResponse>
     {

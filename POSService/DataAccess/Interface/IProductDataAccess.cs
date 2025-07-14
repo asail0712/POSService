@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Common.Entity;
+using XPlan.DataAccess;
 
-using XPlan.Interface;
-    
 namespace DataAccess.Interface
 {
     public interface IProductDataAccess : IDataAccess<ProductInfo>
