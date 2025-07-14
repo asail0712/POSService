@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-using Common.DTO;
+﻿using Common.DTO;
+using Common.Entity;
+using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
-
 using XPlan.Controller;
 using XPlan.Interface;
 
@@ -18,30 +17,13 @@ namespace POSService.Controllers
 
         }
 
-        /*********************************
-         * 隱藏的API
-         * ******************************/
 
-        // R - Read All
-        [NonAction]
-        public override async Task<IActionResult> GetAll()
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            return await base.GetAll();
-        }
+            var bResult = await _service.Login(request);
 
-        // R - Read by Id
-        [NonAction]
-        public override async Task<IActionResult> GetById(string id)
-        {
-            return await base.GetById(id);
+            return Ok(bResult);
         }
-
-        // U - Update
-        [NonAction]
-        public override async Task<IActionResult> Update(string id, [FromBody] StaffDataRequest requestDto)
-        {
-            return await base.Update(id, requestDto);
-        }
-
     }
 }

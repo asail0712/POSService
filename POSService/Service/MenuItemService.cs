@@ -17,8 +17,7 @@ namespace Service
 {
     public class MenuItemService : GenericService<MenuItem, MenuItemRequest, MenuItemResponse, IMenuItemRepository>, IMenuItemService
     {
-        public MenuItemService(IMenuItemRepository repo
-            , IMapper mapper) 
+        public MenuItemService(IMenuItemRepository repo, IMapper mapper) 
             : base(repo, mapper)
         {
         }

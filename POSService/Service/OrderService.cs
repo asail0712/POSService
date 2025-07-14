@@ -18,8 +18,7 @@ namespace Service
     {
         private ISalesRepository _saleRepo;
 
-        public OrderService(IOrderRepository repo, ISalesRepository saleRepo
-            , IMapper mapper)
+        public OrderService(IOrderRepository repo, ISalesRepository saleRepo, IMapper mapper)
             : base(repo, mapper)
         {
             _saleRepo = saleRepo;
