@@ -10,6 +10,7 @@ namespace XPlan.Repository
         Task<List<TEntity>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null);
         Task<bool> UpdateAsync(string key, TEntity entity);
         Task<bool> DeleteAsync(string key);
+        Task<bool> ExistsAsync(string key, bool bCache = true);
     }
 }
 

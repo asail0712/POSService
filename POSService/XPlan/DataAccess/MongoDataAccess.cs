@@ -84,5 +84,11 @@ namespace XPlan.DataAccess
 
             return result.DeletedCount > 0;
         }
+
+        public async Task<bool> ExistsAsync(string key)
+        {
+            var count = await _collection.CountDocumentsAsync(e => e.SearchKey == key);
+            return count > 0;
+        }
     }
 }

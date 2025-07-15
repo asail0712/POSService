@@ -25,7 +25,7 @@ namespace XPlan.Controller
 
         // C - Create
         [HttpPost]
-        public virtual async Task<IActionResult> Create([FromBody] TRequest requestDto)
+        public virtual async Task<IActionResult> CreateAsync([FromBody] TRequest requestDto)
         {
             await _service.CreateAsync(requestDto);
 
@@ -34,7 +34,7 @@ namespace XPlan.Controller
 
         // R - Read All
         [HttpGet]
-        public virtual async Task<IActionResult> GetAll()
+        public virtual async Task<IActionResult> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
 
@@ -52,17 +52,17 @@ namespace XPlan.Controller
 
         // R - Read by Id
         // /api/yourcontroller/by-time?startTime=2025-07-01&endTime=2025-07-15
-        [HttpGet("by-time")]
-        public virtual async Task<IActionResult> GetByTimeAsync([FromQuery] DateTime? startTime = null, [FromQuery] DateTime? endTime = null)
-        {
-            var result = await _service.GetByTimeAsync(startTime, endTime);
+        //[HttpGet("by-time")]
+        //public virtual async Task<IActionResult> GetByTimeAsync([FromQuery] DateTime? startTime = null, [FromQuery] DateTime? endTime = null)
+        //{
+        //    var result = await _service.GetByTimeAsync(startTime, endTime);
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         // U - Update
         [HttpPut("{key}")]
-        public virtual async Task<IActionResult> Update(string key, [FromBody] TRequest requestDto)
+        public virtual async Task<IActionResult> UpdateAsync(string key, [FromBody] TRequest requestDto)
         {
             bool bResult = await _service.UpdateAsync(key, requestDto);
             
@@ -71,7 +71,7 @@ namespace XPlan.Controller
 
         // D - Delete
         [HttpDelete("{key}")]
-        public virtual async Task<IActionResult> Delete(string key)
+        public virtual async Task<IActionResult> DeleteAsync(string key)
         {
             bool bDeleted = await _service.DeleteAsync(key);
 

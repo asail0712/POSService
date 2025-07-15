@@ -82,6 +82,7 @@ namespace XPlan.Repository
             {
                 _cache.Set($"{_cachePrefix}:{key}", entity, TimeSpan.FromMinutes(5));
                 _cache.Remove($"{_cachePrefix}:all");
+                _cache.Remove($"{_cachePrefix}:exists:{key}");
             }
 
             return bResult;
@@ -95,9 +96,25 @@ namespace XPlan.Repository
             {
                 _cache.Remove($"{_cachePrefix}:{key}");
                 _cache.Remove($"{_cachePrefix}:all");
+                _cache.Remove($"{_cachePrefix}:exists:{key}");
             }
 
             return bResult;
+        }
+        public async Task<bool> ExistsAsync(string key, bool bCache = true)
+        {
+            var cacheKey = $"{_cachePrefix}:exists:{key}";
+
+            if (bCache && _cache.TryGetValue(cacheKey, out bool cachedExists))
+            {
+                return cachedExists;
+            }
+
+            bool exists = await _dataAccess.ExistsAsync(key);
+
+            _cache.Set(cacheKey, exists, TimeSpan.FromMinutes(_cacheDurationMinutes));
+
+            return exists;
         }
     }
 }

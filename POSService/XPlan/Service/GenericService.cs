@@ -23,7 +23,7 @@ namespace XPlan.Service
             _mapper     = mapper;
         }
 
-        public async Task CreateAsync(TRequest request)
+        public virtual async Task CreateAsync(TRequest request)
         {
             var entity = _mapper.Map<TEntity>(request);
 
@@ -32,31 +32,31 @@ namespace XPlan.Service
             return;
         }
 
-        public async Task<List<TResponse>?> GetAllAsync()
+        public virtual async Task<List<TResponse>?> GetAllAsync()
         {
             List<TEntity>? entities = await _repository.GetAllAsync();
             return _mapper.Map<List<TResponse>?>(entities);
         }
 
-        public async Task<TResponse?> GetAsync(string key)
+        public virtual async Task<TResponse?> GetAsync(string key)
         {
             var entity = await _repository.GetAsync(key);
             return _mapper.Map<TResponse>(entity);
         }
 
-        public async Task<List<TResponse>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
+        public virtual async Task<List<TResponse>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
             List<TEntity>? entities = await _repository.GetByTimeAsync();
             return _mapper.Map<List<TResponse>?>(entities);
         }
 
-        public async Task<bool> UpdateAsync(string key, TRequest request)
+        public virtual async Task<bool> UpdateAsync(string key, TRequest request)
         {
             var entity  = _mapper.Map<TEntity>(request);
             return await _repository.UpdateAsync(key, entity);
         }
 
-        public async Task<bool> DeleteAsync(string key)
+        public virtual async Task<bool> DeleteAsync(string key)
         {
             return await _repository.DeleteAsync(key);
         }
