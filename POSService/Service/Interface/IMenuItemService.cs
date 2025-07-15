@@ -11,5 +11,6 @@ namespace Service.Interface
 {
     public interface IMenuItemService : IService<MenuItemRequest, MenuItemResponse>
     {
+        Task<MenuBriefResponse> GetBriefAsync(string key);
     }
 }

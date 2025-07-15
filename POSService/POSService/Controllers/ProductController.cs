@@ -17,9 +17,8 @@ namespace POSService.Controllers
 
         }
 
-
         [HttpGet("{key}/GetBrief")]
-        public virtual async Task<IActionResult> GetBriefAsync(string key)
+        public async Task<IActionResult> GetBriefAsync(string key)
         {
             var result = await _service.GetBriefAsync(key);
 

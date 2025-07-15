@@ -18,15 +18,12 @@ namespace POSService.Controllers
 
         }
 
-
-        /*********************************
-         * 隱藏的API
-         * ******************************/
-        // R - Read All
-        [NonAction]
-        public override async Task<IActionResult> GetAllAsync()
+        [HttpGet("{key}/GetBrief")]
+        public async Task<IActionResult> GetBriefAsync(string key)
         {
-            return await base.GetAllAsync();
+            var result = await _service.GetBriefAsync(key);
+
+            return Ok(result);
         }
     }
 }

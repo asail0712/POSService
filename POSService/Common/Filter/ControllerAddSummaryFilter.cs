@@ -13,6 +13,7 @@ namespace Common.Filter
                 { "SalesController.GetConsumptionCount", "取得產品消費次數" },
                 { "OrderController.ModifyOrderStatus", "修改訂單狀態" },
                 { "ProductController.GetBriefAsync", "取得產品簡介" },
+                { "MenuItemController.GetBriefAsync", "取得菜品簡介" },
             
                 // 基本
                 { "SalesController.Create", "新增銷售資料" },
@@ -33,11 +34,11 @@ namespace Common.Filter
                 { "OrderController.Update", "更新訂單資料" },
                 { "OrderController.Delete", "刪除訂單資料" },
 
-                { "MenuItemController.Create", "新增單品資料" },
-                { "MenuItemController.GetAll", "取得所有單品資料" },
-                { "MenuItemController.GetById", "依據 ID 取得單品資料" },
-                { "MenuItemController.Update", "更新單品資料" },
-                { "MenuItemController.Delete", "刪除單品資料" },
+                { "MenuItemController.CreateAsync", "新增單品資料" },
+                { "MenuItemController.GetAllAsync", "取得所有單品資料" },
+                { "MenuItemController.GetAsync", "依據 ID 取得單品資料" },
+                { "MenuItemController.UpdateAsync", "更新單品資料" },
+                { "MenuItemController.DeleteAsync", "刪除單品資料" },
 
                 { "ManagementController.Create", "新增後台人員資料" },
                 { "ManagementController.GetAll", "取得所有後台人員資料" },

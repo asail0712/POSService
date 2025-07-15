@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Common.DTO
+{
+    public class MenuBriefResponse
+    {
+        public string Name { get; set; }          // 餐點名稱
+        public string ImageUrl { get; set; }      // 圖片連結
+        public decimal Discount { get; set; }     // 折扣百分比 (0~1)
+        public bool IsCombo { get; set; }         // 是否為套餐
+        public bool IsAvailable { get; set; }     // 販售狀態（true: 上架, false: 下架）
+    }
+}
