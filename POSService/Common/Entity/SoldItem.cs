@@ -15,5 +15,6 @@ namespace Common.Entity
         public List<string>? ProductItemList { get; set; }      // 關聯的餐點 ID
         public decimal Amount { get; set; }                     // 銷售金額
         public DateTime CreatedAt { get; set; }                 // 建立時間
+        public DateTime UpdatedAt { get; set; }                 // 更新時間
     }
 }

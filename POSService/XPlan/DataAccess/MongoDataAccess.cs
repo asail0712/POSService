@@ -30,26 +30,57 @@ namespace XPlan.DataAccess
             await _collection.InsertOneAsync(entity);
         }
 
-        public async Task<IEnumerable<TEntity?>?> QueryAllAsync()
+        public async Task<List<TEntity>?> QueryAllAsync()
         {
             return await _collection.Find(_ => true).ToListAsync();
         }
 
-        public async Task<TEntity?> QueryByIdAsync(string id)
+        public async Task<TEntity?> QueryAsync(string key)
         {
-            return await _collection.Find(e => e.Id == new ObjectId(id)).FirstOrDefaultAsync();
+            return await _collection.Find(e => e.SearchKey == key).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> UpdateAsync(string id, TEntity entity)
+        public async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
         {
-            var result = await _collection.ReplaceOneAsync(e => e.Id == new ObjectId(id), entity);
+            // 如果 startTime 和 endTime 都沒設定，直接回傳所有資料
+            if (startTime == null && endTime == null)
+            {
+                return await _collection.Find(_ => true).ToListAsync();
+            }
+
+            // 如果兩個時間都有，並且 startTime > endTime，就交換
+            if (startTime != null && endTime != null && startTime > endTime)
+            {
+                return new List<TEntity>();
+            }
+
+            // 建立過濾條件
+            var builder                         = Builders<TEntity>.Filter;
+            FilterDefinition<TEntity> filter    = builder.Empty;
+
+            if (startTime != null)
+            {
+                filter = builder.And(filter, builder.Gte(e => e.CreatedAt, startTime.Value));
+            }
+            if (endTime != null)
+            {
+                filter = builder.And(filter, builder.Lte(e => e.CreatedAt, endTime.Value));
+            }
+
+            return await _collection.Find(filter).ToListAsync();
+        }
+
+        public async Task<bool> UpdateAsync(string key, TEntity entity)
+        {
+            entity.UpdatedAt    = DateTime.UtcNow;
+            var result          = await _collection.ReplaceOneAsync(e => e.SearchKey == key, entity);
 
             return result.ModifiedCount > 0;
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string key)
         {
-            var result = await _collection.DeleteOneAsync(e => e.Id == new ObjectId(id));
+            var result = await _collection.DeleteOneAsync(e => e.SearchKey == key);
 
             return result.DeletedCount > 0;
         }

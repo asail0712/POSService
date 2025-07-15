@@ -11,5 +11,9 @@ namespace XPlan.Interface
     {
         ObjectId Id { get; set; }           // 唯一識別碼
         DateTime CreatedAt { get; set; }    // 建立時間
+        DateTime UpdatedAt { get; set; }    // 更新時間
+
+        // 預設使用Id當作搜尋key
+        string SearchKey { get { return Id.ToString(); } }
     }
 }

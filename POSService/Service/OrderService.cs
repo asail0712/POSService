@@ -29,7 +29,7 @@ namespace Service
         public async Task<bool> ModifyOrderStatus(string orderId, OrderStatus status)
         {
             bool bResult                = false;
-            OrderDetail? orderDetail    = await _repository.GetByIdAsync(orderId);
+            OrderDetail? orderDetail    = await _repository.GetAsync(orderId);
             
             if (orderDetail == null)
             {

@@ -42,28 +42,38 @@ namespace XPlan.Controller
         }
 
         // R - Read by Id
-        [HttpGet("{id}")]
-        public virtual async Task<IActionResult> GetById(string id)
+        [HttpGet("{key}")]
+        public virtual async Task<IActionResult> GetAsync(string key)
         {
-            var result = await _service.GetByIdAsync(id);
+            var result = await _service.GetAsync(key);
+
+            return Ok(result);
+        }
+
+        // R - Read by Id
+        // /api/yourcontroller/by-time?startTime=2025-07-01&endTime=2025-07-15
+        [HttpGet("by-time")]
+        public virtual async Task<IActionResult> GetByTimeAsync([FromQuery] DateTime? startTime = null, [FromQuery] DateTime? endTime = null)
+        {
+            var result = await _service.GetByTimeAsync(startTime, endTime);
 
             return Ok(result);
         }
 
         // U - Update
-        [HttpPut("{id}")]
-        public virtual async Task<IActionResult> Update(string id, [FromBody] TRequest requestDto)
+        [HttpPut("{key}")]
+        public virtual async Task<IActionResult> Update(string key, [FromBody] TRequest requestDto)
         {
-            bool bResult = await _service.UpdateAsync(id, requestDto);
+            bool bResult = await _service.UpdateAsync(key, requestDto);
             
             return NoContent();
         }
 
         // D - Delete
-        [HttpDelete("{id}")]
-        public virtual async Task<IActionResult> Delete(string id)
+        [HttpDelete("{key}")]
+        public virtual async Task<IActionResult> Delete(string key)
         {
-            bool bDeleted = await _service.DeleteAsync(id);
+            bool bDeleted = await _service.DeleteAsync(key);
 
             return NoContent();
         }

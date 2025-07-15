@@ -24,28 +24,5 @@ namespace POSService.Controllers
 
             return Ok(bResult);
         }
-
-        /*********************************
-         * 隱藏的API
-         * ******************************/
-        [NonAction]
-        public override async Task<IActionResult> GetAll()
-        {
-            return await base.GetAll();
-        }
-
-        // R - Read by Id
-        [NonAction]
-        public override async Task<IActionResult> GetById(string id)
-        {
-            return await base.GetById(id);
-        }
-
-        // U - Update
-        [NonAction]
-        public override async Task<IActionResult> Update(string id, [FromBody] OrderDetailRequest requestDto)
-        {
-            return await base.Update(id, requestDto);
-        }
     }
 }

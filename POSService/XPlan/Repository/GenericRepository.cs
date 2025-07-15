@@ -32,10 +32,10 @@ namespace XPlan.Repository
             _cache.Remove($"{_cachePrefix}:all");
         }
 
-        public async Task<IEnumerable<TEntity?>?> GetAllAsync(bool bCache = true)
+        public async Task<List<TEntity>?> GetAllAsync(bool bCache = true)
         {
-            IEnumerable<TEntity?>? cachedList   = null;
-            var cacheKey                        = $"{_cachePrefix}:all";
+            List<TEntity>? cachedList   = null;
+            var cacheKey                = $"{_cachePrefix}:all";
 
             if (bCache && _cache.TryGetValue(cacheKey, out cachedList))
             {
@@ -49,43 +49,22 @@ namespace XPlan.Repository
             return cachedList;
         }
 
-        public async Task<IEnumerable<TEntity?>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null, bool bCache = true)
+        public async Task<List<TEntity>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
-            IEnumerable<TEntity?>? allData = await GetAllAsync(bCache);
-
-            if (allData == null)
-            {
-                return Enumerable.Empty<TEntity?>();
-            }
-
-            // 如果 startTime 和 endTime 都沒設定，直接回傳全部
-            if (startTime == null && endTime == null)
-            {
-                return allData;
-            }
-
-            // 在記憶體中過濾時間
-            var filteredData = allData.Where(e =>
-                e != null && (
-                    (startTime == null || e.CreatedAt >= startTime.Value) &&
-                    (endTime == null || e.CreatedAt <= endTime.Value)
-                )
-            );
-
-            return filteredData;
+            return await _dataAccess.QueryByTimeAsync(startTime, endTime);
         }
 
-        public async Task<TEntity?> GetByIdAsync(string id, bool bCache = true)
+        public async Task<TEntity?> GetAsync(string key, bool bCache = true)
         {
             TEntity? cachedEntity   = null;
-            var cacheKey            = $"{_cachePrefix}:{id}";
+            var cacheKey            = $"{_cachePrefix}:{key}";
 
             if (bCache && _cache.TryGetValue(cacheKey, out cachedEntity))
             {
                 return cachedEntity;
             }
 
-            cachedEntity = await _dataAccess.QueryByIdAsync(id);
+            cachedEntity = await _dataAccess.QueryAsync(key);
 
             if (cachedEntity != null)
             {
@@ -95,27 +74,26 @@ namespace XPlan.Repository
             return cachedEntity;
         }
 
-        public async Task<bool> UpdateAsync(string id, TEntity entity)
+        public async Task<bool> UpdateAsync(string key, TEntity entity)
         {
-            entity.Id       = new ObjectId(id);             // Ensure the ID is set for the update operation
-            bool bResult    = await _dataAccess.UpdateAsync(id, entity);
+            bool bResult = await _dataAccess.UpdateAsync(key, entity);
 
             if (bResult)
             {
-                _cache.Set($"{_cachePrefix}:{id}", entity, TimeSpan.FromMinutes(5));
+                _cache.Set($"{_cachePrefix}:{key}", entity, TimeSpan.FromMinutes(5));
                 _cache.Remove($"{_cachePrefix}:all");
             }
 
             return bResult;
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string key)
         {
-            bool bResult =await _dataAccess.DeleteAsync(id);
+            bool bResult =await _dataAccess.DeleteAsync(key);
 
             if (bResult)
             {
-                _cache.Remove($"{_cachePrefix}:{id}");
+                _cache.Remove($"{_cachePrefix}:{key}");
                 _cache.Remove($"{_cachePrefix}:all");
             }
 

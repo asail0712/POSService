@@ -30,6 +30,7 @@ namespace Common.Entity
 
         public OrderDetail()
         {
+            OrderId     = "";
             ProductIds  = new List<string>();
             Status      = OrderStatus.Pending;
         }

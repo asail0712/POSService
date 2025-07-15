@@ -53,9 +53,9 @@ namespace POSService.Controllers
 
         // R - Read by Id
         [NonAction]
-        public override async Task<IActionResult> GetById(string id)
+        public override async Task<IActionResult> GetAsync(string id)
         {
-            var result = await _service.GetByIdAsync(id);
+            var result = await _service.GetAsync(id);
 
             return Ok(result);
         }

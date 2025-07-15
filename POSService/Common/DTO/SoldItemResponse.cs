@@ -10,8 +10,6 @@ namespace Common.DTO
     public class SoldItemResponse
     {
         public List<string>? ProductItemList { get; set; }          // 關聯的餐點 ID
-        public DateTime StartTimeAt { get; set; }                   // 開始時間
-        public DateTime EndTimeAt { get; set; }                     // 結束時間
         public decimal Amount { get; set; }                         // 銷售金額
     }
 }

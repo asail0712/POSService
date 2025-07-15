@@ -32,27 +32,33 @@ namespace XPlan.Service
             return;
         }
 
-        public async Task<IEnumerable<TResponse?>?> GetAllAsync()
+        public async Task<List<TResponse>?> GetAllAsync()
         {
-            var entities = await _repository.GetAllAsync();
-            return _mapper.Map<IEnumerable<TResponse>>(entities);
+            List<TEntity>? entities = await _repository.GetAllAsync();
+            return _mapper.Map<List<TResponse>?>(entities);
         }
 
-        public async Task<TResponse?> GetByIdAsync(string id)
+        public async Task<TResponse?> GetAsync(string key)
         {
-            var entity = await _repository.GetByIdAsync(id);
+            var entity = await _repository.GetAsync(key);
             return _mapper.Map<TResponse>(entity);
         }
 
-        public async Task<bool> UpdateAsync(string id, TRequest request)
+        public async Task<List<TResponse>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
-            var entity  = _mapper.Map<TEntity>(request);
-            return await _repository.UpdateAsync(id, entity);
+            List<TEntity>? entities = await _repository.GetByTimeAsync();
+            return _mapper.Map<List<TResponse>?>(entities);
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<bool> UpdateAsync(string key, TRequest request)
         {
-            return await _repository.DeleteAsync(id);
+            var entity  = _mapper.Map<TEntity>(request);
+            return await _repository.UpdateAsync(key, entity);
+        }
+
+        public async Task<bool> DeleteAsync(string key)
+        {
+            return await _repository.DeleteAsync(key);
         }
     }
 }
