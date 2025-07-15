@@ -27,7 +27,7 @@ namespace Common.Entity
         public List<string> ProductIds { get; set; }            // 產品ID清單
         public decimal TotalPrice { get; set; }                 // 總售價
         public OrderStatus Status { get; set; }                 // 訂單狀態
-
+        public string SearchKey => OrderId.ToString();
         public OrderDetail()
         {
             OrderId     = "";

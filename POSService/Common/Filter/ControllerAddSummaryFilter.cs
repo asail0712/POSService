@@ -28,11 +28,11 @@ namespace Common.Filter
                 { "ProductController.UpdateAsync", "更新產品資料" },
                 { "ProductController.DeleteAsync", "刪除產品資料" },
 
-                { "OrderController.Create", "新增訂單資料" },
-                { "OrderController.GetAll", "取得所有訂單資料" },
-                { "OrderController.GetById", "依據 ID 取得訂單資料" },
-                { "OrderController.Update", "更新訂單資料" },
-                { "OrderController.Delete", "刪除訂單資料" },
+                { "OrderController.CreateAsync", "新增訂單資料" },
+                { "OrderController.GetAllAsync", "取得所有訂單資料" },
+                { "OrderController.GetAsync", "依據 ID 取得訂單資料" },
+                { "OrderController.UpdateAsync", "更改訂單資料" },
+                { "OrderController.DeleteAsync", "刪除訂單資料" },
 
                 { "MenuItemController.CreateAsync", "新增單品資料" },
                 { "MenuItemController.GetAllAsync", "取得所有單品資料" },

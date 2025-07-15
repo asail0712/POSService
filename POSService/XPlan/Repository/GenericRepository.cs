@@ -80,7 +80,7 @@ namespace XPlan.Repository
 
             if (bResult)
             {
-                _cache.Set($"{_cachePrefix}:{key}", entity, TimeSpan.FromMinutes(5));
+                _cache.Set($"{_cachePrefix}:{key}", entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
                 _cache.Remove($"{_cachePrefix}:all");
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
             }
@@ -115,6 +115,46 @@ namespace XPlan.Repository
             _cache.Set(cacheKey, exists, TimeSpan.FromMinutes(_cacheDurationMinutes));
 
             return exists;
+        }
+
+        public async Task<bool> ExistsAsync(List<string> keys, bool bCache = true)
+        {
+            if (keys == null || keys.Count == 0)
+            { 
+                return false;
+            }
+
+            // 批次快取檢查（全部 keys 都有快取時直接回傳）
+            var missingKeys = new List<string>();
+            if (bCache)
+            {
+                foreach (var key in keys)
+                {
+                    var cacheKey = $"{_cachePrefix}:exists:{key}";
+                    if (!_cache.TryGetValue(cacheKey, out bool cachedExists) || !cachedExists)
+                    {
+                        missingKeys.Add(key);
+                    }
+                }
+
+                if (missingKeys.Count == 0)
+                {
+                    return true; // 全部 keys 都在快取且存在
+                }
+            }
+            else
+            {
+                missingKeys = keys;
+            }
+
+            // 用批次查詢檢查缺少的 keys
+            bool allExist = await _dataAccess.ExistsAsync(missingKeys);
+            foreach (var key in missingKeys)
+            {
+                _cache.Set($"{_cachePrefix}:exists:{key}", allExist, TimeSpan.FromMinutes(_cacheDurationMinutes));
+            }
+
+            return allExist;
         }
     }
 }

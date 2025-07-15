@@ -13,5 +13,6 @@ namespace XPlan.DataAccess
         Task<bool> UpdateAsync(string key, TEntity entity);
         Task<bool> DeleteAsync(string key);
         Task<bool> ExistsAsync(string key);
+        Task<bool> ExistsAsync(List<string> key);
     }
 }

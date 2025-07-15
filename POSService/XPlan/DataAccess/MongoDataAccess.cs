@@ -90,5 +90,16 @@ namespace XPlan.DataAccess
             var count = await _collection.CountDocumentsAsync(e => e.SearchKey == key);
             return count > 0;
         }
+
+        public async Task<bool> ExistsAsync(List<string> key)
+        {
+            if (key == null || key.Count == 0)
+            {
+                return false;
+            }
+            var filter = Builders<TEntity>.Filter.In(e => e.SearchKey, key);
+            var count  = await _collection.CountDocumentsAsync(filter);
+            return count > 0;
+        }
     }
 }

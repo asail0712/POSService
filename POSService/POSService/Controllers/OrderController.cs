@@ -24,5 +24,15 @@ namespace POSService.Controllers
 
             return Ok(bResult);
         }
+
+        /*********************************
+         * 隱藏的API
+         * ******************************/
+        // D - Delete
+        [NonAction]
+        public override async Task<IActionResult> DeleteAsync(string id)
+        {
+            return await DeleteAsync(id);
+        }
     }
 }

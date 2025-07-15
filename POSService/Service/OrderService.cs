@@ -17,20 +17,54 @@ namespace Service
     public class OrderService : GenericService<OrderDetail, OrderDetailRequest, OrderDetailResponse, IOrderRepository>, IOrderService
     {
         private ISalesRepository _saleRepo;
+        private IProductRepository _productRepository;
 
-        public OrderService(IOrderRepository repo, ISalesRepository saleRepo, IMapper mapper)
+        public OrderService(IOrderRepository repo, IMapper mapper, ISalesRepository saleRepo, IProductRepository productRepository)
             : base(repo, mapper)
         {
-            _saleRepo = saleRepo;
+            _saleRepo           = saleRepo;
+            _productRepository  = productRepository;
         }
-        // 這裡可以添加特定於 MenuItem 的業務邏輯方法
-        // 例如：根據類別獲取餐點、根據價格範圍獲取餐點等
+
+        public override async Task CreateAsync(OrderDetailRequest request)
+        {
+            // 檢查產品是否存在
+            if (!await _productRepository.ExistsAsync(request.ProductIds))
+            {
+                // ED TODO
+                throw new Exception($"Product does not exist.");
+            }
+            // 創建訂單
+            OrderDetail orderDetail = _mapper.Map<OrderDetail>(request);
+
+            // 計算總價
+            orderDetail.TotalPrice = request.ProductIds.Sum(id => _productRepository.GetAsync(id).Result.Price);
+
+            // 儲存訂單
+            await _repository.CreateAsync(orderDetail);
+        }
+
+        public override async Task<bool> UpdateAsync(string key, OrderDetailRequest request)
+        {
+            // 檢查產品是否存在
+            if (!await _productRepository.ExistsAsync(request.ProductIds))
+            {
+                // ED TODO
+                throw new Exception($"Product does not exist.");
+            }
+            // 更新訂單
+            OrderDetail orderDetail = _mapper.Map<OrderDetail>(request);
+
+            // 計算總價
+            orderDetail.TotalPrice = request.ProductIds.Sum(id => _productRepository.GetAsync(id).Result.Price);
+            return await _repository.UpdateAsync(key, orderDetail);
+        }
 
         public async Task<bool> ModifyOrderStatus(string orderId, OrderStatus status)
         {
             bool bResult                = false;
             OrderDetail? orderDetail    = await _repository.GetAsync(orderId);
-            
+
             if (orderDetail == null)
             {
                 return false; // 如果找不到訂單，則返回 false
@@ -41,12 +75,12 @@ namespace Service
                 case OrderStatus.Completed:
                     // 完成訂單時，更新銷售記錄
                     bResult = await _repository.DeleteAsync(orderId);
-                    if(bResult)
+                    if (bResult)
                     {
                         SoldItem soldItem = new SoldItem
                         {
-                            ProductItemList     = orderDetail.ProductIds,
-                            Amount              = orderDetail.TotalPrice
+                            ProductItemList = orderDetail.ProductIds,
+                            Amount = orderDetail.TotalPrice
                         };
 
                         await _saleRepo.CreateAsync(soldItem);
@@ -56,8 +90,8 @@ namespace Service
                     bResult = await _repository.DeleteAsync(orderId);
                     break;
                 default:
-                    orderDetail.Status  = status;
-                    bResult             = true;
+                    orderDetail.Status = status;
+                    bResult = true;
                     break;
             }
 
