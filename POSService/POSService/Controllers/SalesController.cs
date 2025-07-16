@@ -17,18 +17,18 @@ namespace POSService.Controllers
 
         }
 
-        [HttpPost("GetTotalSalesAmount")]
-        public async Task<IActionResult> GetTotalSalesAmount([FromBody]SoldItemRequest request)
+        [HttpPost("GetSalesByTime")]
+        public async Task<IActionResult> GetSalesByTime([FromBody]TimeRangeSalesRequest request)
         {
-            var result = await _service.GetTotalSalesAmount(request);
+            var result = await _service.GetSalesByTime(request);
 
             return Ok(result);
         }
 
-        [HttpGet("{id}/GetConsumptionCount")]
-        public async Task<IActionResult> GetConsumptionCount(string id)
+        [HttpGet("GetProductSalesByTime")]
+        public async Task<IActionResult> GetProductSalesByTime([FromBody]TimeRangeProductSalesRequest request)
         {
-            var result = await _service.GetConsumptionCount(id);
+            var result = await _service.GetProductSalesByTime(request);
 
             return Ok();
         }
