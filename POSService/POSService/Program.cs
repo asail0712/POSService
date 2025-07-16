@@ -3,6 +3,7 @@ using Common.Filter;
 using Common.Profiles;
 using DataAccess;
 using DataAccess.Interface;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -11,7 +12,7 @@ using Repository;
 using Repository.Interface;
 using Service;
 using Service.Interface;
-using XPlan.Interface;
+
 using XPlan.Utility;
 using XPlan.Utility.Databases;
 
@@ -20,14 +21,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 /********************************************
- * 加上Exception Filter 
+ * 加上 Filter 
  * ******************************************/
 builder.Services.AddGlobalExceptionHandling();
+//builder.Services.AddJwtPathAuthFilter();
 
 /********************************************
- * 加上Cache Settings
+ * 加上 Settings
  * ******************************************/
 builder.Services.AddCacheSettings(builder.Configuration);
+builder.Services.AddJWTSecurity();
 
 /********************************************
  * 加上Database Settings
@@ -46,6 +49,20 @@ builder.Services.AddAutoMapperProfiles(LoggerFactory.Create(builder =>
 {
     builder.AddConsole(); // 或其他你需要的設定
 }));
+
+/********************************************
+ * 註冊 JWT 認證
+ * ******************************************/
+builder.Services.AddJwtAuthentication(new JwtOptions() 
+{
+    ValidateIssuer              = true,
+    ValidateAudience            = false,
+    ValidateLifetime            = false,
+    ValidateIssuerSigningKey    = true,
+    Issuer                      = builder.Configuration["Jwt:Issuer"]!,
+    Audience                    = builder.Configuration["Jwt:Audience"]!,
+    Secret                      = builder.Configuration["Jwt:Secret"]!
+});
 
 /********************************************
  * 加上Data Access
@@ -97,7 +114,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// 由中介層加上JSON驗證
+app.UseJwtPathAuth();
 
 app.MapControllers();
 

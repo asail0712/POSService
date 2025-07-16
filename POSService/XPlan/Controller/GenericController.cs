@@ -50,16 +50,6 @@ namespace XPlan.Controller
             return Ok(result);
         }
 
-        // R - Read by Id
-        // /api/yourcontroller/by-time?startTime=2025-07-01&endTime=2025-07-15
-        //[HttpGet("by-time")]
-        //public virtual async Task<IActionResult> GetByTimeAsync([FromQuery] DateTime? startTime = null, [FromQuery] DateTime? endTime = null)
-        //{
-        //    var result = await _service.GetByTimeAsync(startTime, endTime);
-
-        //    return Ok(result);
-        //}
-
         // U - Update
         [HttpPut("{key}")]
         public virtual async Task<IActionResult> UpdateAsync(string key, [FromBody] TRequest requestDto)

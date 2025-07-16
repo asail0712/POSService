@@ -14,6 +14,10 @@ namespace XPlan.Interface
         DateTime UpdatedAt { get; set; }    // 更新時間
 
         // 預設使用Id當作搜尋key
-        string SearchKey { get { return Id.ToString(); } }
+        string SearchKey
+        {
+            get => Id.ToString();
+            set { /* 不做事 */ }
+        }
     }
 }

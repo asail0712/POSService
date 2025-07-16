@@ -8,8 +8,8 @@ namespace Common.DTO
 {
     public class LoginResponse
     {
-        public bool IsSuccess { get; set; }                 = false;        // 登入是否成功
-        public string ErrorMessage { get; set; }            = string.Empty; // 錯誤訊息
-        public StaffDataResponse? StaffData { get; set; }                   // 員工資料
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string Token { get; set; }      // jwt token
     }
 }

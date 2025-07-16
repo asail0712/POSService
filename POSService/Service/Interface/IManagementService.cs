@@ -11,5 +11,6 @@ namespace Service.Interface
     public interface IManagementService : IService<StaffDataRequest, StaffDataResponse>
     {
         Task<LoginResponse> Login(LoginRequest request);
+        Task<ChangePasswordResponse> ChangePassword(ChangePasswordRequest request);        
     }
 }

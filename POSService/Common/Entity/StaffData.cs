@@ -19,7 +19,10 @@ namespace Common.Entity
         public bool IsActive { get; set; }       // 帳號是否啟用
         public DateTime CreatedAt { get; set; }  // 建立時間
         public DateTime UpdatedAt { get; set; }  // 更新時間
-
-        public string SearchKey => Account.ToString();
+        public string SearchKey
+        {
+            get => Account.ToString();
+            set { /* 不做事 */ }
+        }
     }
 }
