@@ -40,6 +40,18 @@ namespace XPlan.DataAccess
             return await _collection.Find(e => e.SearchKey == key).FirstOrDefaultAsync();
         }
 
+        public async Task<List<TEntity>?> QueryAsync(List<string> keys)
+        {
+            if (keys == null || keys.Count == 0)
+            {
+                return new List<TEntity>();
+            }
+
+            var filter = Builders<TEntity>.Filter.In(e => e.SearchKey, keys);
+
+            return await _collection.Find(filter).ToListAsync();
+        }
+
         public async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
         {
             // 如果 startTime 和 endTime 都沒設定，直接回傳所有資料

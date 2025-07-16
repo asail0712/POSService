@@ -1,4 +1,5 @@
 ﻿using Common.DTO;
+using Common.Entity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,6 @@ namespace Service.Interface
     {
         Task<int> GetTotalSalesAmount(SoldItemRequest request);
         Task<int> GetConsumptionCount(string id);
+        Task AddOrderDetail(List<string> idList, decimal totalPrice);
     }
 }

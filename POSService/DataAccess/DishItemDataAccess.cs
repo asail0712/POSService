@@ -15,9 +15,9 @@ using XPlan.Utility.Databases;
 
 namespace DataAccess
 {
-    public class MenuItemDataAccess : MongoDataAccess<MenuItem>, IMenuItemDataAccess
+    public class DishItemDataAccess : MongoDataAccess<DishItem>, IDishItemDataAccess
     {
-        public MenuItemDataAccess(IMongoClient database, IOptions<MongoDbSettings> dbSettings)
+        public DishItemDataAccess(IMongoClient database, IOptions<MongoDbSettings> dbSettings)
             : base(database, dbSettings.Value)
         {
 

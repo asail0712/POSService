@@ -16,9 +16,9 @@ using XPlan.Utility.Caches;
 
 namespace Repository
 {
-    public class MenuItemRepository : GenericRepository<MenuItem, IMenuItemDataAccess>, IMenuItemRepository
+    public class DishItemRepository : GenericRepository<DishItem, IDishItemDataAccess>, IDishItemRepository
     {
-        public MenuItemRepository(IMenuItemDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings) 
+        public DishItemRepository(IDishItemDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings) 
             : base(dataAccess, memoryCache, cacheSettings)
         {
 

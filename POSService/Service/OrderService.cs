@@ -16,29 +16,30 @@ namespace Service
 {
     public class OrderService : GenericService<OrderDetail, OrderDetailRequest, OrderDetailResponse, IOrderRepository>, IOrderService
     {
-        private ISalesRepository _saleRepo;
-        private IProductRepository _productRepository;
+        private readonly ISalesService _saleService;
+        private readonly IProductService _productService;
 
-        public OrderService(IOrderRepository repo, IMapper mapper, ISalesRepository saleRepo, IProductRepository productRepository)
+        public OrderService(IOrderRepository repo, IMapper mapper, ISalesService saleService, IProductService productService)
             : base(repo, mapper)
         {
-            _saleRepo           = saleRepo;
-            _productRepository  = productRepository;
+            _saleService        = saleService;
+            _productService     = productService;
         }
 
         public override async Task CreateAsync(OrderDetailRequest request)
         {
             // 檢查產品是否存在
-            if (!await _productRepository.ExistsAsync(request.ProductIds))
+            if (!await _productService.IsExists(request.ProductIds))
             {
                 // ED TODO
                 throw new Exception($"Product does not exist.");
             }
+
             // 創建訂單
             OrderDetail orderDetail = _mapper.Map<OrderDetail>(request);
 
             // 計算總價
-            orderDetail.TotalPrice = request.ProductIds.Sum(id => _productRepository.GetAsync(id).Result.Price);
+            orderDetail.TotalPrice  = await _productService.GetTotalPrice(request.ProductIds);
 
             // 儲存訂單
             await _repository.CreateAsync(orderDetail);
@@ -47,7 +48,7 @@ namespace Service
         public override async Task<bool> UpdateAsync(string key, OrderDetailRequest request)
         {
             // 檢查產品是否存在
-            if (!await _productRepository.ExistsAsync(request.ProductIds))
+            if (!await _productService.IsExists(request.ProductIds))
             {
                 // ED TODO
                 throw new Exception($"Product does not exist.");
@@ -56,7 +57,8 @@ namespace Service
             OrderDetail orderDetail = _mapper.Map<OrderDetail>(request);
 
             // 計算總價
-            orderDetail.TotalPrice = request.ProductIds.Sum(id => _productRepository.GetAsync(id).Result.Price);
+            orderDetail.TotalPrice = await _productService.GetTotalPrice(request.ProductIds);
+
             return await _repository.UpdateAsync(key, orderDetail);
         }
 
@@ -77,13 +79,7 @@ namespace Service
                     bResult = await _repository.DeleteAsync(orderId);
                     if (bResult)
                     {
-                        SoldItem soldItem = new SoldItem
-                        {
-                            ProductItemList = orderDetail.ProductIds,
-                            Amount = orderDetail.TotalPrice
-                        };
-
-                        await _saleRepo.CreateAsync(soldItem);
+                        await _saleService.AddOrderDetail(orderDetail.ProductIds, orderDetail.TotalPrice);
                     }
                     break;
                 case OrderStatus.Cancelled:

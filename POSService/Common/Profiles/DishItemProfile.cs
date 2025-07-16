@@ -10,12 +10,12 @@ using Common.DTO;
 
 namespace Common.Profiles
 {
-    public class MenuItemProfile : Profile
+    public class DishItemProfile : Profile
     {
-        public MenuItemProfile()
+        public DishItemProfile()
         {
-            CreateMap<MenuItemRequest, MenuItem>();
-            CreateMap<MenuItem, MenuItemResponse>();
+            CreateMap<DishItemRequest, DishItem>();
+            CreateMap<DishItem, DishItemResponse>();
         }
     }
 

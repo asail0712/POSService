@@ -1,4 +1,5 @@
 ﻿using Common.Entity;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,9 @@ namespace Common.DTO
 {
     public class SoldItemResponse
     {
-        public List<string>? ProductItemList { get; set; }          // 關聯的餐點 ID
+        public ObjectId Id { get; set; }                            // 唯一識別碼 (UUID)
+        public string OrderId { get; set; }                         // 訂單編號 
+        public List<ProductBrief>? ProductItemList { get; set; }    // 關聯的餐點 ID
         public decimal Amount { get; set; }                         // 銷售金額
     }
 }

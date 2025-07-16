@@ -9,8 +9,8 @@ using XPlan.Service;
 
 namespace Service.Interface
 {
-    public interface IMenuItemService : IService<MenuItemRequest, MenuItemResponse>
+    public interface IDishItemService : IService<DishItemRequest, DishItemResponse>
     {
-        Task<MenuBriefResponse> GetBriefAsync(string key);
+        Task<DishBriefResponse> GetBriefAsync(string key);
     }
 }

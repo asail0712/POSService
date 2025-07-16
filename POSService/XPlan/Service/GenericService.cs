@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,11 @@ namespace XPlan.Service
             var entity = await _repository.GetAsync(key);
             return _mapper.Map<TResponse>(entity);
         }
+        public virtual async Task<List<TResponse>?> GetAsync(List<string> keys)
+        {
+            var entity = await _repository.GetAsync(keys);
+            return _mapper.Map<List<TResponse>>(entity);
+        }
 
         public virtual async Task<List<TResponse>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
@@ -59,6 +65,11 @@ namespace XPlan.Service
         public virtual async Task<bool> DeleteAsync(string key)
         {
             return await _repository.DeleteAsync(key);
+        }
+
+        public async Task<bool> IsExists(List<string> idList)
+        {
+            return await _repository.ExistsAsync(idList);
         }
     }
 }

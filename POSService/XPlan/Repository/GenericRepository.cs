@@ -74,6 +74,58 @@ namespace XPlan.Repository
             return cachedEntity;
         }
 
+        public async Task<List<TEntity>?> GetAsync(List<string> keys, bool bCache = true)
+        {
+            if (keys == null || keys.Count == 0)
+            {
+                return new List<TEntity>();
+            }
+
+            var resultList          = new List<TEntity>();
+            var keysToFetchFromDb   = new List<string>();
+
+            if (bCache)
+            {
+                foreach (var key in keys)
+                {
+                    var cacheKey = $"{_cachePrefix}:{key}";
+                    if (_cache.TryGetValue(cacheKey, out TEntity cachedEntity))
+                    {
+                        resultList.Add(cachedEntity);
+                    }
+                    else
+                    {
+                        keysToFetchFromDb.Add(key);
+                    }
+                }
+            }
+            else
+            {
+                keysToFetchFromDb = keys;
+            }
+
+            if (keysToFetchFromDb.Count > 0)
+            {
+                // 假設你的 IDataAccess<TEntity> 有支援批次查詢
+                var dbEntities = await _dataAccess.QueryAsync(keysToFetchFromDb);
+
+                if (dbEntities != null)
+                {
+                    foreach (var entity in dbEntities)
+                    {
+                        if (entity != null)
+                        {
+                            var cacheKey = $"{_cachePrefix}:{entity.Id}";
+                            _cache.Set(cacheKey, entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                            resultList.Add(entity);
+                        }
+                    }
+                }
+            }
+
+            return resultList;
+        }
+
         public async Task<bool> UpdateAsync(string key, TEntity entity)
         {
             bool bResult = await _dataAccess.UpdateAsync(key, entity);

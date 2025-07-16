@@ -12,5 +12,6 @@ namespace Service.Interface
     public interface IProductService : IService<ProductInfoRequest, ProductInfoResponse>
     {
         Task<ProductBriefResponse> GetBriefAsync(string key);
+        Task<decimal> GetTotalPrice(List<string> idList);
     }
 }

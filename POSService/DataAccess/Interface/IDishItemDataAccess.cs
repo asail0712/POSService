@@ -8,7 +8,7 @@ using XPlan.DataAccess;
 
 namespace DataAccess.Interface
 {
-    public interface IMenuItemDataAccess : IDataAccess<MenuItem>
+    public interface IDishItemDataAccess : IDataAccess<DishItem>
     {
     }
 }

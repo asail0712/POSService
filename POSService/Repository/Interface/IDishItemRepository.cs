@@ -8,7 +8,7 @@ using XPlan.Repository;
 
 namespace Repository.Interface
 {
-    public interface IMenuItemRepository : IRepository<MenuItem>
+    public interface IDishItemRepository : IRepository<DishItem>
     {
     }
 }

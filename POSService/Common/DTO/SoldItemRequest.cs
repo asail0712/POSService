@@ -9,7 +9,8 @@ namespace Common.DTO
 {
     public class SoldItemRequest
     {
-        public DateTime StartTimeAt { get; set; }                   // 開始時間
-        public DateTime EndTimeAt { get; set; }                     // 結束時間
+        public string OrderId { get; set; }                     // 桌號或訂單編號
+        public List<string> ProductIds { get; set; }            // 產品ID清單
+        public decimal TotalPrice { get; set; }                 // 總售價
     }
 }

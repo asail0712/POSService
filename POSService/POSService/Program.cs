@@ -50,7 +50,7 @@ builder.Services.AddAutoMapperProfiles(LoggerFactory.Create(builder =>
 /********************************************
  * 加上Data Access
  * ******************************************/
-builder.Services.AddScoped<IMenuItemDataAccess, MenuItemDataAccess>();
+builder.Services.AddScoped<IDishItemDataAccess, DishItemDataAccess>();
 builder.Services.AddScoped<IManagementDataAccess, ManagementDataAccess>();
 builder.Services.AddScoped<IOrderDataAccess, OrderDataAccess>();
 builder.Services.AddScoped<IProductDataAccess, ProductDataAccess>();
@@ -59,7 +59,7 @@ builder.Services.AddScoped<ISalesDataAccess, SalesDataAccess>();
 /********************************************
  * 加上Repository
  * ******************************************/
-builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+builder.Services.AddScoped<IDishItemRepository, DishItemRepository>();
 builder.Services.AddScoped<IManagementRepository, ManagementRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -68,7 +68,7 @@ builder.Services.AddScoped<ISalesRepository, SalesRepository>();
 /********************************************
  * 加上Services
  * ******************************************/
-builder.Services.AddScoped<IMenuItemService, MenuItemService>();
+builder.Services.AddScoped<IDishItemService, DishItemService>();
 builder.Services.AddScoped<IManagementService, ManagementService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();

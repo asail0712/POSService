@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Common.DTO;
 using Common.Entity;
+using Repository;
 using Repository.Interface;
 using Service.Interface;
 using System;
@@ -15,27 +16,24 @@ namespace Service
 {
     public class ProductService : GenericService<ProductInfo, ProductInfoRequest, ProductInfoResponse, IProductRepository>, IProductService
     {
-        private IMenuItemRepository _menuItemRepository;
+        private readonly IDishItemRepository _dishItemRepository;
 
-        public ProductService(IProductRepository repo, IMapper mapper, IMenuItemRepository menuItemRepository)
+        public ProductService(IProductRepository repo, IMapper mapper, IDishItemRepository dishItemRepository)
             : base(repo, mapper)
         {
-            _menuItemRepository = menuItemRepository;
+            _dishItemRepository = dishItemRepository;
         }
 
         public override async Task CreateAsync(ProductInfoRequest request)
         {
-            var entity = _mapper.Map<ProductInfo>(request);
-            
+            var entity      = _mapper.Map<ProductInfo>(request);            
             // 確認該產品裡面的Item都是存在的
-            foreach(string itemId in entity.Items)
+            bool bResult    = await _dishItemRepository.ExistsAsync(entity.Items);
+
+            if(!bResult)
             {
-                bool bResult = await _menuItemRepository.ExistsAsync(itemId);
-                if(!bResult)
-                {
-                    // ED TODO : Handle the case where the item does not exist
-                    return;
-                }
+                // ED TODO : Handle the case where the item does not exist
+                return;
             }
 
             await _repository.CreateAsync(entity);
@@ -50,7 +48,7 @@ namespace Service
             // 確認該產品裡面的Item都是存在的
             foreach (string itemId in entity.Items)
             {
-                bool bResult = await _menuItemRepository.ExistsAsync(itemId);
+                bool bResult = await _dishItemRepository.ExistsAsync(itemId);
                 if (!bResult)
                 {
                     // ED TODO : Handle the case where the item does not exist
@@ -66,6 +64,13 @@ namespace Service
             var result = await _repository.GetAsync(key);
 
             return _mapper.Map<ProductBriefResponse>(result);
+        }
+
+        public async Task<decimal> GetTotalPrice(List<string> idList)
+        {
+            var tasks   = idList.Select(id => _repository.GetAsync(id));    // 先準備多個非同步任務
+            var results = await Task.WhenAll(tasks);                        // 等待全部完成
+            return results.Sum(item => item.Price);                         // 加總價格
         }
     }
 }

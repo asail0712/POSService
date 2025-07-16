@@ -15,19 +15,19 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class MenuItemService : GenericService<MenuItem, MenuItemRequest, MenuItemResponse, IMenuItemRepository>, IMenuItemService
+    public class DishItemService : GenericService<DishItem, DishItemRequest, DishItemResponse, IDishItemRepository>, IDishItemService
     {
-        public MenuItemService(IMenuItemRepository repo, IMapper mapper) 
+        public DishItemService(IDishItemRepository repo, IMapper mapper) 
             : base(repo, mapper)
         {
         }
         // 這裡可以添加特定於 MenuItem 的業務邏輯方法
         // 例如：根據類別獲取餐點、根據價格範圍獲取餐點等
 
-        public async Task<MenuBriefResponse> GetBriefAsync(string key)
+        public async Task<DishBriefResponse> GetBriefAsync(string key)
         {
             var item = await _repository.GetAsync(key);
-            return _mapper.Map<MenuBriefResponse>(item);
+            return _mapper.Map<DishBriefResponse>(item);
         }
     }
 }

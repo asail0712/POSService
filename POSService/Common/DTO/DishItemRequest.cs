@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.DTO
 {
-    public class MenuItemRequest
+    public class DishItemRequest
     {
         public string Name { get; set; }          // 餐點名稱
         public string ImageUrl { get; set; }      // 圖片連結
