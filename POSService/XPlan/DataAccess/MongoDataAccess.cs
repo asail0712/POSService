@@ -16,11 +16,22 @@ namespace XPlan.DataAccess
     public abstract class MongoDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : EntityBase
     {
         private readonly IMongoCollection<TEntity> _collection;
-
+        private static bool _bIndexCreated = false;
         public MongoDataAccess(IMongoClient mongoClient, IDBSetting dbSettings)
         {
             var database        = mongoClient.GetDatabase(dbSettings.DatabaseName);
             this._collection    = database.GetCollection<TEntity>(typeof(TEntity).Name);
+
+            if (!_bIndexCreated)
+            {
+                // 將SearchKey以B Tree結構做搜尋
+                _bIndexCreated      = true;
+                var indexKeys       = Builders<TEntity>.IndexKeys.Ascending(e => e.SearchKey);
+                var indexOptions    = new CreateIndexOptions { Unique = true };
+                var indexModel      = new CreateIndexModel<TEntity>(indexKeys, indexOptions);
+
+                _collection.Indexes.CreateOne(indexModel);                
+            }
         }
 
         public virtual async Task InsertAsync(TEntity entity)
@@ -91,7 +102,7 @@ namespace XPlan.DataAccess
 
             // 欄位黑名單：_id、CreatedAt、noUpdateList
             var excludedFields = new HashSet<string>(
-                new[] { "_id", "CreatedAt" }
+                new[] { "_id", "CreatedAt", "SearchKey" }
                 .Concat(noUpdateList ?? Enumerable.Empty<string>())
             );
 
