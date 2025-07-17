@@ -13,6 +13,7 @@ namespace XPlan.Repository
         Task<bool> DeleteAsync(string key);
         Task<bool> ExistsAsync(string key, bool bCache = true);
         Task<bool> ExistsAsync(List<string> keys, bool bCache = true);
+        Task<TEntity?> FindLastAsync();
     }
 }
 

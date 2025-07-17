@@ -26,6 +26,7 @@ namespace XPlan.DataAccess
         public virtual async Task InsertAsync(TEntity entity)
         {
             entity.CreatedAt = DateTime.UtcNow;
+            entity.UpdatedAt = DateTime.UtcNow;
 
             await _collection.InsertOneAsync(entity);
         }
@@ -133,6 +134,17 @@ namespace XPlan.DataAccess
             var filter = Builders<TEntity>.Filter.In(e => e.SearchKey, key);
             var count  = await _collection.CountDocumentsAsync(filter);
             return count > 0;
+        }
+
+        public virtual async Task<TEntity?> FindLastAsync()
+        {
+            var sort = Builders<TEntity>.Sort.Descending(nameof(EntityBase.UpdatedAt));
+
+            return await _collection
+                .Find(_ => true)
+                .Sort(sort)
+                .Limit(1)
+                .FirstOrDefaultAsync();
         }
     }
 }

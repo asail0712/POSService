@@ -16,5 +16,6 @@ namespace XPlan.DataAccess
         Task<bool> DeleteAsync(string key);
         Task<bool> ExistsAsync(string key);
         Task<bool> ExistsAsync(List<string> key);
+        Task<TEntity?> FindLastAsync();
     }
 }

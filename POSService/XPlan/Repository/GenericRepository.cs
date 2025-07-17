@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -30,6 +31,7 @@ namespace XPlan.Repository
 
             _cache.Set($"{_cachePrefix}:{entity.Id}", entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
             _cache.Remove($"{_cachePrefix}:all");
+            _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
         }
 
         public virtual async Task<List<TEntity>?> GetAllAsync(bool bCache = true)
@@ -135,6 +137,7 @@ namespace XPlan.Repository
                 _cache.Set($"{_cachePrefix}:{key}", entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
                 _cache.Remove($"{_cachePrefix}:all");
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
+                _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
             }
 
             return bResult;
@@ -149,6 +152,7 @@ namespace XPlan.Repository
                 _cache.Remove($"{_cachePrefix}:{key}");
                 _cache.Remove($"{_cachePrefix}:all");
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
+                _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
             }
 
             return bResult;
@@ -207,6 +211,27 @@ namespace XPlan.Repository
             }
 
             return allExist;
+        }
+
+        public virtual async Task<TEntity?> FindLastAsync()
+        {
+            var cacheKey = $"{_cachePrefix}:findLast";
+            // 嘗試從快取取得
+            if (_cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
+            {
+                return cachedEntity;
+            }
+
+            // 如果快取沒有，從資料庫查詢
+            var lastEntity = await _dataAccess.FindLastAsync();
+
+            if (lastEntity != null)
+            {
+                // 寫入快取，設定過期時間（例如 30 秒）
+                _cache.Set(cacheKey, lastEntity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+            }
+
+            return lastEntity;
         }
     }
 }
