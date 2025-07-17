@@ -1,4 +1,4 @@
-﻿using XPlan.Entity;
+﻿using XPlan.Entities;
 
 namespace XPlan.DataAccess
 {

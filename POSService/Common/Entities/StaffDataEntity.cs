@@ -1,8 +1,8 @@
-﻿using XPlan.Entity;
+﻿using XPlan.Entities;
 
-namespace Common.Entity
+namespace Common.Entities
 {
-    public class StaffData : EntityBase
+    public class StaffDataEntity : EntityBase
     {
         public string Account { get; set; }         // 帳號
         public string PasswordHash { get; set; }    // 密碼（記得存 Hash，不存明文）

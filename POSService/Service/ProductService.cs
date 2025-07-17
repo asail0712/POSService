@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Common.DTO;
-using Common.Entity;
+using Common.Entities;
 using Repository;
 using Repository.Interface;
 using Service.Interface;
@@ -10,7 +10,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class ProductService : GenericService<ProductPackage, ProductPackageRequest, ProductPackageResponse, IProductRepository>, IProductService
+    public class ProductService : GenericService<ProductPackageEntity, ProductPackageRequest, ProductPackageResponse, IProductRepository>, IProductService
     {
         private readonly IDishItemRepository _dishItemRepository;
 
@@ -22,7 +22,7 @@ namespace Service
 
         public override async Task CreateAsync(ProductPackageRequest request)
         {
-            var entity      = _mapper.Map<ProductPackage>(request);            
+            var entity      = _mapper.Map<ProductPackageEntity>(request);            
             // 確認該產品裡面的Item都是存在的
             bool bResult    = await _dishItemRepository.ExistsAsync(entity.Items);
 
@@ -39,7 +39,7 @@ namespace Service
 
         public override async Task<bool> UpdateAsync(string key, ProductPackageRequest request)
         {
-            var entity = _mapper.Map<ProductPackage>(request);
+            var entity = _mapper.Map<ProductPackageEntity>(request);
 
             // 確認該產品裡面的Item都是存在的
             foreach (string itemId in entity.Items)

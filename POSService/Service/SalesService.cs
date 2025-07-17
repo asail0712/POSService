@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 
 using Common.DTO;
-using Common.Entity;
+using Common.Entities;
 using Repository.Interface;
 using Service.Interface;
 using XPlan.Service;
 
 namespace Service
 {
-    public class SalesService : GenericService<OrderRecall, OrderRecallRequest, OrderRecallResponse, ISalesRepository>, ISalesService
+    public class SalesService : GenericService<OrderRecallEntity, OrderRecallRequest, OrderRecallResponse, ISalesRepository>, ISalesService
     {
         private readonly IProductRepository _productRepository;
         private readonly IDishItemRepository _dishItemRepository;
@@ -22,13 +22,13 @@ namespace Service
 
         public async Task<List<OrderRecallResponse>> GetSalesByTime(TimeRangeSalesRequest request)
         {
-            List<OrderRecall>? allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime);
+            List<OrderRecallEntity>? allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime);
             return _mapper.Map<List<OrderRecallResponse>>(allSold);
         }
 
         public async Task<decimal> GetProductSalesByTime(TimeRangeProductSalesRequest request)
         {
-            List<OrderRecall> allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime)?? new List<OrderRecall>();
+            List<OrderRecallEntity> allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime)?? new List<OrderRecallEntity>();
 
             return allSold.SelectMany(soldItem => soldItem.ProductItemList ?? Enumerable.Empty<ProductBrief>())
                 .Sum(productItem => productItem.Price);
@@ -68,7 +68,7 @@ namespace Service
             }).ToList();
 
             // 建立 SoldItem 並儲存
-            var soldItem = new OrderRecall
+            var soldItem = new OrderRecallEntity
             {
                 OrderId         = orderId,
                 ProductItemList = briefList,

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Common.Entity;
+using Common.Entities;
 using Common.DTO;
 
 namespace Common.Profiles
@@ -14,8 +14,8 @@ namespace Common.Profiles
     {
         public StaffDataProfile()
         {
-            CreateMap<StaffDataRequest, StaffData>();
-            CreateMap<StaffData, StaffDataResponse>();
+            CreateMap<StaffDataRequest, StaffDataEntity>();
+            CreateMap<StaffDataEntity, StaffDataResponse>();
         }
     }
 

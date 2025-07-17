@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using XPlan.Entity;
+using XPlan.Entities;
 using XPlan.Repository;
 
 namespace XPlan.Service

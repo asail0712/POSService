@@ -1,6 +1,6 @@
-﻿using XPlan.Entity;
+﻿using XPlan.Entities;
 
-namespace Common.Entity
+namespace Common.Entities
 {
     public enum OrderStatus
     {
@@ -11,7 +11,7 @@ namespace Common.Entity
         Cancelled   // 已取消
     }
 
-    public class OrderDetail : EntityBase
+    public class OrderDetailEntity : EntityBase
     {
         public string OrderId { get; set; }                     // 桌號或訂單編號
         public List<string> ProductIds { get; set; }            // 產品ID清單
@@ -24,7 +24,7 @@ namespace Common.Entity
             set { /* 不做事 */}
         }
 
-        public OrderDetail()
+        public OrderDetailEntity()
         {
             OrderId     = "";
             ProductIds  = new List<string>();

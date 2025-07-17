@@ -1,9 +1,9 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace XPlan.Entity
+namespace XPlan.Entities
 {
-    public abstract class EntityBase
+    public abstract class EntityBase: IEntityBase
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

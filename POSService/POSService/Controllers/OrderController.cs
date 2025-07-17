@@ -1,5 +1,5 @@
 ﻿using Common.DTO;
-using Common.Entity;
+using Common.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
 using XPlan.Controller;

@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
 
 using XPlan.Utility.Databases;
-using XPlan.Entity;
+using XPlan.Entities;
 
 namespace XPlan.DataAccess
 {

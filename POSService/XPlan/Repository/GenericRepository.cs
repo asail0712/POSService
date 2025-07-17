@@ -6,7 +6,7 @@ using MongoDB.Bson;
 using SharpCompress.Common;
 using System.Collections.Generic;
 using XPlan.DataAccess;
-using XPlan.Entity;
+using XPlan.Entities;
 using XPlan.Utility.Caches;
 
 namespace XPlan.Repository

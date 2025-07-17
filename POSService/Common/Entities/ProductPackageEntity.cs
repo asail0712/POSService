@@ -1,8 +1,8 @@
-﻿using XPlan.Entity;
+﻿using XPlan.Entities;
 
-namespace Common.Entity
+namespace Common.Entities
 {
-    public class ProductPackage : EntityBase
+    public class ProductPackageEntity : EntityBase
     {
         public string Name { get; set; }                        // 分類名稱 / 產品名稱
         public bool IsVisible { get; set; }                     // 是否顯示

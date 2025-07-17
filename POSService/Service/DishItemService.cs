@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Common.DTO;
-using Common.Entity;
+using Common.Entities;
 using Service.Interface;
 using Repository.Interface;
 
@@ -14,7 +14,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class DishItemService : GenericService<DishItem, DishItemRequest, DishItemResponse, IDishItemRepository>, IDishItemService
+    public class DishItemService : GenericService<DishItemEntity, DishItemRequest, DishItemResponse, IDishItemRepository>, IDishItemService
     {
         public DishItemService(IDishItemRepository repo, IMapper mapper) 
             : base(repo, mapper)

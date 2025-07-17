@@ -1,4 +1,4 @@
-﻿using Common.Entity;
+﻿using Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using XPlan.DataAccess;
 
 namespace DataAccess.Interface
 {
-    public interface IOrderDataAccess : IDataAccess<OrderDetail>
+    public interface IOrderDataAccess : IDataAccess<OrderDetailEntity>
     {
     }
 }

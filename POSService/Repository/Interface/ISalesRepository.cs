@@ -1,4 +1,4 @@
-﻿using Common.Entity;
+﻿using Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using XPlan.Repository;
 
 namespace Repository.Interface
 {
-    public interface ISalesRepository : IRepository<OrderRecall>
+    public interface ISalesRepository : IRepository<OrderRecallEntity>
     {
     }
 }

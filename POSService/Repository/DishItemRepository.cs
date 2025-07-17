@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Common.Entity;
+using Common.Entities;
 using DataAccess.Interface;
 using Repository.Interface;
 
@@ -15,7 +15,7 @@ using XPlan.Utility.Caches;
 
 namespace Repository
 {
-    public class DishItemRepository : GenericRepository<DishItem, IDishItemDataAccess>, IDishItemRepository
+    public class DishItemRepository : GenericRepository<DishItemEntity, IDishItemDataAccess>, IDishItemRepository
     {
         public DishItemRepository(IDishItemDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings) 
             : base(dataAccess, memoryCache, cacheSettings)

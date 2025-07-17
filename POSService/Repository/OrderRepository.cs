@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Common.Entity;
+using Common.Entities;
 using DataAccess.Interface;
 using Repository.Interface;
 
@@ -15,7 +15,7 @@ using XPlan.Utility.Caches;
 
 namespace Repository
 {
-    public class OrderRepository : GenericRepository<OrderDetail, IOrderDataAccess>, IOrderRepository
+    public class OrderRepository : GenericRepository<OrderDetailEntity, IOrderDataAccess>, IOrderRepository
     {
         public OrderRepository(IOrderDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings)
             : base(dataAccess, memoryCache, cacheSettings)

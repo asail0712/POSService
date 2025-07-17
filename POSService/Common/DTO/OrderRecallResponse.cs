@@ -1,4 +1,4 @@
-﻿using Common.Entity;
+﻿using Common.Entities;
 
 namespace Common.DTO
 {

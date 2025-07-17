@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Common.Entity;
+using Common.Entities;
 using Common.DTO;
 
 namespace Common.Profiles
@@ -14,9 +14,9 @@ namespace Common.Profiles
     {
         public DishItemProfile()
         {
-            CreateMap<DishItemRequest, DishItem>();
-            CreateMap<DishItem, DishItemResponse>();
-            CreateMap<DishItem, DishBriefResponse>();
+            CreateMap<DishItemRequest, DishItemEntity>();
+            CreateMap<DishItemEntity, DishItemResponse>();
+            CreateMap<DishItemEntity, DishBriefResponse>();
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿
 using AutoMapper;
 using Common.DTO;
-using Common.Entity;
+using Common.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
@@ -13,7 +13,7 @@ using XPlan.Utility.JWT;
 
 namespace Service
 {
-    public class ManagementService : GenericService<StaffData, StaffDataRequest, StaffDataResponse, IManagementRepository>, IManagementService
+    public class ManagementService : GenericService<StaffDataEntity, StaffDataRequest, StaffDataResponse, IManagementRepository>, IManagementService
     {
         private readonly JwtOptions _jwtOptions;
 
@@ -99,7 +99,7 @@ namespace Service
 
         public override async Task CreateAsync(StaffDataRequest request)
         {
-            var entity          = _mapper.Map<StaffData>(request);
+            var entity          = _mapper.Map<StaffDataEntity>(request);
             entity.PasswordHash = Utils.ComputeSha256Hash(request.Password);
 
             await _repository.CreateAsync(entity);

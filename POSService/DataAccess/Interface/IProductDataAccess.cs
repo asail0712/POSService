@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Common.Entity;
+using Common.Entities;
 using XPlan.DataAccess;
 
 namespace DataAccess.Interface
 {
-    public interface IProductDataAccess : IDataAccess<ProductPackage>
+    public interface IProductDataAccess : IDataAccess<ProductPackageEntity>
     {
     }
 }

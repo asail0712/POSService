@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
 using Common.DTO;
-using Common.Entity;
+using Common.Entities;
 using Repository.Interface;
 using Service.Interface;
 using System;
@@ -10,7 +10,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class OrderService : GenericService<OrderDetail, OrderDetailRequest, OrderDetailResponse, IOrderRepository>, IOrderService
+    public class OrderService : GenericService<OrderDetailEntity, OrderDetailRequest, OrderDetailResponse, IOrderRepository>, IOrderService
     {
         private readonly ISalesService _saleService;
         private readonly IProductService _productService;
@@ -32,7 +32,7 @@ namespace Service
             }
 
             // 創建訂單
-            OrderDetail orderDetail = _mapper.Map<OrderDetail>(request);
+            OrderDetailEntity orderDetail = _mapper.Map<OrderDetailEntity>(request);
 
             // 計算總價
             orderDetail.TotalPrice  = await _productService.GetTotalPrice(request.ProductIds);
@@ -50,7 +50,7 @@ namespace Service
                 throw new Exception($"Product does not exist.");
             }
             
-            OrderDetail orderDetail = _mapper.Map<OrderDetail>(request);                        // 更新訂單
+            OrderDetailEntity orderDetail = _mapper.Map<OrderDetailEntity>(request);                        // 更新訂單
             orderDetail.TotalPrice  = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
 
             return await _repository.UpdateAsync(key, orderDetail);
@@ -59,7 +59,7 @@ namespace Service
         public async Task<bool> ModifyOrderStatus(string orderId, OrderStatus status)
         {
             bool bResult                = false;
-            OrderDetail? orderDetail    = await _repository.GetAsync(orderId);
+            OrderDetailEntity? orderDetail    = await _repository.GetAsync(orderId);
 
             if (orderDetail == null)
             {

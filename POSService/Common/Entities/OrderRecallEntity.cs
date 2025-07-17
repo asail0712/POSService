@@ -1,6 +1,6 @@
-﻿using XPlan.Entity;
+﻿using XPlan.Entities;
 
-namespace Common.Entity
+namespace Common.Entities
 {
     public class ProductBrief
     {
@@ -10,7 +10,7 @@ namespace Common.Entity
         public List<string> MenuNameList { get; set; }          // 關聯菜品名稱
     }
 
-    public class OrderRecall : EntityBase
+    public class OrderRecallEntity : EntityBase
     {
         public string OrderId { get; set; }                     // 桌號或訂單編號
         public List<ProductBrief> ProductItemList { get; set; } // 關聯的餐點 ID

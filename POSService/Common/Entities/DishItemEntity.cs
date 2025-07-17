@@ -1,8 +1,8 @@
-﻿using XPlan.Entity;
+﻿using XPlan.Entities;
 
-namespace Common.Entity
+namespace Common.Entities
 {
-    public class DishItem : EntityBase
+    public class DishItemEntity : EntityBase
     {
         public string Name { get; set; }          // 餐點名稱
         public string ImageUrl { get; set; }      // 圖片連結

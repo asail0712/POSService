@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Common.Entity;
+using Common.Entities;
 using Common.DTO;
 
 namespace Common.Profiles
@@ -14,9 +14,9 @@ namespace Common.Profiles
     {
         public ProductInfoProfile()
         {
-            CreateMap<ProductPackageRequest, ProductPackage>();
-            CreateMap<ProductPackage, ProductPackageResponse>();
-            CreateMap<ProductPackage, ProductBriefResponse>();            
+            CreateMap<ProductPackageRequest, ProductPackageEntity>();
+            CreateMap<ProductPackageEntity, ProductPackageResponse>();
+            CreateMap<ProductPackageEntity, ProductBriefResponse>();            
         }
     }
 
