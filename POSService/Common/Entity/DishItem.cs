@@ -1,20 +1,17 @@
 ﻿using MongoDB.Bson;
-
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using XPlan.Interface;
+using XPlan.Entity;
 
 namespace Common.Entity
 {
-    public class DishItem : IEntity
+    public class DishItem : EntityBase
     {
-        public ObjectId Id { get; set; }
-        public DateTime CreatedAt { get; set; }   // 建立時間
-        public DateTime UpdatedAt { get; set; }   // 更新時間
         public string Name { get; set; }          // 餐點名稱
         public string ImageUrl { get; set; }      // 圖片連結
         public decimal Price { get; set; }        // 原價

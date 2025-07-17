@@ -1,8 +1,8 @@
-﻿using XPlan.Interface;
+﻿using XPlan.Entity;
 
 namespace XPlan.Repository
 {
-    public interface IRepository<TEntity> where TEntity : class, IEntity
+    public interface IRepository<TEntity> where TEntity : EntityBase
     {
         Task CreateAsync(TEntity entity);
         Task<List<TEntity>?> GetAllAsync(bool bCache = true);

@@ -1,19 +1,17 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using XPlan.Interface;
+using XPlan.Entity;
 
 namespace Common.Entity
 {
-    public class ProductInfo : IEntity
+    public class ProductInfo : EntityBase
     {
-        public ObjectId Id { get; set; }
-        public DateTime CreatedAt { get; set; }                 // 建立時間
-        public DateTime UpdatedAt { get; set; }                 // 更新時間
         public string Name { get; set; }                        // 分類名稱 / 產品名稱
         public bool IsVisible { get; set; }                     // 是否顯示
         public decimal? Discount { get; set; }                  // 可選：群組折扣 (0~1)

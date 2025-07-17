@@ -4,7 +4,6 @@ using Common.DTO;
 using Service.Interface;
 
 using XPlan.Controller;
-using XPlan.Interface;
 
 namespace POSService.Controllers
 {

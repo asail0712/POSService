@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using XPlan.Interface;
+
+using XPlan.Entity;
 
 namespace XPlan.DataAccess
 {
-    public interface IDataAccess<TEntity> where TEntity : class, IEntity
+    public interface IDataAccess<TEntity> where TEntity : EntityBase
     {
         Task InsertAsync(TEntity entity);
         Task<List<TEntity>?> QueryAllAsync();

@@ -8,6 +8,7 @@ namespace Common.DTO
 {
     public class DishItemResponse
     {
+        public string Id { get; set; }
         public string Name { get; set; }          // 餐點名稱
         public string ImageUrl { get; set; }      // 圖片連結
         public decimal Price { get; set; }        // 原價

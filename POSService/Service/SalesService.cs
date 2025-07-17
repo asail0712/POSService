@@ -60,7 +60,7 @@ namespace Service
 
             // 批次取得所有相關 DishItem
             var allDishItems    = await _dishItemRepository.GetAsync(allDishItemIds);
-            var dishItemMap     = allDishItems?.ToDictionary(d => d.Id, d => d.Name) ?? new Dictionary<ObjectId, string>();
+            var dishItemMap     = allDishItems?.ToDictionary(d => d.Id, d => d.Name) ?? new Dictionary<string, string>();
 
             // 組合 ProductBrief 清單
             var briefList = productList.Select(info => new ProductBrief
@@ -69,8 +69,8 @@ namespace Service
                 Name            = info.Name,
                 Price           = info.OverridePrice ?? 0,
                 MenuNameList    = info.Items?
-                            .Where(id => dishItemMap.ContainsKey(new ObjectId(id)))
-                            .Select(id => dishItemMap[new ObjectId(id)])
+                            .Where(id => dishItemMap.ContainsKey(id))
+                            .Select(id => dishItemMap[id])
                             .ToList() ?? new List<string>()
             }).ToList();
 

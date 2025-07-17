@@ -16,6 +16,7 @@ namespace Common.Profiles
         {
             CreateMap<DishItemRequest, DishItem>();
             CreateMap<DishItem, DishItemResponse>();
+            CreateMap<DishItem, DishBriefResponse>();
         }
     }
 

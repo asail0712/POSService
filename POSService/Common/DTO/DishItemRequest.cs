@@ -15,7 +15,5 @@ namespace Common.DTO
         public bool IsCombo { get; set; }         // 是否為套餐
         public bool IsAvailable { get; set; }     // 販售狀態（true: 上架, false: 下架）
         public int Stock { get; set; }            // 庫存量
-        public DateTime CreatedAt { get; set; }   // 建立時間
-        public DateTime UpdatedAt { get; set; }   // 更新時間
     }
 }

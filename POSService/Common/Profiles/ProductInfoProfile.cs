@@ -16,6 +16,7 @@ namespace Common.Profiles
         {
             CreateMap<ProductInfoRequest, ProductInfo>();
             CreateMap<ProductInfo, ProductInfoResponse>();
+            CreateMap<ProductInfo, ProductBriefResponse>();            
         }
     }
 

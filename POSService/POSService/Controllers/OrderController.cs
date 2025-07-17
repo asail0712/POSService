@@ -3,7 +3,6 @@ using Common.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
 using XPlan.Controller;
-using XPlan.Interface;
 
 namespace POSService.Controllers
 {

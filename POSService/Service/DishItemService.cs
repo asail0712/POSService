@@ -10,7 +10,6 @@ using Common.Entity;
 using Service.Interface;
 using Repository.Interface;
 
-using XPlan.Interface;
 using XPlan.Service;
 
 namespace Service

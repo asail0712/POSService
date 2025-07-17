@@ -1,11 +1,12 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using XPlan.Interface;
+using XPlan.Entity;
 
 namespace Common.Entity
 {
@@ -18,16 +19,19 @@ namespace Common.Entity
         Cancelled   // 已取消
     }
 
-    public class OrderDetail : IEntity
+    public class OrderDetail : EntityBase
     {
-        public ObjectId Id { get; set; }
         public string OrderId { get; set; }                     // 桌號或訂單編號
-        public DateTime CreatedAt { get; set; }                 // 建立時間
-        public DateTime UpdatedAt { get; set; }                 // 更新時間
         public List<string> ProductIds { get; set; }            // 產品ID清單
         public decimal TotalPrice { get; set; }                 // 總售價
         public OrderStatus Status { get; set; }                 // 訂單狀態
-        public string SearchKey => OrderId.ToString();
+        
+        public override string SearchKey
+        {
+            get => OrderId.ToString();
+            set { /* 不做事 */}
+        }
+
         public OrderDetail()
         {
             OrderId     = "";

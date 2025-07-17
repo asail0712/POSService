@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using XPlan.Interface;
+using XPlan.Entity;
 using XPlan.Repository;
 
 namespace XPlan.Service
 {
     public abstract class GenericService<TEntity, TRequest, TResponse, TRepository>
-        : IService<TRequest, TResponse> where TEntity : class, IEntity where TRepository : IRepository<TEntity>
+        : IService<TRequest, TResponse> where TEntity : EntityBase where TRepository : IRepository<TEntity>
     {
         protected readonly TRepository _repository;
         protected readonly IMapper _mapper;

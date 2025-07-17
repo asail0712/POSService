@@ -11,7 +11,5 @@ namespace Common.DTO
     {
         public string OrderId { get; set; }                     // 桌號或訂單編號
         public List<string> ProductIds { get; set; }            // 產品ID清單
-        public decimal TotalPrice { get; set; }                 // 總售價
-        public OrderStatus Status { get; set; }                 // 訂單狀態
     }
 }

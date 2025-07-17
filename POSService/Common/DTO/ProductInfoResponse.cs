@@ -9,6 +9,7 @@ namespace Common.DTO
 {
     public class ProductInfoResponse
     {
+        public string Id { get; set; }
         public string Name { get; set; }                        // 分類名稱 / 產品名稱
         public bool IsVisible { get; set; }                     // 是否顯示
         public decimal? Discount { get; set; }                  // 可選：群組折扣 (0~1)

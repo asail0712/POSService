@@ -9,11 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 using XPlan.Utility.Databases;
-using XPlan.Interface;
+using XPlan.Entity;
 
 namespace XPlan.DataAccess
 {
-    public abstract class MongoDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : class, IEntity
+    public abstract class MongoDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : EntityBase
     {
         private readonly IMongoCollection<TEntity> _collection;
 
@@ -85,7 +85,21 @@ namespace XPlan.DataAccess
         public async Task<bool> UpdateAsync(string key, TEntity entity)
         {
             entity.UpdatedAt    = DateTime.UtcNow;
-            var result          = await _collection.ReplaceOneAsync(e => e.SearchKey == key, entity);
+            var filter          = Builders<TEntity>.Filter.Eq(x => x.SearchKey, key);
+
+            // 將 Entity 轉成 BsonDocument
+            var bsonDoc         = entity.ToBsonDocument();
+            // 移除 _id，避免改動不可變欄位
+            bsonDoc.Remove("_id");
+            // 移除 CreatedAt，避免改動不可變欄位
+            bsonDoc.Remove("CreatedAt");
+
+            // 使用 $set 更新所有欄位
+            var update = new BsonDocument("$set", bsonDoc);
+
+            var result = await _collection.UpdateOneAsync(filter, update);
+
+            //var result          = await _collection.ReplaceOneAsync(e => e.SearchKey == key, entity);
 
             return result.ModifiedCount > 0;
         }

@@ -5,12 +5,12 @@ using MongoDB.Bson;
 using SharpCompress.Common;
 using System.Collections.Generic;
 using XPlan.DataAccess;
-using XPlan.Interface;
+using XPlan.Entity;
 using XPlan.Utility.Caches;
 
 namespace XPlan.Repository
 {
-    public class GenericRepository<TEntity, TDataAccess> : IRepository<TEntity> where TEntity : class, IEntity where TDataAccess : IDataAccess<TEntity>
+    public class GenericRepository<TEntity, TDataAccess> : IRepository<TEntity> where TEntity : EntityBase where TDataAccess : IDataAccess<TEntity>
     {
         protected readonly TDataAccess _dataAccess;
         private readonly IMemoryCache _cache;
