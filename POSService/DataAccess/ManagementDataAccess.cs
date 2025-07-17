@@ -21,5 +21,11 @@ namespace DataAccess
         {
 
         }
+
+        public override async Task<bool> UpdateAsync(string key, StaffData staffData, List<string>? noUpdateList = null)
+        {
+            return await base.UpdateAsync(key, staffData, new List<string> { "PasswordHash" });
+        }
+
     }
 }

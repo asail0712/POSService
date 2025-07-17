@@ -12,7 +12,7 @@ namespace Service.Interface
 {
     public interface ISalesService : IService<SoldItemRequest, SoldItemResponse>
     {
-        Task<SoldItemResponse> GetSalesByTime(TimeRangeSalesRequest request);
+        Task<List<SoldItemResponse>> GetSalesByTime(TimeRangeSalesRequest request);
         Task<decimal> GetProductSalesByTime(TimeRangeProductSalesRequest request);
         Task AddOrderDetail(List<string> idList, decimal totalPrice);
     }

@@ -25,12 +25,12 @@ namespace POSService.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetProductSalesByTime")]
+        [HttpPost("GetProductSalesByTime")]
         public async Task<IActionResult> GetProductSalesByTime([FromBody]TimeRangeProductSalesRequest request)
         {
             var result = await _service.GetProductSalesByTime(request);
 
-            return Ok();
+            return Ok(result);
         }
 
         /*********************************

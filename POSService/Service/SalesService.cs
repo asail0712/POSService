@@ -27,10 +27,10 @@ namespace Service
             _dishItemRepository = dishItemRepository;
         }
 
-        public async Task<SoldItemResponse> GetSalesByTime(TimeRangeSalesRequest request)
+        public async Task<List<SoldItemResponse>> GetSalesByTime(TimeRangeSalesRequest request)
         {
             List<SoldItem>? allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime);
-            return _mapper.Map<SoldItemResponse>(allSold);
+            return _mapper.Map<List<SoldItemResponse>>(allSold);
         }
 
         public async Task<decimal> GetProductSalesByTime(TimeRangeProductSalesRequest request)

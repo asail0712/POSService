@@ -32,8 +32,8 @@ namespace Service
 
             if (staffData == null)
             {
-                loginResponse.Success = false;
-                loginResponse.Message = "無此帳號";
+                loginResponse.Success   = false;
+                loginResponse.Message   = "無此帳號";
                 return loginResponse;
             }
 

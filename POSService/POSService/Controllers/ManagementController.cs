@@ -60,11 +60,17 @@ namespace POSService.Controllers
         }
 
         // U - Update
-        [HttpPut("{key}")]
+        [HttpPut("ChangeData/{key}")]
         [Authorize]
-        public override async Task<IActionResult> UpdateAsync(string key, [FromBody] StaffDataRequest requestDto)
+        public async Task<IActionResult> ChangeData(string key, [FromBody] ChangeStaffDataRequest requestDto)
         {
-            return await base.UpdateAsync(key, requestDto);
+            StaffDataRequest staffDataRequest = new StaffDataRequest
+            {
+                Account   = requestDto.Account,
+                Name      = requestDto.Name,
+                IsActive  = requestDto.IsActive
+            };
+            return await base.UpdateAsync(key, staffDataRequest);
         }
 
         // D - Delete

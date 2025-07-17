@@ -24,7 +24,7 @@ namespace XPlan.Repository
             _cacheDurationMinutes   = cacheSettings.Value.CacheDurationMinutes;
         }
 
-        public async Task CreateAsync(TEntity entity)
+        public virtual async Task CreateAsync(TEntity entity)
         {
             await _dataAccess.InsertAsync(entity);
 
@@ -32,7 +32,7 @@ namespace XPlan.Repository
             _cache.Remove($"{_cachePrefix}:all");
         }
 
-        public async Task<List<TEntity>?> GetAllAsync(bool bCache = true)
+        public virtual async Task<List<TEntity>?> GetAllAsync(bool bCache = true)
         {
             List<TEntity>? cachedList   = null;
             var cacheKey                = $"{_cachePrefix}:all";
@@ -49,12 +49,12 @@ namespace XPlan.Repository
             return cachedList;
         }
 
-        public async Task<List<TEntity>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
+        public virtual async Task<List<TEntity>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
             return await _dataAccess.QueryByTimeAsync(startTime, endTime);
         }
 
-        public async Task<TEntity?> GetAsync(string key, bool bCache = true)
+        public virtual async Task<TEntity?> GetAsync(string key, bool bCache = true)
         {
             TEntity? cachedEntity   = null;
             var cacheKey            = $"{_cachePrefix}:{key}";
@@ -74,7 +74,7 @@ namespace XPlan.Repository
             return cachedEntity;
         }
 
-        public async Task<List<TEntity>?> GetAsync(List<string> keys, bool bCache = true)
+        public virtual async Task<List<TEntity>?> GetAsync(List<string> keys, bool bCache = true)
         {
             if (keys == null || keys.Count == 0)
             {
@@ -126,7 +126,7 @@ namespace XPlan.Repository
             return resultList;
         }
 
-        public async Task<bool> UpdateAsync(string key, TEntity entity)
+        public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
         {
             bool bResult = await _dataAccess.UpdateAsync(key, entity);
 
@@ -140,7 +140,7 @@ namespace XPlan.Repository
             return bResult;
         }
 
-        public async Task<bool> DeleteAsync(string key)
+        public virtual async Task<bool> DeleteAsync(string key)
         {
             bool bResult =await _dataAccess.DeleteAsync(key);
 
@@ -153,7 +153,7 @@ namespace XPlan.Repository
 
             return bResult;
         }
-        public async Task<bool> ExistsAsync(string key, bool bCache = true)
+        public virtual async Task<bool> ExistsAsync(string key, bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:exists:{key}";
 
@@ -169,7 +169,7 @@ namespace XPlan.Repository
             return exists;
         }
 
-        public async Task<bool> ExistsAsync(List<string> keys, bool bCache = true)
+        public virtual async Task<bool> ExistsAsync(List<string> keys, bool bCache = true)
         {
             if (keys == null || keys.Count == 0)
             { 

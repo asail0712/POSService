@@ -36,11 +36,6 @@ builder.Services.AddJWTSecurity();
  * 加上Database Settings
  * ******************************************/
 builder.Services.InitialMongoDB(builder.Configuration);
-builder.Services.AddSingleton<IMongoClient>((sp) =>
-{
-    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-    return new MongoClient(settings.ConnectionString);
-});
 
 /********************************************
  * 註冊AutoMapper

@@ -10,7 +10,7 @@ namespace Common.Filter
             {
                 // 額外
                 { "SalesController.GetSalesByTime", "取得銷售總金額" },
-                { "SalesController.GetProductSalesByTime", "取得產品消費次數" },
+                { "SalesController.GetProductSalesByTime", "取得產品消費總金額" },
                 { "OrderController.ModifyOrderStatus", "修改訂單狀態" },
                 { "ProductController.GetBriefAsync", "取得產品簡介" },
                 { "DishItemController.GetBriefAsync", "取得菜品簡介" },
