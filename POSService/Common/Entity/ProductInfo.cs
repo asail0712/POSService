@@ -24,7 +24,7 @@ namespace Common.Entity
             {
                 if (OverridePrice.HasValue && Discount.HasValue)
                 {
-                    return OverridePrice.Value * Discount.Value;
+                    return OverridePrice.Value - Discount.Value;
                 }
                 else if (OverridePrice.HasValue)
                 {

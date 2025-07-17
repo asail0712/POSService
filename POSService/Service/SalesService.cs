@@ -41,7 +41,7 @@ namespace Service
                 .Sum(productItem => productItem.Price);
         }
 
-        public async Task AddOrderDetail(List<string> idList, decimal totalPrice)
+        public async Task AddOrderDetail(string orderId, List<string> idList, decimal totalPrice)
         {
             // 批次取得產品資料
             var productList = await _productRepository.GetAsync(idList);
@@ -77,6 +77,7 @@ namespace Service
             // 建立 SoldItem 並儲存
             var soldItem = new SoldItem
             {
+                OrderId         = orderId,
                 ProductItemList = briefList,
                 Price           = totalPrice
             };

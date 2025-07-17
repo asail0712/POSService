@@ -14,6 +14,6 @@ namespace Service.Interface
     {
         Task<List<SoldItemResponse>> GetSalesByTime(TimeRangeSalesRequest request);
         Task<decimal> GetProductSalesByTime(TimeRangeProductSalesRequest request);
-        Task AddOrderDetail(List<string> idList, decimal totalPrice);
+        Task AddOrderDetail(string orderId, List<string> idList, decimal totalPrice);
     }
 }

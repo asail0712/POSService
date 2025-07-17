@@ -20,6 +20,7 @@ namespace Common.Entity
 
     public class SoldItem : EntityBase
     {
+        public string OrderId { get; set; }                     // 桌號或訂單編號
         public List<ProductBrief> ProductItemList { get; set; } // 關聯的餐點 ID
         public decimal Price { get; set; }                      // 銷售金額     
     }

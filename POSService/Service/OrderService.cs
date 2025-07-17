@@ -49,11 +49,9 @@ namespace Service
                 // ED TODO
                 throw new Exception($"Product does not exist.");
             }
-            // 更新訂單
-            OrderDetail orderDetail = _mapper.Map<OrderDetail>(request);
-
-            // 計算總價
-            orderDetail.TotalPrice = await _productService.GetTotalPrice(request.ProductIds);
+            
+            OrderDetail orderDetail = _mapper.Map<OrderDetail>(request);                        // 更新訂單
+            orderDetail.TotalPrice  = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
 
             return await _repository.UpdateAsync(key, orderDetail);
         }
@@ -75,7 +73,7 @@ namespace Service
                     bResult = await _repository.DeleteAsync(orderId);
                     if (bResult)
                     {
-                        await _saleService.AddOrderDetail(orderDetail.ProductIds, orderDetail.TotalPrice);
+                        await _saleService.AddOrderDetail(orderDetail.OrderId, orderDetail.ProductIds, orderDetail.TotalPrice);
                     }
                     break;
                 case OrderStatus.Cancelled:
