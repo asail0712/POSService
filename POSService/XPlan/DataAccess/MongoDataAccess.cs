@@ -2,11 +2,6 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using XPlan.Utility.Databases;
 using XPlan.Entity;
@@ -17,10 +12,9 @@ namespace XPlan.DataAccess
     {
         private readonly IMongoCollection<TEntity> _collection;
         private static bool _bIndexCreated = false;
-        public MongoDataAccess(IMongoClient mongoClient, IDBSetting dbSettings)
+        public MongoDataAccess(IMongoDbContext dbContext, IDBSetting dbSettings)
         {
-            var database        = mongoClient.GetDatabase(dbSettings.DatabaseName);
-            this._collection    = database.GetCollection<TEntity>(typeof(TEntity).Name);
+            this._collection = dbContext.GetCollection<TEntity>(typeof(TEntity).Name);
 
             if (!_bIndexCreated)
             {

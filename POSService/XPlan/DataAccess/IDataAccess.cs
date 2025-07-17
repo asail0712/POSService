@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using XPlan.Entity;
+﻿using XPlan.Entity;
 
 namespace XPlan.DataAccess
 {

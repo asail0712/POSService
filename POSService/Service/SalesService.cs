@@ -1,16 +1,9 @@
 ﻿using AutoMapper;
+
 using Common.DTO;
 using Common.Entity;
-using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
-using Repository;
 using Repository.Interface;
 using Service.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XPlan.Service;
 
 namespace Service

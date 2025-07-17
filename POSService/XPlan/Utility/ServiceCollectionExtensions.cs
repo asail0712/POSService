@@ -71,6 +71,8 @@ namespace XPlan.Utility
                 return new MongoClient(settings.ConnectionString);
             });
 
+            services.AddSingleton<IMongoDbContext, MongoDbContext>();
+
             return services;
         }
 
