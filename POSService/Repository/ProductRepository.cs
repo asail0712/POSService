@@ -15,7 +15,7 @@ using XPlan.Utility.Caches;
 
 namespace Repository
 {
-    public class ProductRepository : GenericRepository<ProductInfo, IProductDataAccess>, IProductRepository
+    public class ProductRepository : GenericRepository<ProductPackage, IProductDataAccess>, IProductRepository
     {
         public ProductRepository(IProductDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings)
             : base(dataAccess, memoryCache, cacheSettings)

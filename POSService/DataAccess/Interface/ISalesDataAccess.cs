@@ -8,7 +8,7 @@ using XPlan.DataAccess;
 
 namespace DataAccess.Interface
 {
-    public interface ISalesDataAccess : IDataAccess<SoldItem>
+    public interface ISalesDataAccess : IDataAccess<OrderRecall>
     {
     }
 }

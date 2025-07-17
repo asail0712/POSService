@@ -9,7 +9,7 @@ using XPlan.DataAccess;
 
 namespace DataAccess.Interface
 {
-    public interface IProductDataAccess : IDataAccess<ProductInfo>
+    public interface IProductDataAccess : IDataAccess<ProductPackage>
     {
     }
 }

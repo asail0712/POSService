@@ -15,7 +15,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class SalesService : GenericService<SoldItem, SoldItemRequest, SoldItemResponse, ISalesRepository>, ISalesService
+    public class SalesService : GenericService<OrderRecall, OrderRecallRequest, OrderRecallResponse, ISalesRepository>, ISalesService
     {
         private readonly IProductRepository _productRepository;
         private readonly IDishItemRepository _dishItemRepository;
@@ -27,15 +27,15 @@ namespace Service
             _dishItemRepository = dishItemRepository;
         }
 
-        public async Task<List<SoldItemResponse>> GetSalesByTime(TimeRangeSalesRequest request)
+        public async Task<List<OrderRecallResponse>> GetSalesByTime(TimeRangeSalesRequest request)
         {
-            List<SoldItem>? allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime);
-            return _mapper.Map<List<SoldItemResponse>>(allSold);
+            List<OrderRecall>? allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime);
+            return _mapper.Map<List<OrderRecallResponse>>(allSold);
         }
 
         public async Task<decimal> GetProductSalesByTime(TimeRangeProductSalesRequest request)
         {
-            List<SoldItem> allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime)?? new List<SoldItem>();
+            List<OrderRecall> allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime)?? new List<OrderRecall>();
 
             return allSold.SelectMany(soldItem => soldItem.ProductItemList ?? Enumerable.Empty<ProductBrief>())
                 .Sum(productItem => productItem.Price);
@@ -75,7 +75,7 @@ namespace Service
             }).ToList();
 
             // 建立 SoldItem 並儲存
-            var soldItem = new SoldItem
+            var soldItem = new OrderRecall
             {
                 OrderId         = orderId,
                 ProductItemList = briefList,

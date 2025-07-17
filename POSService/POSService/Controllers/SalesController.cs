@@ -9,7 +9,7 @@ namespace POSService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SalesController : GenericController<SoldItemRequest, SoldItemResponse, ISalesService>
+    public class SalesController : GenericController<OrderRecallRequest, OrderRecallResponse, ISalesService>
     {
         public SalesController(ISalesService service)
             : base(service)
@@ -37,7 +37,7 @@ namespace POSService.Controllers
          * 隱藏的API
          * ******************************/
         [NonAction]
-        public override async Task<IActionResult> CreateAsync([FromBody] SoldItemRequest requestDto)
+        public override async Task<IActionResult> CreateAsync([FromBody] OrderRecallRequest requestDto)
         {
             await _service.CreateAsync(requestDto);
 
@@ -62,7 +62,7 @@ namespace POSService.Controllers
 
         // U - Update
         [NonAction]
-        public override async Task<IActionResult> UpdateAsync(string id, [FromBody] SoldItemRequest requestDto)
+        public override async Task<IActionResult> UpdateAsync(string id, [FromBody] OrderRecallRequest requestDto)
         {
             return await UpdateAsync(id, requestDto);
         }

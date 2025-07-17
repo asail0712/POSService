@@ -14,7 +14,7 @@ using XPlan.Utility.Databases;
 
 namespace DataAccess
 {
-    public class ProductDataAccess : MongoDataAccess<ProductInfo>, IProductDataAccess
+    public class ProductDataAccess : MongoDataAccess<ProductPackage>, IProductDataAccess
     {
         public ProductDataAccess(IMongoClient database, IOptions<MongoDbSettings> dbSettings)
             : base(database, dbSettings.Value)

@@ -10,9 +10,9 @@ using XPlan.Service;
 
 namespace Service.Interface
 {
-    public interface ISalesService : IService<SoldItemRequest, SoldItemResponse>
+    public interface ISalesService : IService<OrderRecallRequest, OrderRecallResponse>
     {
-        Task<List<SoldItemResponse>> GetSalesByTime(TimeRangeSalesRequest request);
+        Task<List<OrderRecallResponse>> GetSalesByTime(TimeRangeSalesRequest request);
         Task<decimal> GetProductSalesByTime(TimeRangeProductSalesRequest request);
         Task AddOrderDetail(string orderId, List<string> idList, decimal totalPrice);
     }

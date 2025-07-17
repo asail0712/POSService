@@ -8,7 +8,7 @@ using XPlan.Repository;
 
 namespace Repository.Interface
 {
-    public interface IProductRepository : IRepository<ProductInfo>
+    public interface IProductRepository : IRepository<ProductPackage>
     {
     }
 }

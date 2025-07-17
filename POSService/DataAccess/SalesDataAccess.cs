@@ -14,7 +14,7 @@ using XPlan.Utility.Databases;
 
 namespace DataAccess
 {
-    public class SalesDataAccess : MongoDataAccess<SoldItem>, ISalesDataAccess
+    public class SalesDataAccess : MongoDataAccess<OrderRecall>, ISalesDataAccess
     {
         public SalesDataAccess(IMongoClient database, IOptions<MongoDbSettings> dbSettings)
             : base(database, dbSettings.Value)

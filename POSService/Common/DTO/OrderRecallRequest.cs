@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common.DTO
 {
-    public class SoldItemRequest
+    public class OrderRecallRequest
     {
         public string OrderId { get; set; }                     // 桌號或訂單編號
         public List<string> ProductIds { get; set; }            // 產品ID清單

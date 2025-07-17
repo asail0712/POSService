@@ -9,7 +9,7 @@ using XPlan.Service;
 
 namespace Service.Interface
 {
-    public interface IProductService : IService<ProductInfoRequest, ProductInfoResponse>
+    public interface IProductService : IService<ProductPackageRequest, ProductPackageResponse>
     {
         Task<ProductBriefResponse> GetBriefAsync(string key);
         Task<decimal> GetTotalPrice(List<string> idList);

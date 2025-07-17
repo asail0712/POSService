@@ -14,8 +14,8 @@ namespace Common.Profiles
     {
         public SoldItemProfile()
         {
-            CreateMap<SoldItemRequest, SoldItem>();
-            CreateMap<SoldItem, SoldItemResponse>();
+            CreateMap<OrderRecallRequest, OrderRecall>();
+            CreateMap<OrderRecall, OrderRecallResponse>();
         }
     }
 

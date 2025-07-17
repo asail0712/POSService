@@ -8,7 +8,7 @@ using XPlan.Repository;
 
 namespace Repository.Interface
 {
-    public interface ISalesRepository : IRepository<SoldItem>
+    public interface ISalesRepository : IRepository<OrderRecall>
     {
     }
 }

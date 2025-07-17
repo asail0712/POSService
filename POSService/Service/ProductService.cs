@@ -10,7 +10,7 @@ using XPlan.Service;
 
 namespace Service
 {
-    public class ProductService : GenericService<ProductInfo, ProductInfoRequest, ProductInfoResponse, IProductRepository>, IProductService
+    public class ProductService : GenericService<ProductPackage, ProductPackageRequest, ProductPackageResponse, IProductRepository>, IProductService
     {
         private readonly IDishItemRepository _dishItemRepository;
 
@@ -20,9 +20,9 @@ namespace Service
             _dishItemRepository = dishItemRepository;
         }
 
-        public override async Task CreateAsync(ProductInfoRequest request)
+        public override async Task CreateAsync(ProductPackageRequest request)
         {
-            var entity      = _mapper.Map<ProductInfo>(request);            
+            var entity      = _mapper.Map<ProductPackage>(request);            
             // 確認該產品裡面的Item都是存在的
             bool bResult    = await _dishItemRepository.ExistsAsync(entity.Items);
 
@@ -37,9 +37,9 @@ namespace Service
             return;
         }
 
-        public override async Task<bool> UpdateAsync(string key, ProductInfoRequest request)
+        public override async Task<bool> UpdateAsync(string key, ProductPackageRequest request)
         {
-            var entity = _mapper.Map<ProductInfo>(request);
+            var entity = _mapper.Map<ProductPackage>(request);
 
             // 確認該產品裡面的Item都是存在的
             foreach (string itemId in entity.Items)
