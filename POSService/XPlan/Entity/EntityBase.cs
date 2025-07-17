@@ -14,7 +14,7 @@ namespace XPlan.Entity
         // 預設使用Id當作搜尋key
         public virtual string SearchKey
         {
-            get => Id.ToString();
+            get => Id ?? string.Empty;
             set { /* 不做事 */}
         }
     }
