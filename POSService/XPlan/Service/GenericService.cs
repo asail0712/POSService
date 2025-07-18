@@ -13,7 +13,7 @@ using XPlan.Repository;
 namespace XPlan.Service
 {
     public abstract class GenericService<TEntity, TRequest, TResponse, TRepository>
-        : IService<TRequest, TResponse> where TEntity : EntityBase where TRepository : IRepository<TEntity>
+        : IService<TRequest, TResponse> where TEntity : IEntity where TRepository : IRepository<TEntity>
     {
         protected readonly TRepository _repository;
         protected readonly IMapper _mapper;

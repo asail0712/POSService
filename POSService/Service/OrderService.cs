@@ -81,7 +81,7 @@ namespace Service
                     break;
                 default:
                     orderDetail.Status  = status;
-                    bResult             = await _repository.UpdateAsync(orderDetail.SearchKey, orderDetail); ;
+                    bResult             = await _repository.UpdateAsync(orderDetail.OrderId, orderDetail); ;
                     break;
             }
 

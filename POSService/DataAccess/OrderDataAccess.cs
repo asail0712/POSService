@@ -18,7 +18,7 @@ namespace DataAccess
         public OrderDataAccess(IMongoDbContext dbContext, IOptions<MongoDbSettings> dbSettings)
             : base(dbContext, dbSettings.Value)
         {
-
+            EnsureIndexCreated("OrderId");
         }
     }
 }

@@ -45,7 +45,7 @@ namespace POSService.Controllers
 
         // R - Read All
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public override async Task<IActionResult> GetAllAsync()
         {
             return await base.GetAllAsync();
@@ -53,7 +53,7 @@ namespace POSService.Controllers
 
         // R - Read by Id
         [HttpGet("{key}")]
-        [Authorize]
+        //[Authorize]
         public override async Task<IActionResult> GetAsync(string key)
         {
             return await base.GetAsync(key);

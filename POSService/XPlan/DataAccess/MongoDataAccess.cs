@@ -6,22 +6,26 @@ using XPlan.Entities;
 
 namespace XPlan.DataAccess
 {
-    public abstract class MongoDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : EntityBase
+    public abstract class MongoDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : IEntity
     {
         private readonly IMongoCollection<TEntity> _collection;
-        private static bool _bIndexCreated = false;
+        private static bool _bIndexCreated  = false;
+        private static string _searchKey    = "Id";
         public MongoDataAccess(IMongoDbContext dbContext, IDBSetting dbSettings)
         {
-            this._collection = dbContext.GetCollection<TEntity>(typeof(TEntity).Name);
+            this._collection    = dbContext.GetCollection<TEntity>(typeof(TEntity).Name);
+        }
 
+        protected void EnsureIndexCreated(string searchKey)
+        {
             if (!_bIndexCreated)
             {
-                // 將SearchKey以B Tree結構做搜尋
                 _bIndexCreated      = true;
-                var indexKeys       = Builders<TEntity>.IndexKeys.Ascending(e => e.SearchKey);
+                _searchKey          = searchKey;
+
+                var indexKeys       = Builders<TEntity>.IndexKeys.Ascending(searchKey);
                 var indexOptions    = new CreateIndexOptions { Unique = true };
                 var indexModel      = new CreateIndexModel<TEntity>(indexKeys, indexOptions);
-
                 _collection.Indexes.CreateOne(indexModel);                
             }
         }
@@ -41,7 +45,8 @@ namespace XPlan.DataAccess
 
         public virtual async Task<TEntity?> QueryAsync(string key)
         {
-            return await _collection.Find(e => e.SearchKey == key).FirstOrDefaultAsync();
+            var filter = Builders<TEntity>.Filter.Eq(_searchKey, key);
+            return await _collection.Find(filter).FirstOrDefaultAsync();
         }
 
         public virtual async Task<List<TEntity>?> QueryAsync(List<string> keys)
@@ -51,7 +56,7 @@ namespace XPlan.DataAccess
                 return new List<TEntity>();
             }
 
-            var filter = Builders<TEntity>.Filter.In(e => e.SearchKey, keys);
+            var filter = Builders<TEntity>.Filter.In(_searchKey, keys);
 
             return await _collection.Find(filter).ToListAsync();
         }
@@ -89,7 +94,7 @@ namespace XPlan.DataAccess
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
         {
             entity.UpdatedAt    = DateTime.UtcNow;
-            var filter          = Builders<TEntity>.Filter.Eq(x => x.SearchKey, key);
+            var filter          = Builders<TEntity>.Filter.Eq(_searchKey, key);
             var bsonDoc         = entity.ToBsonDocument();              // 將 Entity 轉成 BsonDocument
 
             // 欄位黑名單：_id、CreatedAt、noUpdateList
@@ -117,14 +122,16 @@ namespace XPlan.DataAccess
 
         public virtual async Task<bool> DeleteAsync(string key)
         {
-            var result = await _collection.DeleteOneAsync(e => e.SearchKey == key);
+            var filter  = Builders<TEntity>.Filter.Eq(_searchKey, key);
+            var result  = await _collection.DeleteOneAsync(filter);
 
             return result.DeletedCount > 0;
         }
 
         public virtual async Task<bool> ExistsAsync(string key)
         {
-            var count = await _collection.CountDocumentsAsync(e => e.SearchKey == key);
+            var filter  = Builders<TEntity>.Filter.Eq(_searchKey, key);
+            var count   = await _collection.CountDocumentsAsync(filter);
             return count > 0;
         }
 
@@ -134,14 +141,14 @@ namespace XPlan.DataAccess
             {
                 return false;
             }
-            var filter = Builders<TEntity>.Filter.In(e => e.SearchKey, key);
+            var filter = Builders<TEntity>.Filter.In(_searchKey, key);
             var count  = await _collection.CountDocumentsAsync(filter);
             return count > 0;
         }
 
         public virtual async Task<TEntity?> FindLastAsync()
         {
-            var sort = Builders<TEntity>.Sort.Descending(nameof(EntityBase.UpdatedAt));
+            var sort = Builders<TEntity>.Sort.Descending(nameof(IEntity.UpdatedAt));
 
             return await _collection
                 .Find(_ => true)

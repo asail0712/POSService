@@ -11,7 +11,7 @@ using XPlan.Utility.Caches;
 
 namespace XPlan.Repository
 {
-    public class GenericRepository<TEntity, TDataAccess> : IRepository<TEntity> where TEntity : EntityBase where TDataAccess : IDataAccess<TEntity>
+    public class GenericRepository<TEntity, TDataAccess> : IRepository<TEntity> where TEntity : IEntity where TDataAccess : IDataAccess<TEntity>
     {
         protected readonly TDataAccess _dataAccess;
         private readonly IMemoryCache _cache;
@@ -58,7 +58,7 @@ namespace XPlan.Repository
 
         public virtual async Task<TEntity?> GetAsync(string key, bool bCache = true)
         {
-            TEntity? cachedEntity   = null;
+            TEntity? cachedEntity   = default(TEntity);
             var cacheKey            = $"{_cachePrefix}:{key}";
 
             if (bCache && _cache.TryGetValue(cacheKey, out cachedEntity))
