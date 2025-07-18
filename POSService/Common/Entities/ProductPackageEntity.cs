@@ -1,13 +1,10 @@
 ﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 using XPlan.Entities;
 
 namespace Common.Entities
 {
     public class ProductPackageEntity : IEntity
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }                  = "";
         public DateTime CreatedAt { get; set; }                                     // 建立時間
         public DateTime UpdatedAt { get; set; }                                     // 更新時間
@@ -19,8 +16,9 @@ namespace Common.Entities
         public bool DisplayWhenSoldOut { get; set; }                                // 菜品缺貨後，是否在前台顯示(顯示售完或是不顯示)
         public decimal? Discount { get; set; }                                      // 可選：群組價格
         public decimal? OverridePrice { get; set; }                                 // 可選：統一設定價格
-        public string Descirption { get; set; }         = "";                       // 產品描述
-        public List<DishItemEntity> Items { get; set; } = new List<DishItemEntity>();   // 菜單項目清單
+        public string Description { get; set; }         = "";                       // 產品描述
+        public List<string> Items { get; set; } = new List<string>();               // 菜單項目清單
+        public List<DishItemEntity> EntityItems { get; set; } = new List<DishItemEntity>();   // 菜單項目清單
 
         public decimal Price
         {
@@ -41,7 +39,7 @@ namespace Common.Entities
                 {
                     decimal totalPrice = 0;
 
-                    foreach(var item in Items)
+                    foreach(var item in EntityItems)
                     {
                         totalPrice += item.Price;
                     }

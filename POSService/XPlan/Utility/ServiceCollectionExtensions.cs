@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using MongoDB.Entities;
 
 using System;
 using System.Collections.Generic;
@@ -67,13 +68,19 @@ namespace XPlan.Utility
             services.Configure<MongoDbSettings>(configuration.GetSection("MongoDBSetting"));
             services.AddSingleton<IMongoClient>((sp) =>
             {
-                var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-                return new MongoClient(settings.ConnectionString);
+                var settings    = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+                var client      = new MongoClient(settings.ConnectionString);                
+                return client;
             });
 
             services.AddSingleton<IMongoDbContext, MongoDbContext>();
 
             return services;
+        }
+
+        public async static Task InitialMongoDBEntity(this IServiceCollection services, string databaseName)
+        {
+            await DB.InitAsync(databaseName);
         }
 
         public static IServiceCollection AddAutoMapperProfiles(this IServiceCollection services, ILoggerFactory loggerFactory)

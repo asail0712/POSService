@@ -2,13 +2,11 @@
 using MongoDB.Driver;
 using MongoDB.Entities;
 
-using XPlan.Entities;
-
 namespace XPlan.DataAccess
 {
     public abstract class MongoEntityDataAccess<TEntity, TDocument>
         where TEntity : class, new()
-        where TDocument : Entity, Entities.IEntity, new() // 👈 注意繼承 Entity
+        where TDocument : IEntity, XPlan.Entities.IEntity, new() // 👈 注意繼承 Entity
     {
         private static bool _bIndexCreated  = false;
         private static string _searchKey    = "Id";
@@ -37,14 +35,13 @@ namespace XPlan.DataAccess
             }
         }
 
-        protected abstract TEntity MapToEntity(TDocument doc);
+        protected abstract Task<TEntity> MapToEntity(TDocument doc);
         protected abstract TDocument MapToDocument(TEntity entity);
 
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
             var doc = MapToDocument(entity);
             await doc.SaveAsync();
-
             return entity;
         }
 
@@ -53,26 +50,38 @@ namespace XPlan.DataAccess
             var doc = await DB.Find<TDocument>()
                               .Match(d => d.Eq(_searchKey, key))
                               .ExecuteFirstAsync();
-            return doc == null ? null : MapToEntity(doc);
+
+            if (doc == null)
+            {
+                throw new KeyNotFoundException($"Document with key '{key}' not found.");
+            }
+
+            return await MapToEntity(doc);
         }
 
         public virtual async Task<List<TEntity>> QueryAllAsync()
         {
-            var docs = await DB.Find<TDocument>()
+            var docs        = await DB.Find<TDocument>()
                                .Match(_ => true)
                                .ExecuteAsync();
-            return docs.Select(MapToEntity).ToList();
+            // 非同步轉換所有文件 → Entity
+            var entities    = await Task.WhenAll(docs.Select(MapToEntity));
+            return entities.ToList();
         }
 
         public virtual async Task<List<TEntity>> QueryAsync(List<string> keys)
         {
             if (keys == null || keys.Count == 0)
+            {
                 return new List<TEntity>();
+            }
 
-            var docs = await DB.Find<TDocument>()
+            var docs        = await DB.Find<TDocument>()
                                .Match(d => d.Eq(_searchKey, keys))
                                .ExecuteAsync();
-            return docs.Select(MapToEntity).ToList();
+            // 非同步轉換所有文件 → Entity
+            var entities    = await Task.WhenAll(docs.Select(MapToEntity));
+            return entities.ToList();
         }
 
         public virtual async Task<List<TEntity>> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
@@ -89,8 +98,10 @@ namespace XPlan.DataAccess
                 query = query.Match(d => d.CreatedAt <= endTime.Value);
             }
 
-            var docs = await query.ExecuteAsync();
-            return docs.Select(MapToEntity).ToList();
+            var docs        = await query.ExecuteAsync();
+            // 非同步轉換所有文件 → Entity
+            var entities    = await Task.WhenAll(docs.Select(MapToEntity));
+            return entities.ToList();
         }
 
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
@@ -148,7 +159,12 @@ namespace XPlan.DataAccess
             var doc = await DB.Find<TDocument>()
                               .Sort(d => d.Descending(x => x.UpdatedAt))
                               .ExecuteFirstAsync();
-            return doc == null ? null : MapToEntity(doc);
+            if (doc == null)
+            {
+                throw new KeyNotFoundException($"Document not found.");
+            }
+
+            return await MapToEntity(doc);
         }
     }
 }

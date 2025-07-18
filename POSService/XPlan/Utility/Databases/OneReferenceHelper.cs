@@ -22,6 +22,12 @@ namespace XPlan.Utility.Databases
             return one == null ? null : await one.ToEntityAsync();
         }
 
+        public static async Task<List<TDocument>?> LoadEntitysAsync<TDocument>(List<One<TDocument>>? ones)
+            where TDocument : Entity
+        {
+            return ones == null ? null : (await Task.WhenAll(ones.Select(item => item.ToEntityAsync()))).ToList();
+        }
+
         public static One<TDocument>? ToReference<TDocument>(TDocument? entity)
             where TDocument : Entity
         {

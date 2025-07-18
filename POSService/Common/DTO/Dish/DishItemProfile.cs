@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Common.Document;
 using Common.Entities;
 
 namespace Common.DTO.Dish
@@ -16,6 +17,8 @@ namespace Common.DTO.Dish
             CreateMap<DishItemRequest, DishItemEntity>();
             CreateMap<DishItemEntity, DishItemResponse>();
             CreateMap<DishItemEntity, DishBriefResponse>();
+            CreateMap<DishItemEntity, DishItemDocument>();
+            CreateMap<DishItemDocument, DishItemEntity>();
         }
     }
 

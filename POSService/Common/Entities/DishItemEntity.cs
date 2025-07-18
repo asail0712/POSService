@@ -12,7 +12,7 @@ namespace Common.Entities
     }
 
     public class DishItemEntity : IEntity
-    {
+    {        
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }              = "";

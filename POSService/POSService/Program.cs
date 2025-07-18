@@ -3,11 +3,6 @@ using Common.Filter;
 using Common.Profiles;
 using DataAccess;
 using DataAccess.Interface;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
 using Repository;
 using Repository.Interface;
 using Service;
@@ -36,6 +31,7 @@ builder.Services.AddJWTSecurity();
  * 加上Database Settings
  * ******************************************/
 builder.Services.InitialMongoDB(builder.Configuration);
+await builder.Services.InitialMongoDBEntity(builder.Configuration["MongoDbSetting:DatabaseName"]);
 
 /********************************************
  * 註冊AutoMapper
