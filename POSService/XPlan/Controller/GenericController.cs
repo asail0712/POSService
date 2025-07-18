@@ -65,7 +65,7 @@ namespace XPlan.Controller
         {
             bool bDeleted = await _service.DeleteAsync(key);
 
-            return Ok(bResult);
+            return Ok(bDeleted);
         }
     }
 }
