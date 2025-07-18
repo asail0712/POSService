@@ -56,7 +56,7 @@ namespace XPlan.Controller
         {
             bool bResult = await _service.UpdateAsync(key, requestDto);
             
-            return NoContent();
+            return Ok(bResult);
         }
 
         // D - Delete
@@ -65,7 +65,7 @@ namespace XPlan.Controller
         {
             bool bDeleted = await _service.DeleteAsync(key);
 
-            return NoContent();
+            return Ok(bResult);
         }
     }
 }
