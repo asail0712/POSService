@@ -26,7 +26,9 @@ namespace XPlan.Service
 
         public virtual async Task CreateAsync(TRequest request)
         {
-            var entity = _mapper.Map<TEntity>(request);
+            var entity          = _mapper.Map<TEntity>(request);
+            entity.CreatedAt    = DateTime.UtcNow;
+            entity.UpdatedAt    = DateTime.UtcNow;
 
             await _repository.CreateAsync(entity);
 
@@ -58,7 +60,10 @@ namespace XPlan.Service
 
         public virtual async Task<bool> UpdateAsync(string key, TRequest request)
         {
-            var entity  = _mapper.Map<TEntity>(request);
+            var entity          = _mapper.Map<TEntity>(request);
+            entity.Id           = ObjectId.GenerateNewId().ToString(); // 該string不會被使用到 只是為了能夠 ToBsonDocument()
+            entity.UpdatedAt    = DateTime.UtcNow;
+
             return await _repository.UpdateAsync(key, entity);
         }
 

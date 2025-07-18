@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
+using Common.DTO.Dish;
+using Common.Entities;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Repository.Interface;
+using Service.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Common.DTO;
-using Common.Entities;
-using Service.Interface;
-using Repository.Interface;
-
 using XPlan.Service;
 
 namespace Service
@@ -27,6 +26,12 @@ namespace Service
         {
             var item = await _repository.GetAsync(key);
             return _mapper.Map<DishBriefResponse>(item);
+        }
+
+        public async Task<List<DishBriefResponse>> GetAllBriefAsync()
+        {
+            var item = await _repository.GetAllAsync();
+            return _mapper.Map<List<DishBriefResponse>>(item);
         }
     }
 }

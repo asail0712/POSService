@@ -6,9 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Common.Entities;
-using Common.DTO;
 
-namespace Common.Profiles
+namespace Common.DTO.Dish
 {
     public class DishItemProfile : Profile
     {

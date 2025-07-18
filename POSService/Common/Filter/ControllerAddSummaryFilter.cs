@@ -14,6 +14,7 @@ namespace Common.Filter
                 { "OrderController.ModifyOrderStatus", "修改訂單狀態" },
                 { "ProductController.GetBriefAsync", "取得產品簡介" },
                 { "DishItemController.GetBriefAsync", "取得菜品簡介" },
+                { "DishItemController.GetAllBriefAsync", "取得所有菜品簡介" },
             
                 // 基本
                 { "SalesController.Create", "新增銷售資料" },

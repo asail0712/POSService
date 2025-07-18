@@ -43,7 +43,6 @@ namespace XPlan.DataAccess
         public virtual async Task InsertAsync(TEntity entity)
         {
             var doc = MapToDocument(entity);
-            SetTimestamps(doc, isInsert: true);
             await doc.SaveAsync();
         }
 
@@ -94,16 +93,14 @@ namespace XPlan.DataAccess
 
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
         {
-            var doc = MapToDocument(entity);
-            SetTimestamps(doc, isInsert: false);
-
-            var excludedFields = new HashSet<string>(
+            var doc             = MapToDocument(entity);
+            var excludedFields  = new HashSet<string>(
                 new[] { "_id", "CreatedAt" }
                 .Concat(noUpdateList ?? Enumerable.Empty<string>())
             );
 
-            var bsonDoc = doc.ToBsonDocument();
-            var updateDict = bsonDoc
+            var bsonDoc         = doc.ToBsonDocument();
+            var updateDict      = bsonDoc
                 .Where(kv => !excludedFields.Contains(kv.Name))
                 .ToDictionary(kv => kv.Name, kv => kv.Value);
 
@@ -150,21 +147,6 @@ namespace XPlan.DataAccess
                               .Sort(d => d.Descending(x => x.UpdatedAt))
                               .ExecuteFirstAsync();
             return doc == null ? null : MapToEntity(doc);
-        }
-
-        private void SetTimestamps(TDocument doc, bool isInsert)
-        {
-            var now = DateTime.UtcNow;
-
-            if (isInsert && doc.GetType().GetProperty("CreatedAt") != null)
-            {
-                doc.GetType().GetProperty("CreatedAt")?.SetValue(doc, now);
-            }
-
-            if (doc.GetType().GetProperty("UpdatedAt") != null)
-            {
-                doc.GetType().GetProperty("UpdatedAt")?.SetValue(doc, now);
-            }
         }
     }
 }

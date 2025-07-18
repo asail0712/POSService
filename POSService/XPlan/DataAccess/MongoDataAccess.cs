@@ -32,9 +32,6 @@ namespace XPlan.DataAccess
 
         public virtual async Task InsertAsync(TEntity entity)
         {
-            entity.CreatedAt = DateTime.UtcNow;
-            entity.UpdatedAt = DateTime.UtcNow;
-
             await _collection.InsertOneAsync(entity);
         }
 
@@ -92,14 +89,13 @@ namespace XPlan.DataAccess
         }
 
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
-        {
-            entity.UpdatedAt    = DateTime.UtcNow;
+        {            
             var filter          = Builders<TEntity>.Filter.Eq(_searchKey, key);
             var bsonDoc         = entity.ToBsonDocument();              // 將 Entity 轉成 BsonDocument
 
             // 欄位黑名單：_id、CreatedAt、noUpdateList
             var excludedFields = new HashSet<string>(
-                new[] { "_id", "CreatedAt", "SearchKey" }
+                new[] { "_id", "CreatedAt"}
                 .Concat(noUpdateList ?? Enumerable.Empty<string>())
             );
 
