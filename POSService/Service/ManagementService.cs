@@ -97,14 +97,13 @@ namespace Service
             };
         }
 
-        public override async Task CreateAsync(StaffDataRequest request)
+        public override async Task<StaffDataResponse> CreateAsync(StaffDataRequest request)
         {
             var entity          = _mapper.Map<StaffDataEntity>(request);
             entity.PasswordHash = Utils.ComputeSha256Hash(request.Password);
+            entity              = await _repository.CreateAsync(entity);
 
-            await _repository.CreateAsync(entity);
-
-            return;
+            return _mapper.Map<StaffDataResponse>(entity);
         }
     }
 }

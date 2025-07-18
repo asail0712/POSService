@@ -22,7 +22,7 @@ namespace Service
             _productService     = productService;
         }
 
-        public override async Task CreateAsync(OrderDetailRequest request)
+        public override async Task<OrderDetailResponse> CreateAsync(OrderDetailRequest request)
         {
             // 檢查產品是否存在
             if (!await _productService.IsExists(request.ProductIds))
@@ -31,14 +31,11 @@ namespace Service
                 throw new Exception($"Product does not exist.");
             }
 
-            // 創建訂單
-            OrderDetailEntity orderDetail = _mapper.Map<OrderDetailEntity>(request);
+            OrderDetailEntity orderDetail   = _mapper.Map<OrderDetailEntity>(request);                  // 創建訂單
+            orderDetail.TotalPrice          = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
+            var entity                      = await _repository.CreateAsync(orderDetail);               // 儲存訂單
 
-            // 計算總價
-            orderDetail.TotalPrice  = await _productService.GetTotalPrice(request.ProductIds);
-
-            // 儲存訂單
-            await _repository.CreateAsync(orderDetail);
+            return _mapper.Map<OrderDetailResponse>(entity);                                            // 返回訂單響應
         }
 
         public override async Task<bool> UpdateAsync(string key, OrderDetailRequest request)

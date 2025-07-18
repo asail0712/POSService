@@ -25,13 +25,25 @@ namespace Service
         public async Task<DishBriefResponse> GetBriefAsync(string key)
         {
             var item = await _repository.GetAsync(key);
+
+            if (item == null || item.dishStatus == DishStatus.Closed)
+            {
+                // ED TODO
+                return null; // 或者拋出異常，根據你的需求
+            }
+
             return _mapper.Map<DishBriefResponse>(item);
         }
 
         public async Task<List<DishBriefResponse>> GetAllBriefAsync()
         {
-            var item = await _repository.GetAllAsync();
-            return _mapper.Map<List<DishBriefResponse>>(item);
+            var items = await _repository.GetAllAsync();
+
+            // 過濾掉 null 和 dishStatus = Closed
+            var filteredItems = items
+                            .Where(x => x != null && x.dishStatus != DishStatus.Closed)
+                            .ToList();
+            return _mapper.Map<List<DishBriefResponse>>(items);
         }
     }
 }

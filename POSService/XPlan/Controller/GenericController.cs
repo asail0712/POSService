@@ -27,9 +27,9 @@ namespace XPlan.Controller
         [HttpPost]
         public virtual async Task<IActionResult> CreateAsync([FromBody] TRequest requestDto)
         {
-            await _service.CreateAsync(requestDto);
+            var response = await _service.CreateAsync(requestDto);
 
-            return Ok();
+            return Ok(response);
         }
 
         // R - Read All

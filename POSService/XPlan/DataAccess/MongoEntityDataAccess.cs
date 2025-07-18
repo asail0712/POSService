@@ -40,13 +40,15 @@ namespace XPlan.DataAccess
         protected abstract TEntity MapToEntity(TDocument doc);
         protected abstract TDocument MapToDocument(TEntity entity);
 
-        public virtual async Task InsertAsync(TEntity entity)
+        public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
             var doc = MapToDocument(entity);
             await doc.SaveAsync();
+
+            return entity;
         }
 
-        public virtual async Task<TEntity?> QueryAsync(string key)
+        public virtual async Task<TEntity> QueryAsync(string key)
         {
             var doc = await DB.Find<TDocument>()
                               .Match(d => d.Eq(_searchKey, key))
@@ -141,7 +143,7 @@ namespace XPlan.DataAccess
             return count > 0;
         }
 
-        public virtual async Task<TEntity?> FindLastAsync()
+        public virtual async Task<TEntity> FindLastAsync()
         {
             var doc = await DB.Find<TDocument>()
                               .Sort(d => d.Descending(x => x.UpdatedAt))

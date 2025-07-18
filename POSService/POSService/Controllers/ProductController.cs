@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-using Common.DTO;
 using Service.Interface;
 
 using XPlan.Controller;
+using Common.DTO.Product;
 
 namespace POSService.Controllers
 {
@@ -15,6 +14,14 @@ namespace POSService.Controllers
             : base(service)
         {
 
+        }
+
+        [HttpGet("GetAllBrief")]
+        public async Task<IActionResult> GetAllBriefAsync()
+        {
+            var result = await _service.GetAllBriefAsync();
+
+            return Ok(result);
         }
 
         [HttpGet("{key}/GetBrief")]

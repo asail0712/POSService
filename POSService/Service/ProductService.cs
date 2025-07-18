@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using Common.DTO;
+using Common.DTO.Product;
 using Common.Entities;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Repository;
 using Repository.Interface;
 using Service.Interface;
@@ -20,29 +21,27 @@ namespace Service
             _dishItemRepository = dishItemRepository;
         }
 
-        public override async Task CreateAsync(ProductPackageRequest request)
-        {
-            var entity      = _mapper.Map<ProductPackageEntity>(request);            
+        public override async Task<ProductPackageResponse> CreateAsync(ProductPackageRequest request)
+        {        
             // 確認該產品裡面的Item都是存在的
-            bool bResult    = await _dishItemRepository.ExistsAsync(entity.Items);
+            bool bResult    = await _dishItemRepository.ExistsAsync(request.Items);
 
             if(!bResult)
             {
                 // ED TODO : Handle the case where the item does not exist
-                return;
+                throw new InvalidOperationException("產品中的某些項目不存在。請確認所有項目都已正確添加。");
             }
 
-            await _repository.CreateAsync(entity);
+            var entity  = _mapper.Map<ProductPackageEntity>(request);
+            entity      = await _repository.CreateAsync(entity);
 
-            return;
+            return _mapper.Map<ProductPackageResponse>(entity);
         }
 
         public override async Task<bool> UpdateAsync(string key, ProductPackageRequest request)
         {
-            var entity = _mapper.Map<ProductPackageEntity>(request);
-
             // 確認該產品裡面的Item都是存在的
-            foreach (string itemId in entity.Items)
+            foreach (string itemId in request.Items)
             {
                 bool bResult = await _dishItemRepository.ExistsAsync(itemId);
                 if (!bResult)
@@ -52,6 +51,8 @@ namespace Service
                 }
             }
 
+            var entity = _mapper.Map<ProductPackageEntity>(request);
+
             return await _repository.UpdateAsync(key, entity);
         }
 
@@ -60,6 +61,13 @@ namespace Service
             var result = await _repository.GetAsync(key);
 
             return _mapper.Map<ProductBriefResponse>(result);
+        }
+
+        public async Task<List<ProductBriefResponse>> GetAllBriefAsync()
+        {
+            var result = await _repository.GetAllAsync();
+
+            return _mapper.Map<List<ProductBriefResponse>>(result);
         }
 
         public async Task<decimal> GetTotalPrice(List<string> idList)

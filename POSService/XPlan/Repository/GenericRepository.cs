@@ -25,16 +25,18 @@ namespace XPlan.Repository
             _cacheDurationMinutes   = cacheSettings.Value.CacheDurationMinutes;
         }
 
-        public virtual async Task CreateAsync(TEntity entity)
+        public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
-            await _dataAccess.InsertAsync(entity);
+            var eneity = await _dataAccess.InsertAsync(entity);
 
             _cache.Set($"{_cachePrefix}:{entity.Id}", entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
             _cache.Remove($"{_cachePrefix}:all");
             _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
+
+            return entity;
         }
 
-        public virtual async Task<List<TEntity>?> GetAllAsync(bool bCache = true)
+        public virtual async Task<List<TEntity>> GetAllAsync(bool bCache = true)
         {
             List<TEntity>? cachedList   = null;
             var cacheKey                = $"{_cachePrefix}:all";
@@ -51,12 +53,12 @@ namespace XPlan.Repository
             return cachedList;
         }
 
-        public virtual async Task<List<TEntity>?> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
+        public virtual async Task<List<TEntity>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
             return await _dataAccess.QueryByTimeAsync(startTime, endTime);
         }
 
-        public virtual async Task<TEntity?> GetAsync(string key, bool bCache = true)
+        public virtual async Task<TEntity> GetAsync(string key, bool bCache = true)
         {
             TEntity? cachedEntity   = default(TEntity);
             var cacheKey            = $"{_cachePrefix}:{key}";
@@ -76,7 +78,7 @@ namespace XPlan.Repository
             return cachedEntity;
         }
 
-        public virtual async Task<List<TEntity>?> GetAsync(List<string> keys, bool bCache = true)
+        public virtual async Task<List<TEntity>> GetAsync(List<string> keys, bool bCache = true)
         {
             if (keys == null || keys.Count == 0)
             {
@@ -213,7 +215,7 @@ namespace XPlan.Repository
             return allExist;
         }
 
-        public virtual async Task<TEntity?> FindLastAsync()
+        public virtual async Task<TEntity> FindLastAsync()
         {
             var cacheKey = $"{_cachePrefix}:findLast";
             // 嘗試從快取取得

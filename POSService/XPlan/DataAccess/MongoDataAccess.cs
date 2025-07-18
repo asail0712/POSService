@@ -30,23 +30,25 @@ namespace XPlan.DataAccess
             }
         }
 
-        public virtual async Task InsertAsync(TEntity entity)
+        public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
             await _collection.InsertOneAsync(entity);
+
+            return entity;
         }
 
-        public virtual async Task<List<TEntity>?> QueryAllAsync()
+        public virtual async Task<List<TEntity>> QueryAllAsync()
         {
             return await _collection.Find(_ => true).ToListAsync();
         }
 
-        public virtual async Task<TEntity?> QueryAsync(string key)
+        public virtual async Task<TEntity> QueryAsync(string key)
         {
             var filter = Builders<TEntity>.Filter.Eq(_searchKey, key);
             return await _collection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public virtual async Task<List<TEntity>?> QueryAsync(List<string> keys)
+        public virtual async Task<List<TEntity>> QueryAsync(List<string> keys)
         {
             if (keys == null || keys.Count == 0)
             {
@@ -58,7 +60,7 @@ namespace XPlan.DataAccess
             return await _collection.Find(filter).ToListAsync();
         }
 
-        public virtual async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
+        public virtual async Task<List<TEntity>> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
         {
             // 如果 startTime 和 endTime 都沒設定，直接回傳所有資料
             if (startTime == null && endTime == null)
@@ -142,7 +144,7 @@ namespace XPlan.DataAccess
             return count > 0;
         }
 
-        public virtual async Task<TEntity?> FindLastAsync()
+        public virtual async Task<TEntity> FindLastAsync()
         {
             var sort = Builders<TEntity>.Sort.Descending(nameof(IEntity.UpdatedAt));
 
