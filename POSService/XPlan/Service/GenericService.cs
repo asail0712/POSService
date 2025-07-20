@@ -12,8 +12,8 @@ using XPlan.Repository;
 
 namespace XPlan.Service
 {
-    public abstract class GenericService<TEntity, TRequest, TResponse, TRepository>
-        : IService<TRequest, TResponse> where TEntity : IDBEntity where TRepository : IRepository<TEntity>
+    public abstract class GenericService<TEntity, TRequest, TResponse, TRepository> //: IService<TRequest, TResponse> 
+        where TEntity : IDBEntity where TRepository : IRepository<TEntity>
     {
         protected readonly TRepository _repository;
         protected readonly IMapper _mapper;

@@ -11,7 +11,8 @@ using XPlan.Utility.Caches;
 
 namespace XPlan.Repository
 {
-    public class GenericRepository<TEntity, TDataAccess> : IRepository<TEntity> where TEntity : IDBEntity where TDataAccess : IDataAccess<TEntity>
+    public class GenericRepository<TEntity, TDataAccess>// : IRepository<TEntity> 
+        where TEntity : IDBEntity where TDataAccess : IDataAccess<TEntity>
     {
         protected readonly TDataAccess _dataAccess;
         private readonly IMemoryCache _cache;
