@@ -15,6 +15,8 @@ namespace Common.DTO.Product
             CreateMap<ProductPackageRequest, ProductPackageEntity>();
             CreateMap<ProductPackageEntity, ProductBriefResponse>();
             CreateMap<ProductPackageEntity, ProductPackageResponse>();
+            CreateMap<ProductPackageEntity, ProductPackageDocument>();
+            CreateMap<ProductPackageDocument, ProductPackageEntity>();
         }
     }
 }

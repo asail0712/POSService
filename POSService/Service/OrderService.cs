@@ -68,7 +68,7 @@ namespace Service
                     bResult = await _repository.DeleteAsync(orderId);
                     if (bResult)
                     {
-                        await _saleService.AddOrderDetail(orderDetail.OrderId, orderDetail.ProductIds, orderDetail.TotalPrice);
+                        await _saleService.AddOrderDetail(orderId, orderDetail.ProductIds, orderDetail.TotalPrice);
                     }
                     break;
                 case OrderStatus.Cancelled:

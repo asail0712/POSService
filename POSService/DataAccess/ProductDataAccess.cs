@@ -17,12 +17,7 @@ namespace DataAccess
 
         protected async override Task<ProductPackageEntity> MapToEntity(ProductPackageDocument doc, IMapper mapper)
         {
-            List<DishItemDocument> dishList = (await Task.WhenAll(doc.ItemIDs.Select(item => item.ToEntityAsync()))).ToList();
-
-            if(dishList.Count != doc.ItemIDs.Count)
-            {
-                throw new InvalidOperationException("Some dish items in the product package do not exist. Please ensure all items are correctly added.");
-            }
+            List<DishItemDocument> dishList = (await Task.WhenAll(doc.ItemDocs.Select(item => item.ToEntityAsync()))).ToList();
 
             return new ProductPackageEntity 
             {
@@ -36,7 +31,7 @@ namespace DataAccess
                 Discount            = doc.Discount,
                 OverridePrice       = doc.OverridePrice,
                 Description         = doc.Description,
-                DishDocs            = mapper.Map<List<DishItemEntity>>(dishList)
+                DishEnts            = mapper.Map<List<DishItemEntity>>(dishList)
             };
         }
 
@@ -54,7 +49,7 @@ namespace DataAccess
                 Discount            = entity.Discount,
                 OverridePrice       = entity.OverridePrice,
                 Description         = entity.Description,
-                ItemIDs             = entity.ItemIDs.Select(id => new One<DishItemDocument>(id)).ToList()
+                ItemDocs            = entity.ItemIDs.Select(id => new One<DishItemDocument>(id)).ToList()
             };
         }
     }

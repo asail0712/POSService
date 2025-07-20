@@ -1,6 +1,6 @@
 ﻿using Common.Entities;
 
-namespace Common.DTO.Order
+namespace Common.DTO.OrderRecall
 {
     public class OrderRecallResponse
     {

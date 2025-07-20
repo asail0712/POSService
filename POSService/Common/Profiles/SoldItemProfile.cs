@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Common.Entities;
-using Common.DTO.Order;
+using Common.DTO.OrderRecall;
 
 namespace Common.Profiles
 {
