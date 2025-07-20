@@ -1,26 +1,28 @@
 ﻿using MongoDB.Entities;
-
-using Common.Entities;
-using Common.Document;
 using DataAccess.Interface;
 
 using XPlan.DataAccess;
 using AutoMapper;
+using Common.DTO.Dish;
+using Common.DTO.Product;
 
 namespace DataAccess
 {
     public class ProductDataAccess : MongoEntityDataAccess<ProductPackageEntity, ProductPackageDocument>, IProductDataAccess
     {
-        private readonly IMapper _mapper;
         public ProductDataAccess(IMapper mapper)
-            : base()
+            : base(mapper)
         {
-            _mapper = mapper;
         }
 
-        protected async override Task<ProductPackageEntity> MapToEntity(ProductPackageDocument doc)
+        protected async override Task<ProductPackageEntity> MapToEntity(ProductPackageDocument doc, IMapper mapper)
         {
-            List<DishItemDocument> dishList = (await Task.WhenAll(doc.Items.Select(item => item.ToEntityAsync()))).ToList();
+            List<DishItemDocument> dishList = (await Task.WhenAll(doc.ItemIDs.Select(item => item.ToEntityAsync()))).ToList();
+
+            if(dishList.Count != doc.ItemIDs.Count)
+            {
+                throw new InvalidOperationException("Some dish items in the product package do not exist. Please ensure all items are correctly added.");
+            }
 
             return new ProductPackageEntity 
             {
@@ -34,11 +36,11 @@ namespace DataAccess
                 Discount            = doc.Discount,
                 OverridePrice       = doc.OverridePrice,
                 Description         = doc.Description,
-                DishDocs            = _mapper.Map<List<DishItemEntity>>(dishList)
+                DishDocs            = mapper.Map<List<DishItemEntity>>(dishList)
             };
         }
 
-        protected override ProductPackageDocument MapToDocument(ProductPackageEntity entity)
+        protected override ProductPackageDocument MapToDocument(ProductPackageEntity entity, IMapper mapper)
         {
             return  new ProductPackageDocument
             {
@@ -52,7 +54,7 @@ namespace DataAccess
                 Discount            = entity.Discount,
                 OverridePrice       = entity.OverridePrice,
                 Description         = entity.Description,
-                Items               = entity.Items.Select(id => new One<DishItemDocument>(id)).ToList()
+                ItemIDs             = entity.ItemIDs.Select(id => new One<DishItemDocument>(id)).ToList()
             };
         }
     }

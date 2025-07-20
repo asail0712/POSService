@@ -27,7 +27,7 @@ namespace XPlan.Repository
 
         public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
-            var eneity = await _dataAccess.InsertAsync(entity);
+            entity = await _dataAccess.InsertAsync(entity);
 
             _cache.Set($"{_cachePrefix}:{entity.Id}", entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
             _cache.Remove($"{_cachePrefix}:all");

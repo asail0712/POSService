@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using AutoMapper;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Entities;
 
@@ -10,12 +11,13 @@ namespace XPlan.DataAccess
         where TEntity : class, IDBEntity, new()
         where TDocument : IEntity, IDBEntity, new() // 👈 注意繼承 Entity
     {
+        private readonly IMapper _mapper;
         private static bool _bIndexCreated  = false;
         private static string _searchKey    = "Id";
 
-        protected MongoEntityDataAccess()
+        protected MongoEntityDataAccess(IMapper mapper)
         {
-
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -37,14 +39,23 @@ namespace XPlan.DataAccess
             }
         }
 
-        protected abstract Task<TEntity> MapToEntity(TDocument doc);
-        protected abstract TDocument MapToDocument(TEntity entity);
+        protected virtual Task<TEntity> MapToEntity(TDocument doc, IMapper mapper)
+        {
+            // 使用 AutoMapper 進行映射
+            return Task.FromResult(mapper.Map<TEntity>(doc));
+        }
+
+        protected virtual TDocument MapToDocument(TEntity entity, IMapper mapper)
+        {
+            // 使用 AutoMapper 進行映射
+            return mapper.Map<TDocument>(entity);
+        }
 
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
-            var doc = MapToDocument(entity);
+            var doc = MapToDocument(entity, _mapper);
             await doc.SaveAsync();
-            entity.Id = doc.Id;
+            entity  = MapToEntity(doc, _mapper).Result;
             return entity;
         }
 
@@ -59,7 +70,7 @@ namespace XPlan.DataAccess
                 throw new KeyNotFoundException($"Document with key '{key}' not found.");
             }
 
-            return await MapToEntity(doc);
+            return await MapToEntity(doc, _mapper);
         }
 
         public virtual async Task<List<TEntity>> QueryAllAsync()
@@ -68,7 +79,7 @@ namespace XPlan.DataAccess
                                .Match(_ => true)
                                .ExecuteAsync();
             // 非同步轉換所有文件 → Entity
-            var entities    = await Task.WhenAll(docs.Select(MapToEntity));
+            var entities    = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
             return entities.ToList();
         }
 
@@ -83,7 +94,7 @@ namespace XPlan.DataAccess
                                .Match(d => d.Eq(_searchKey, keys))
                                .ExecuteAsync();
             // 非同步轉換所有文件 → Entity
-            var entities    = await Task.WhenAll(docs.Select(MapToEntity));
+            var entities    = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
             return entities.ToList();
         }
 
@@ -103,18 +114,20 @@ namespace XPlan.DataAccess
 
             var docs        = await query.ExecuteAsync();
             // 非同步轉換所有文件 → Entity
-            var entities    = await Task.WhenAll(docs.Select(MapToEntity));
+            var entities    = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
             return entities.ToList();
         }
 
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
         {
-            var doc             = MapToDocument(entity);
+            var doc             = MapToDocument(entity, _mapper);
             var excludedFields  = new HashSet<string>(
                 new[] { "_id", "CreatedAt" }
                 .Concat(noUpdateList ?? Enumerable.Empty<string>())
             );
 
+
+            doc.Id              = ObjectId.GenerateNewId().ToString();// 隨便產生 因為不會進入資料庫 只是要能順利ToBsonDocument
             var bsonDoc         = doc.ToBsonDocument();
             var updateDict      = bsonDoc
                 .Where(kv => !excludedFields.Contains(kv.Name))
@@ -167,7 +180,7 @@ namespace XPlan.DataAccess
                 throw new KeyNotFoundException($"Document not found.");
             }
 
-            return await MapToEntity(doc);
+            return await MapToEntity(doc, _mapper);
         }
     }
 }

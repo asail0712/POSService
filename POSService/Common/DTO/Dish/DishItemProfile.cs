@@ -5,9 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Common.Document;
-using Common.Entities;
-
 namespace Common.DTO.Dish
 {
     public class DishItemProfile : Profile

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Common.DTO.Product;
-using Common.Entities;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Repository;
 using Repository.Interface;
@@ -24,7 +23,7 @@ namespace Service
         public override async Task<ProductPackageResponse> CreateAsync(ProductPackageRequest request)
         {        
             // 確認該產品裡面的Item都是存在的
-            bool bResult    = await _dishItemRepository.ExistsAsync(request.Items);
+            bool bResult    = await _dishItemRepository.ExistsAsync(request.ItemIDs);
 
             if(!bResult)
             {
@@ -38,7 +37,7 @@ namespace Service
         public override async Task<bool> UpdateAsync(string key, ProductPackageRequest request)
         {
             // 確認該產品裡面的Item都是存在的
-            foreach (string itemId in request.Items)
+            foreach (string itemId in request.ItemIDs)
             {
                 bool bResult = await _dishItemRepository.ExistsAsync(itemId);
                 if (!bResult)

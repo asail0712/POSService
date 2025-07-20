@@ -16,6 +16,6 @@ namespace Common.DTO.Product
         public decimal? Discount { get; set; }                          // 可選：群組折扣 (0~1)
         public decimal? OverridePrice { get; set; }                     // 可選：統一設定價格
         public string Description { get; set; }     = "";               // 產品描述
-        public List<string> Items { get; set; }     = new List<string>();   // 菜單項目清單
+        public List<string> ItemIDs { get; set; }   = new List<string>();   // 菜單項目清單
     }
 }

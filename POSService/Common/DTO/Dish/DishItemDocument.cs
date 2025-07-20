@@ -4,27 +4,23 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Entities;
 using XPlan.Entities;
 
-namespace Common.Document
+namespace Common.DTO.Dish
 {
     public class DishItemDocument : IEntity, IDBEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }                  = "";
+        public string Id { get; set; }              = "";
         public DateTime CreatedAt { get; set; }                                     // 建立時間
         public DateTime UpdatedAt { get; set; }                                     // 更新時間
 
         // 實作 IEntity
-        public virtual object GenerateNewID()
-            => ObjectId.GenerateNewId().ToString()!;
-
-        /// <inheritdoc />
-        public virtual bool HasDefaultID()
-            => string.IsNullOrEmpty(Id);
+        public object GenerateNewID()   => ObjectId.GenerateNewId().ToString()!;
+        public bool HasDefaultID()      => string.IsNullOrEmpty(Id);
 
         // 顯示資訊
-        public string Name { get; set; } = "";              // 餐點名稱
-        public string ImageUrl { get; set; } = "";          // 圖片連結
+        public string Name { get; set; }            = "";   // 餐點名稱
+        public string ImageUrl { get; set; }        = "";   // 圖片連結
         public decimal Price { get; set; }                  // 原價格
 
         // 顯示的狀態

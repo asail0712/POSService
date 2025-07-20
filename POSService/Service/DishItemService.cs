@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Common.Document;
 using Common.DTO.Dish;
-using Common.Entities;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Repository.Interface;
 using Service.Interface;

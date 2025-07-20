@@ -1,8 +1,8 @@
-﻿using Common.Document;
+﻿using Common.DTO.Dish;
 using MongoDB.Bson;
 using XPlan.Entities;
 
-namespace Common.Entities
+namespace Common.DTO.Product
 {
     public class ProductPackageEntity : IDBEntity
     {
@@ -15,11 +15,11 @@ namespace Common.Entities
         public string ImageUrl { get; set; }            = "";                       // 圖片連結
         public bool IsVisible { get; set; }                                         // 是否顯示
         public bool DisplayWhenSoldOut { get; set; }                                // 菜品缺貨後，是否在前台顯示(顯示售完或是不顯示)
-        public decimal? Discount { get; set; }                                      // 可選：群組價格
-        public decimal? OverridePrice { get; set; }                                 // 可選：統一設定價格
+        public decimal? Discount { get; set; }          = null;                     // 可選：群組價格
+        public decimal? OverridePrice { get; set; }     = null;                     // 可選：統一設定價格
         public string Description { get; set; }         = "";                       // 產品描述
-        public List<string> Items { get; set; } = new List<string>();               // 菜單項目清單
-        public List<DishItemEntity> DishDocs = new List<DishItemEntity>();      // 菜單項目清單
+        public List<string> ItemIDs { get; set; } = new List<string>();             // 菜單項目清單
+        public List<DishItemEntity> DishDocs = new List<DishItemEntity>();          // 菜單項目清單
 
         public decimal Price
         {

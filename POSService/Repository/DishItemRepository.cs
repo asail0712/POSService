@@ -5,13 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Common.Entities;
 using DataAccess.Interface;
 using Repository.Interface;
 
 using XPlan.Repository;
 using XPlan.Utility.Caches;
+using Common.DTO.Dish;
 
 namespace Repository
 {

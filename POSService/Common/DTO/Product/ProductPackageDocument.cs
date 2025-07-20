@@ -1,4 +1,5 @@
-﻿using Common.Entities;
+﻿using Common.DTO.Dish;
+using Common.Entities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Entities;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.Document
+namespace Common.DTO.Product
 {
     public class ProductPackageDocument : IEntity, XPlan.Entities.IDBEntity
     {
@@ -35,6 +36,6 @@ namespace Common.Document
         public decimal? Discount { get; set; }                                      // 可選：群組價格
         public decimal? OverridePrice { get; set; }                                 // 可選：統一設定價格
         public string Description { get; set; }         = "";                       // 產品描述
-        public List<One<DishItemDocument>> Items { get; set; } = new List<One<DishItemDocument>>();   // 菜單項目清單
+        public List<One<DishItemDocument>> ItemIDs { get; set; } = new List<One<DishItemDocument>>();   // 菜單項目清單
     }
 }
