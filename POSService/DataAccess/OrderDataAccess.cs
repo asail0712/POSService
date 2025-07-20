@@ -1,21 +1,21 @@
-﻿using System;
+﻿using AutoMapper;
+using Common.DTO.Order;
+using DataAccess.Interface;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Common.DTO.Order;
-using DataAccess.Interface;
-using Microsoft.Extensions.Options;
-
 using XPlan.DataAccess;
 using XPlan.Utility.Databases;
 
 namespace DataAccess
 {
-    public class OrderDataAccess : MongoDataAccess<OrderDetailEntity>, IOrderDataAccess
+    public class OrderDataAccess : MongoEntityDataAccess<OrderDetailEntity, OrderDetailDocument>, IOrderDataAccess
     {
-        public OrderDataAccess(IMongoDbContext dbContext, IOptions<MongoDbSettings> dbSettings)
-            : base(dbContext, dbSettings.Value)
+        public OrderDataAccess(IMapper mapper)
+            : base(mapper)
         {
             EnsureIndexCreated("OrderId");
         }

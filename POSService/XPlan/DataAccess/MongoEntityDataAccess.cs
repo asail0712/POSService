@@ -122,7 +122,7 @@ namespace XPlan.DataAccess
         {
             var doc             = MapToDocument(entity, _mapper);
             var excludedFields  = new HashSet<string>(
-                new[] { "_id", "CreatedAt" }
+                new[] { "_id", "CreatedAt", _searchKey }
                 .Concat(noUpdateList ?? Enumerable.Empty<string>())
             );
 

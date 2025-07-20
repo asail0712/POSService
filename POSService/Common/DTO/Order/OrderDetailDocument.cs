@@ -1,23 +1,20 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Entities;
 using XPlan.Entities;
 
 namespace Common.DTO.Order
 {
-    public enum OrderStatus
+    public class OrderDetailDocument : IEntity, IDBEntity
     {
-        Pending,    // 待付款
-        Paid,       // 已付款
-        Shipped,    // 已出貨
-        Completed,  // 已完成
-        Cancelled   // 已取消
-    }
-
-    public class OrderDetailEntity : IDBEntity
-    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public DateTime CreatedAt { get; set; }    // 建立時間
         public DateTime UpdatedAt { get; set; }    // 更新時間
+                                                   // 實作 IEntity
+        public object GenerateNewID()   => ObjectId.GenerateNewId().ToString()!;
+        public bool HasDefaultID()      => string.IsNullOrEmpty(Id);
 
         public string OrderId { get; set; }                     // 桌號或訂單編號
         public List<string> ProductIds { get; set; }            // 產品ID清單
@@ -25,7 +22,7 @@ namespace Common.DTO.Order
         public OrderStatus Status { get; set; }                 // 訂單狀態
         
 
-        public OrderDetailEntity()
+        public OrderDetailDocument()
         {
             OrderId     = "";
             ProductIds  = new List<string>();

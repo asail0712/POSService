@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.DTO.Dish;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Common.DTO.Order
         {
             CreateMap<OrderDetailRequest, OrderDetailEntity>();
             CreateMap<OrderDetailEntity, OrderDetailResponse>();
+            CreateMap<OrderDetailEntity, OrderDetailDocument>();
+            CreateMap<OrderDetailDocument, OrderDetailEntity>();
         }
     }
 
