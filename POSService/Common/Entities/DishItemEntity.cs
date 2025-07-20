@@ -11,10 +11,8 @@ namespace Common.Entities
         Closed,     // 下架
     }
 
-    public class DishItemEntity : IEntity
+    public class DishItemEntity : IDBEntity
     {        
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }              = "";
         public DateTime CreatedAt { get; set; }             // 建立時間
         public DateTime UpdatedAt { get; set; }             // 更新時間
@@ -29,7 +27,6 @@ namespace Common.Entities
         public int Stock { get; set; }                      // 庫存量
         public bool DisplayWhenSoldOut { get; set; }        // 庫存歸零後，是否在前台顯示(顯示售完或是不顯示)
 
-        [BsonIgnore]
         public DishStatus dishStatus 
         { 
             get 

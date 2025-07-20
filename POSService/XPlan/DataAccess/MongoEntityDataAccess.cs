@@ -2,11 +2,13 @@
 using MongoDB.Driver;
 using MongoDB.Entities;
 
+using XPlan.Entities;
+
 namespace XPlan.DataAccess
 {
     public abstract class MongoEntityDataAccess<TEntity, TDocument>
-        where TEntity : class, new()
-        where TDocument : IEntity, XPlan.Entities.IEntity, new() // 👈 注意繼承 Entity
+        where TEntity : class, IDBEntity, new()
+        where TDocument : IEntity, IDBEntity, new() // 👈 注意繼承 Entity
     {
         private static bool _bIndexCreated  = false;
         private static string _searchKey    = "Id";
@@ -42,6 +44,7 @@ namespace XPlan.DataAccess
         {
             var doc = MapToDocument(entity);
             await doc.SaveAsync();
+            entity.Id = doc.Id;
             return entity;
         }
 

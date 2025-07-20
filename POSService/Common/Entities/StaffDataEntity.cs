@@ -4,7 +4,7 @@ using XPlan.Entities;
 
 namespace Common.Entities
 {
-    public class StaffDataEntity : IEntity
+    public class StaffDataEntity : IDBEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

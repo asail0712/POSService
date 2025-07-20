@@ -15,7 +15,7 @@ namespace Common.DTO.Product
         public bool DisplayWhenSoldOut { get; set; }                    // 菜品缺貨後，是否在前台顯示(顯示售完或是不顯示)
         public decimal? Discount { get; set; }                          // 可選：群組折扣 (0~1)
         public decimal? OverridePrice { get; set; }                     // 可選：統一設定價格
-        public string Descirption { get; set; }     = "";               // 產品描述
+        public string Description { get; set; }     = "";               // 產品描述
         public List<string> Items { get; set; }     = new List<string>();   // 菜單項目清單
     }
 }

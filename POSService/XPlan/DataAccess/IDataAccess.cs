@@ -2,7 +2,7 @@
 
 namespace XPlan.DataAccess
 {
-    public interface IDataAccess<TEntity> where TEntity : IEntity
+    public interface IDataAccess<TEntity> where TEntity : IDBEntity
     {
         Task<TEntity> InsertAsync(TEntity entity);
         Task<List<TEntity>> QueryAllAsync();

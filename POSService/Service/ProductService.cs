@@ -32,10 +32,7 @@ namespace Service
                 throw new InvalidOperationException("產品中的某些項目不存在。請確認所有項目都已正確添加。");
             }
 
-            var entity      = _mapper.Map<ProductPackageEntity>(request);
-            entity          = await _repository.CreateAsync(entity);
-
-            return _mapper.Map<ProductPackageResponse>(entity);
+            return await base.CreateAsync(request);
         }
 
         public override async Task<bool> UpdateAsync(string key, ProductPackageRequest request)

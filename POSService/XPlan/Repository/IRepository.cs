@@ -2,7 +2,7 @@
 
 namespace XPlan.Repository
 {
-    public interface IRepository<TEntity> where TEntity : IEntity
+    public interface IRepository<TEntity> where TEntity : IDBEntity
     {
         Task<TEntity> CreateAsync(TEntity entity);
         Task<List<TEntity>> GetAllAsync(bool bCache = true);

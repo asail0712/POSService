@@ -13,7 +13,7 @@ namespace Common.Entities
         Cancelled   // 已取消
     }
 
-    public class OrderDetailEntity : IEntity
+    public class OrderDetailEntity : IDBEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

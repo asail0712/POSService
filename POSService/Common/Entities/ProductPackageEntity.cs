@@ -1,9 +1,10 @@
-﻿using MongoDB.Bson;
+﻿using Common.Document;
+using MongoDB.Bson;
 using XPlan.Entities;
 
 namespace Common.Entities
 {
-    public class ProductPackageEntity : IEntity
+    public class ProductPackageEntity : IDBEntity
     {
         public string Id { get; set; }                  = "";
         public DateTime CreatedAt { get; set; }                                     // 建立時間
@@ -18,7 +19,7 @@ namespace Common.Entities
         public decimal? OverridePrice { get; set; }                                 // 可選：統一設定價格
         public string Description { get; set; }         = "";                       // 產品描述
         public List<string> Items { get; set; } = new List<string>();               // 菜單項目清單
-        public List<DishItemEntity> EntityItems { get; set; } = new List<DishItemEntity>();   // 菜單項目清單
+        public List<DishItemEntity> DishDocs = new List<DishItemEntity>();      // 菜單項目清單
 
         public decimal Price
         {
@@ -39,7 +40,7 @@ namespace Common.Entities
                 {
                     decimal totalPrice = 0;
 
-                    foreach(var item in EntityItems)
+                    foreach(var item in DishDocs)
                     {
                         totalPrice += item.Price;
                     }

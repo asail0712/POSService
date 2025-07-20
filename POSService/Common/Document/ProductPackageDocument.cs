@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Common.Document
 {
-    public class ProductPackageDocument : IEntity, XPlan.Entities.IEntity
+    public class ProductPackageDocument : IEntity, XPlan.Entities.IDBEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

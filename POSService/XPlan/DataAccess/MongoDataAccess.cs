@@ -6,7 +6,7 @@ using XPlan.Entities;
 
 namespace XPlan.DataAccess
 {
-    public abstract class MongoDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : IEntity
+    public abstract class MongoDataAccess<TEntity> : IDataAccess<TEntity> where TEntity : IDBEntity
     {
         private readonly IMongoCollection<TEntity> _collection;
         private static bool _bIndexCreated  = false;
@@ -146,7 +146,7 @@ namespace XPlan.DataAccess
 
         public virtual async Task<TEntity> FindLastAsync()
         {
-            var sort = Builders<TEntity>.Sort.Descending(nameof(IEntity.UpdatedAt));
+            var sort = Builders<TEntity>.Sort.Descending(nameof(IDBEntity.UpdatedAt));
 
             return await _collection
                 .Find(_ => true)

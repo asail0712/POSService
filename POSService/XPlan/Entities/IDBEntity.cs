@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XPlan.Entities
 {
-    public interface IEntity
+    public interface IDBEntity
     {
         string Id { get; set; }
         DateTime CreatedAt { get; set; }    // 建立時間

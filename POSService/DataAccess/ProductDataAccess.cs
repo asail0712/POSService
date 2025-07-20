@@ -3,23 +3,25 @@
 using Common.Entities;
 using Common.Document;
 using DataAccess.Interface;
-using Microsoft.Extensions.Options;
 
 using XPlan.DataAccess;
-using XPlan.Utility.Databases;
+using AutoMapper;
 
 namespace DataAccess
 {
     public class ProductDataAccess : MongoEntityDataAccess<ProductPackageEntity, ProductPackageDocument>, IProductDataAccess
     {
-        public ProductDataAccess()
+        private readonly IMapper _mapper;
+        public ProductDataAccess(IMapper mapper)
             : base()
         {
-
+            _mapper = mapper;
         }
 
         protected async override Task<ProductPackageEntity> MapToEntity(ProductPackageDocument doc)
         {
+            List<DishItemDocument> dishList = (await Task.WhenAll(doc.Items.Select(item => item.ToEntityAsync()))).ToList();
+
             return new ProductPackageEntity 
             {
                 Id                  = doc.Id,
@@ -32,13 +34,13 @@ namespace DataAccess
                 Discount            = doc.Discount,
                 OverridePrice       = doc.OverridePrice,
                 Description         = doc.Description,
-                //EntityItems         = (await Task.WhenAll(doc.Items.Select(item => item.ToEntityAsync()))).ToList()
+                DishDocs            = _mapper.Map<List<DishItemEntity>>(dishList)
             };
         }
 
         protected override ProductPackageDocument MapToDocument(ProductPackageEntity entity)
         {
-            return new ProductPackageDocument
+            return  new ProductPackageDocument
             {
                 Id                  = entity.Id,
                 CreatedAt           = entity.CreatedAt,
@@ -50,7 +52,7 @@ namespace DataAccess
                 Discount            = entity.Discount,
                 OverridePrice       = entity.OverridePrice,
                 Description         = entity.Description,
-                //Items               = entity.EntityItems.Select(item => item.ToReference()).ToList()
+                Items               = entity.Items.Select(id => new One<DishItemDocument>(id)).ToList()
             };
         }
     }

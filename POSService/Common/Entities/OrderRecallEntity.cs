@@ -12,7 +12,7 @@ namespace Common.Entities
         public List<string> MenuNameList { get; set; }          // 關聯菜品名稱
     }
 
-    public class OrderRecallEntity : IEntity
+    public class OrderRecallEntity : IDBEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
