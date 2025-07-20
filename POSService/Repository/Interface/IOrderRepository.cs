@@ -1,4 +1,4 @@
-﻿using Common.Entities;
+﻿using Common.DTO.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;

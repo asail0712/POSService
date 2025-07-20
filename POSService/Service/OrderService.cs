@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-
-using Common.DTO;
-using Common.Entities;
+using Common.DTO.Order;
 using Repository.Interface;
 using Service.Interface;
 using System;
@@ -47,20 +45,20 @@ namespace Service
                 throw new Exception($"Product does not exist.");
             }
             
-            OrderDetailEntity orderDetail = _mapper.Map<OrderDetailEntity>(request);                        // 更新訂單
-            orderDetail.TotalPrice  = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
+            OrderDetailEntity orderDetail   = _mapper.Map<OrderDetailEntity>(request);                  // 更新訂單
+            orderDetail.TotalPrice          = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
 
             return await _repository.UpdateAsync(key, orderDetail);
         }
 
         public async Task<bool> ModifyOrderStatus(string orderId, OrderStatus status)
         {
-            bool bResult                = false;
-            OrderDetailEntity? orderDetail    = await _repository.GetAsync(orderId);
+            bool bResult                    = false;
+            OrderDetailEntity? orderDetail  = await _repository.GetAsync(orderId);
 
             if (orderDetail == null)
             {
-                return false; // 如果找不到訂單，則返回 false
+                throw new Exception($"Order with ID {orderId} does not exist.");
             }
 
             switch (status)

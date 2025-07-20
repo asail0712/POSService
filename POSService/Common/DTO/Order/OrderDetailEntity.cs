@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using XPlan.Entities;
 
-namespace Common.Entities
+namespace Common.DTO.Order
 {
     public enum OrderStatus
     {
