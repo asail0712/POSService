@@ -2,11 +2,17 @@
 using MongoDB.Bson.Serialization.Attributes;
 using XPlan.Entities;
 
-namespace Common.Entities
+namespace Common.DTO.OrderRecall
 {
+    //public class DishBrief
+    //{
+    //    public string Id { get; set; }                          // 唯一識別碼 (UUID)
+    //    public string Name { get; set; }                        // 分類名稱 / 產品名稱
+    //}
+
     public class ProductBrief
     {
-        public string Id { get; set; }                        // 唯一識別碼 (UUID)
+        public string Id { get; set; }                          // 唯一識別碼 (UUID)
         public string Name { get; set; }                        // 分類名稱 / 產品名稱
         public decimal Price { get; set; }                      // 售價金額
         public List<string> MenuNameList { get; set; }          // 關聯菜品名稱

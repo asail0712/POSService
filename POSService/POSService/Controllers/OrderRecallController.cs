@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-using Common.DTO;
 using Service.Interface;
 
 using XPlan.Controller;
@@ -10,9 +8,9 @@ namespace POSService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SalesController : GenericController<OrderRecallRequest, OrderRecallResponse, ISalesService>
+    public class OrderRecallController : GenericController<OrderRecallRequest, OrderRecallResponse, IOrderRecallService>
     {
-        public SalesController(ISalesService service)
+        public OrderRecallController(IOrderRecallService service)
             : base(service)
         {
 
@@ -40,9 +38,9 @@ namespace POSService.Controllers
         [NonAction]
         public override async Task<IActionResult> CreateAsync([FromBody] OrderRecallRequest requestDto)
         {
-            await _service.CreateAsync(requestDto);
+            var result = await _service.CreateAsync(requestDto);
 
-            return Ok();
+            return Ok(result);
         }
 
         // R - Read All

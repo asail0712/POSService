@@ -62,7 +62,7 @@ builder.Services.AddScoped<IDishItemDataAccess, DishItemDataAccess>();
 builder.Services.AddScoped<IManagementDataAccess, ManagementDataAccess>();
 builder.Services.AddScoped<IOrderDataAccess, OrderDataAccess>();
 builder.Services.AddScoped<IProductDataAccess, ProductDataAccess>();
-builder.Services.AddScoped<ISalesDataAccess, SalesDataAccess>();
+builder.Services.AddScoped<ISalesDataAccess, OrderRecallDataAccess>();
 
 /********************************************
  * 加上Repository
@@ -71,7 +71,7 @@ builder.Services.AddScoped<IDishItemRepository, DishItemRepository>();
 builder.Services.AddScoped<IManagementRepository, ManagementRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ISalesRepository, SalesRepository>();
+builder.Services.AddScoped<ISalesRepository, OrderRecallRepository>();
 
 /********************************************
  * 加上Services
@@ -80,7 +80,7 @@ builder.Services.AddScoped<IDishItemService, DishItemService>();
 builder.Services.AddScoped<IManagementService, ManagementService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ISalesService, SalesService>();
+builder.Services.AddScoped<IOrderRecallService, OrderRecallService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.DTO
+namespace Common.DTO.OrderRecall
 {
-    public class TimeRangeProductSalesRequest : TimeRangeSalesRequest
+    public class TimeRangeDishSalesRequest : TimeRangeSalesRequest
     {
-        public string ProductId { get; set; }   // 產品ID
+        public string DishId { get; set; }   // 菜品ID
     }
 }

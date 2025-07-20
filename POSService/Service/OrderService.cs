@@ -10,10 +10,10 @@ namespace Service
 {
     public class OrderService : GenericService<OrderDetailEntity, OrderDetailRequest, OrderDetailResponse, IOrderRepository>, IOrderService
     {
-        private readonly ISalesService _saleService;
+        private readonly IOrderRecallService _saleService;
         private readonly IProductService _productService;
 
-        public OrderService(IOrderRepository repo, IMapper mapper, ISalesService saleService, IProductService productService)
+        public OrderService(IOrderRepository repo, IMapper mapper, IOrderRecallService saleService, IProductService productService)
             : base(repo, mapper)
         {
             _saleService        = saleService;
@@ -65,11 +65,14 @@ namespace Service
             {
                 case OrderStatus.Completed:
                     // 完成訂單時，更新銷售記錄
-                    bResult = await _repository.DeleteAsync(orderId);
-                    if (bResult)
+                    var entity = _saleService.AddOrderDetail(orderId, orderDetail.ProductPackages, orderDetail.TotalPrice);
+                    if (entity != null)
                     {
-                        await _saleService.AddOrderDetail(orderId, orderDetail.ProductIds, orderDetail.TotalPrice);
+                        await _repository.DeleteAsync(orderId);
                     }
+
+                    bResult = entity != null;
+
                     break;
                 case OrderStatus.Cancelled:
                     bResult = await _repository.DeleteAsync(orderId);

@@ -26,9 +26,7 @@ namespace DataAccess
         }
 
         protected async override Task<OrderDetailEntity> MapToEntity(OrderDetailDocument doc, IMapper mapper)
-        {            
-            ProductPackageDocument aa =  await doc.ProductDocs[0].ToEntityAsync(); // 確保 ProductDocs 已經被載入
-
+        {   
             // 先把 ProductPackageDocument 都取回來
             List<ProductPackageDocument> prodDocList    = (await Task.WhenAll(doc.ProductDocs.Select(prod => prod.ToEntityAsync()))).ToList();
             List<ProductPackageEntity> prodEntList      = new List<ProductPackageEntity>();

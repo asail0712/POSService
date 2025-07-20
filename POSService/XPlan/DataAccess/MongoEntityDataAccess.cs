@@ -91,7 +91,7 @@ namespace XPlan.DataAccess
             }
 
             var docs        = await DB.Find<TDocument>()
-                               .Match(d => d.Eq(_searchKey, keys))
+                               .Match(d => d.In(_searchKey, keys))
                                .ExecuteAsync();
             // 非同步轉換所有文件 → Entity
             var entities    = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));

@@ -5,14 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Common.Entities;
-using Common.DTO.OrderRecall;
-
-namespace Common.Profiles
+namespace Common.DTO.OrderRecall
 {
-    public class SoldItemProfile : Profile
+    public class OrderRecallProfile : Profile
     {
-        public SoldItemProfile()
+        public OrderRecallProfile()
         {
             CreateMap<OrderRecallRequest, OrderRecallEntity>();
             CreateMap<OrderRecallEntity, OrderRecallResponse>();

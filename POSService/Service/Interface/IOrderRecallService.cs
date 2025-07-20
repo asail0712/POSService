@@ -1,5 +1,6 @@
-﻿using Common.DTO;
+﻿using Common.DTO.Order;
 using Common.DTO.OrderRecall;
+using Common.DTO.Product;
 using Common.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,10 +12,10 @@ using XPlan.Service;
 
 namespace Service.Interface
 {
-    public interface ISalesService : IService<OrderRecallRequest, OrderRecallResponse>
+    public interface IOrderRecallService : IService<OrderRecallRequest, OrderRecallResponse>
     {
         Task<List<OrderRecallResponse>> GetSalesByTime(TimeRangeSalesRequest request);
         Task<decimal> GetProductSalesByTime(TimeRangeProductSalesRequest request);
-        Task AddOrderDetail(string orderId, List<string> idList, decimal totalPrice);
+        Task<OrderRecallEntity> AddOrderDetail(string orderId, List<ProductPackageEntity> idList, decimal totalPrice);
     }
 }
