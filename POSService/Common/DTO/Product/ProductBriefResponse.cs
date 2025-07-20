@@ -14,7 +14,7 @@ namespace Common.DTO.Product
         public string Name { get; set; }                = "";                               // 分類名稱 / 產品名稱
         public string ImageUrl { get; set; }            = "";                               // 圖片連結
         public decimal? Price { get; set; }                                                 // 設定價格
-        public List<DishBriefResponse> DishDocs { get; set; } = new List<DishBriefResponse>();    // 菜單項目清單
+        public List<DishBriefResponse> DishItems { get; set; } = new List<DishBriefResponse>();    // 菜單項目清單
         public string Descirption { get; set; }         = "";                               // 產品描述
     }
 }

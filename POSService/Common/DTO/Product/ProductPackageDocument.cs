@@ -21,12 +21,10 @@ namespace Common.DTO.Product
         public DateTime UpdatedAt { get; set; }                                     // 更新時間
 
         // 實作 IEntity
-        public virtual object GenerateNewID()
-            => ObjectId.GenerateNewId().ToString()!;
+        public virtual object GenerateNewID() => ObjectId.GenerateNewId().ToString()!;
 
         /// <inheritdoc />
-        public virtual bool HasDefaultID()
-            => string.IsNullOrEmpty(Id);
+        public virtual bool HasDefaultID() => string.IsNullOrEmpty(Id);
 
         // 顯示資訊
         public string Name { get; set; }                = "";                       // 分類名稱 / 產品名稱

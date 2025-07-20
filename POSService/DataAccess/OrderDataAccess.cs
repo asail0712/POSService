@@ -38,7 +38,7 @@ namespace DataAccess
             {
                 ProductPackageEntity ent    = mapper.Map <ProductPackageEntity> (prod);
                 dishDocList                 = (await Task.WhenAll(prod.ItemDocs.Select(itemDoc => itemDoc.ToEntityAsync()))).ToList();
-                ent.DishEnts                = mapper.Map<List<DishItemEntity>>(dishDocList);
+                ent.DishItems               = mapper.Map<List<DishItemEntity>>(dishDocList);
 
                 prodEntList.Add(ent);
             }
@@ -51,7 +51,7 @@ namespace DataAccess
                 OrderId         = doc.OrderId,
                 TotalPrice      = doc.TotalPrice,
                 Status          = doc.Status,
-                ProductEntitys  = prodEntList
+                ProductPackages = prodEntList
             };
         }
 

@@ -31,7 +31,7 @@ namespace DataAccess
                 Discount            = doc.Discount,
                 OverridePrice       = doc.OverridePrice,
                 Description         = doc.Description,
-                DishEnts            = mapper.Map<List<DishItemEntity>>(dishList)
+                DishItems           = mapper.Map<List<DishItemEntity>>(dishList)
             };
         }
 

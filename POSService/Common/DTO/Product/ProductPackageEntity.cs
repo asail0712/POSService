@@ -19,7 +19,7 @@ namespace Common.DTO.Product
         public decimal? OverridePrice { get; set; }     = null;                     // 可選：統一設定價格
         public string Description { get; set; }         = "";                       // 產品描述
         public List<string> ItemIDs { get; set; } = new List<string>();             // 菜單項目清單
-        public List<DishItemEntity> DishEnts = new List<DishItemEntity>();          // 菜單項目清單
+        public List<DishItemEntity> DishItems = new List<DishItemEntity>();          // 菜單項目清單
 
         public decimal Price
         {
@@ -40,7 +40,7 @@ namespace Common.DTO.Product
                 {
                     decimal totalPrice = 0;
 
-                    foreach(var item in DishEnts)
+                    foreach(var item in DishItems)
                     {
                         totalPrice += item.Price;
                     }
