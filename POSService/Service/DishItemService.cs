@@ -20,5 +20,10 @@ namespace Service
         }
         // 這裡可以添加特定於 MenuItem 的業務邏輯方法
         // 例如：根據類別獲取餐點、根據價格範圍獲取餐點等
+
+        public async Task<int> ReduceStock(string key, int numOfReduce)
+        {
+            return await _repository.ReduceStock(key, numOfReduce);
+        }
     }
 }

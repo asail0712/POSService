@@ -10,5 +10,6 @@ namespace Service.Interface
 {
     public interface IDishItemService : IService<DishItemRequest, DishItemResponse>
     {
+        Task<int> ReduceStock(string key, int numOfReduce);
     }
 }

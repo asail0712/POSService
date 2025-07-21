@@ -10,5 +10,6 @@ namespace Repository.Interface
 {
     public interface IDishItemRepository : IRepository<DishItemEntity>
     {
+        Task<int> ReduceStock(string key, int numOfReduce);
     }
 }

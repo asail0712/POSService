@@ -9,13 +9,16 @@ namespace Common.Filter
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>()
             {
                 // 額外
-                { "SalesController.GetSalesByTime", "取得銷售總金額" },
-                { "SalesController.GetProductSalesByTime", "取得產品消費總金額" },
-                { "OrderController.ModifyOrderStatus", "修改訂單狀態" },
+                { "DishItemController.ReduceStock", "減少菜品庫存" },
+
                 { "ProductController.GetAllBriefAsync", "取得所有產品簡介" },
                 { "ProductController.GetBriefAsync", "取得產品簡介" },
-                { "DishItemController.GetBriefAsync", "取得菜品簡介" },
-                { "DishItemController.GetAllBriefAsync", "取得所有菜品簡介" },
+                { "ProductController.ReduceStock", "從產品減少菜品庫存" },
+
+                { "OrderController.ModifyOrderStatus", "修改訂單狀態" },
+
+                { "OrderRecallController.GetSalesByTime", "取得銷售總金額" },
+                { "OrderRecallController.GetProductSalesByTime", "取得產品消費總金額" },
             
                 // 基本
                 { "SalesController.Create", "新增銷售資料" },

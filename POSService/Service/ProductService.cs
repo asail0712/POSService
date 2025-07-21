@@ -82,5 +82,15 @@ namespace Service
             var results = await Task.WhenAll(tasks);                        // 等待全部完成
             return results.Sum(item => item.Price);                         // 加總價格
         }
+        public async Task ReduceStock(string key, int numOfReduce)
+        {
+            var product = await _repository.GetAsync(key);
+
+            foreach (var itemId in product.ItemIDs)
+            {
+                // 減少每個項目的庫存
+                await _dishItemRepository.ReduceStock(itemId, numOfReduce);
+            }
+        }
     }
 }

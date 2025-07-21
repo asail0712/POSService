@@ -21,5 +21,9 @@ namespace Repository
         {
 
         }
+        public async Task<int> ReduceStock(string key, int numOfReduce)
+        {
+            return await _dataAccess.ReduceStock(key, numOfReduce);
+        }
     }
 }

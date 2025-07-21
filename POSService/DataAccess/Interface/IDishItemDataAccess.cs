@@ -10,5 +10,6 @@ namespace DataAccess.Interface
 {
     public interface IDishItemDataAccess : IDataAccess<DishItemEntity>
     {
+        Task<int> ReduceStock(string key, int numOfReduce);
     }
 }

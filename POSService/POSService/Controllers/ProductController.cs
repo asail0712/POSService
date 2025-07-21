@@ -31,5 +31,13 @@ namespace POSService.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut("{key}/ReduceStock/{numOfReduce}")]
+        public async Task<IActionResult> ReduceStock(string key, int numOfReduce)
+        {
+            await _service.ReduceStock(key, numOfReduce);
+
+            return Ok();
+        }
     }
 }
