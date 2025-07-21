@@ -40,13 +40,14 @@ namespace XPlan.DataAccess
 
         public virtual async Task<List<TEntity>> QueryAllAsync()
         {
-            return await _collection.Find(_ => true).ToListAsync();
+            return await _collection.Find(_ => true).ToListAsync();         
         }
 
         public virtual async Task<TEntity> QueryAsync(string key)
         {
-            var filter = Builders<TEntity>.Filter.Eq(_searchKey, key);
-            return await _collection.Find(filter).FirstOrDefaultAsync();
+            var baseFilter      = Builders<TEntity>.Filter.Eq(_searchKey, key);
+
+            return await _collection.Find(baseFilter).FirstOrDefaultAsync();
         }
 
         public virtual async Task<List<TEntity>> QueryAsync(List<string> keys)
@@ -56,9 +57,9 @@ namespace XPlan.DataAccess
                 return new List<TEntity>();
             }
 
-            var filter = Builders<TEntity>.Filter.In(_searchKey, keys);
+            var baseFilter      = Builders<TEntity>.Filter.In(_searchKey, keys);
 
-            return await _collection.Find(filter).ToListAsync();
+            return await _collection.Find(baseFilter).ToListAsync();
         }
 
         public virtual async Task<List<TEntity>> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
@@ -92,7 +93,7 @@ namespace XPlan.DataAccess
         }
 
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
-        {            
+        {
             var filter          = Builders<TEntity>.Filter.Eq(_searchKey, key);
             var bsonDoc         = entity.ToBsonDocument();              // 將 Entity 轉成 BsonDocument
 

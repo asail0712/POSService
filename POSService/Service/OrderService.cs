@@ -65,7 +65,7 @@ namespace Service
             {
                 case OrderStatus.Completed:
                     // 完成訂單時，更新銷售記錄
-                    var entity = _saleService.AddOrderDetail(orderId, orderDetail.ProductPackages, orderDetail.TotalPrice);
+                    var entity = _saleService.AddOrderDetail(orderId, orderDetail);
                     if (entity != null)
                     {
                         await _repository.DeleteAsync(orderId);

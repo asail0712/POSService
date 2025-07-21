@@ -15,7 +15,7 @@ namespace Service.Interface
     public interface IOrderRecallService : IService<OrderRecallRequest, OrderRecallResponse>
     {
         Task<List<OrderRecallResponse>> GetSalesByTime(TimeRangeSalesRequest request);
-        Task<decimal> GetProductSalesByTime(TimeRangeProductSalesRequest request);
-        Task<OrderRecallEntity> AddOrderDetail(string orderId, List<ProductPackageEntity> idList, decimal totalPrice);
+        Task<TimeRangeProductSalesResponse> GetProductSalesByTime(TimeRangeProductSalesRequest request);
+        Task<OrderRecallEntity> AddOrderDetail(string orderId, OrderDetailEntity entity);
     }
 }

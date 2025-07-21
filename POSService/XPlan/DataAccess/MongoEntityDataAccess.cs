@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Entities;
 
@@ -53,17 +55,21 @@ namespace XPlan.DataAccess
 
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
-            var doc = MapToDocument(entity, _mapper);
+            var doc             = MapToDocument(entity, _mapper);
+
             await doc.SaveAsync();
-            entity  = MapToEntity(doc, _mapper).Result;
-            return entity;
+            return MapToEntity(doc, _mapper).Result; 
         }
 
         public virtual async Task<TEntity> QueryAsync(string key)
         {
+            // 建立 Key 過濾條件
+            var keyFilter       = Builders<TDocument>.Filter.Eq(_searchKey, key);
+
+            // 執行查詢
             var doc = await DB.Find<TDocument>()
-                              .Match(d => d.Eq(_searchKey, key))
-                              .ExecuteFirstAsync();
+                                    .Match(keyFilter)
+                                    .ExecuteFirstAsync();
 
             if (doc == null)
             {
@@ -75,11 +81,12 @@ namespace XPlan.DataAccess
 
         public virtual async Task<List<TEntity>> QueryAllAsync()
         {
-            var docs        = await DB.Find<TDocument>()
-                               .Match(_ => true)
-                               .ExecuteAsync();
+            List<TDocument> docs    = await DB.Find<TDocument>()
+                                    .Match(_ => true)
+                                    .ExecuteAsync();
+
             // 非同步轉換所有文件 → Entity
-            var entities    = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
+            var entities            = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
             return entities.ToList();
         }
 
@@ -89,10 +96,15 @@ namespace XPlan.DataAccess
             {
                 return new List<TEntity>();
             }
+            // 建立 Key 過濾條件
+            var keyFilter       = Builders<TDocument>.Filter.In(_searchKey, keys);
 
-            var docs        = await DB.Find<TDocument>()
-                               .Match(d => d.In(_searchKey, keys))
-                               .ExecuteAsync();
+
+            // 執行查詢
+            var docs = await DB.Find<TDocument>()
+                                    .Match(keyFilter)
+                                    .ExecuteAsync();
+
             // 非同步轉換所有文件 → Entity
             var entities    = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
             return entities.ToList();

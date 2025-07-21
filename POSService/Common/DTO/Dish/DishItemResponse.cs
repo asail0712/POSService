@@ -23,6 +23,6 @@ namespace Common.DTO.Dish
         public bool DisplayWhenSoldOut { get; set; }    // 庫存歸零後，是否在前台顯示(顯示售完或是不顯示)
 
         // 顯示的狀態
-        public DishStatus dishStatus { get; set; }      // 販售狀態
+        public DishStatus dishState { get; set; }      // 販售狀態
     }
 }

@@ -25,7 +25,7 @@ namespace Service
         {
             var item = await _repository.GetAsync(key);
 
-            if (item == null || item.dishStatus == DishStatus.Closed)
+            if (item == null || item.DishState == DishStatus.Closed)
             {
                 // ED TODO
                 return null; // 或者拋出異常，根據你的需求
@@ -40,7 +40,7 @@ namespace Service
 
             // 過濾掉 null 和 dishStatus = Closed
             var filteredItems = items
-                            .Where(x => x != null && x.dishStatus != DishStatus.Closed)
+                            .Where(x => x != null && x.DishState != DishStatus.Closed)
                             .ToList();
             return _mapper.Map<List<DishBriefResponse>>(items);
         }

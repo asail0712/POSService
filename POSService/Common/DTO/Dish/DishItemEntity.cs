@@ -27,7 +27,7 @@ namespace Common.DTO.Dish
         public int Stock { get; set; }                      // 庫存量
         public bool DisplayWhenSoldOut { get; set; }        // 庫存歸零後，是否在前台顯示(顯示售完或是不顯示)
 
-        public DishStatus dishStatus 
+        public DishStatus DishState 
         { 
             get 
             {

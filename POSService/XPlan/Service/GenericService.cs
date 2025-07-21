@@ -29,8 +29,9 @@ namespace XPlan.Service
             var entity          = _mapper.Map<TEntity>(request);
             entity.CreatedAt    = DateTime.UtcNow;
             entity.UpdatedAt    = DateTime.UtcNow;
-            entity              = await _repository.CreateAsync(entity);
 
+            entity              = await _repository.CreateAsync(entity);
+            
             return _mapper.Map<TResponse>(entity);
         }
 

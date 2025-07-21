@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Common.DTO.Dish;
 using Common.DTO.Product;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using MongoDB.Driver;
 using Repository;
 using Repository.Interface;
 using Service.Interface;
@@ -56,14 +58,27 @@ namespace Service
         {
             var result = await _repository.GetAsync(key);
 
+            if(result.DishItems.Any(d => d.Stock == 0 && !result.DisplayWhenSoldOut || !d.IsAvailable))
+            {
+                throw new InvalidOperationException("產品中包含已售罄或不可用的項目，無法顯示簡要資訊。請確認所有項目都可用。");
+            }
+            
             return _mapper.Map<ProductBriefResponse>(result);
         }
 
         public async Task<List<ProductBriefResponse>> GetAllBriefAsync()
-        {
+        {            
             var result = await _repository.GetAllAsync();
 
-            return _mapper.Map<List<ProductBriefResponse>>(result);
+            // 過濾掉包含已售罄或已下架項目的產品
+            var validProducts = result.Where(p =>
+                    !p.DishItems.Any(d =>
+                    (d.Stock == 0 && !p.DisplayWhenSoldOut) || // 賣完且不顯示
+                    !d.IsAvailable                             // 下架
+                    )
+                ).ToList();
+
+            return _mapper.Map<List<ProductBriefResponse>>(validProducts);
         }
 
         public async Task<decimal> GetTotalPrice(List<string> idList)
