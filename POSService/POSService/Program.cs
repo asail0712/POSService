@@ -3,6 +3,7 @@ using Common.Filter;
 using Common.Profiles;
 using DataAccess;
 using DataAccess.Interface;
+using Microsoft.OpenApi.Models;
 using Repository;
 using Repository.Interface;
 using Service;
@@ -10,6 +11,7 @@ using Service.Interface;
 
 using XPlan.Utility;
 using XPlan.Utility.Databases;
+using XPlan.Utility.Filter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,6 +99,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.OperationFilter<ControllerAddSummaryFilter>();
+    c.DocumentFilter<ApiHiddenFilter>();
 });
 
 var app = builder.Build();
