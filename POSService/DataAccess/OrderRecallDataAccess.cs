@@ -14,8 +14,8 @@ namespace DataAccess
 {
     public class OrderRecallDataAccess : MongoDataAccess<OrderRecallEntity>, ISalesDataAccess
     {
-        public OrderRecallDataAccess(IMongoDbContext dbContext, IOptions<MongoDbSettings> dbSettings)
-            : base(dbContext, dbSettings.Value)
+        public OrderRecallDataAccess(IMongoDbContext dbContext)
+            : base(dbContext)
         {
 
         }

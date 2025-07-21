@@ -15,8 +15,8 @@ namespace DataAccess
 {
     public class ManagementDataAccess : MongoDataAccess<StaffDataEntity>, IManagementDataAccess
     {
-        public ManagementDataAccess(IMongoDbContext dbContext, IOptions<MongoDbSettings> dbSettings)
-            : base(dbContext, dbSettings.Value)
+        public ManagementDataAccess(IMongoDbContext dbContext)
+            : base(dbContext)
         {
             EnsureIndexCreated("Account");
         }

@@ -6,6 +6,7 @@ using Service.Interface;
 using System;
 
 using XPlan.Service;
+using XPlan.Utility;
 
 namespace Service
 {
@@ -14,13 +15,19 @@ namespace Service
         private readonly IOrderRecallService _saleService;
         private readonly IProductService _productService;
         private readonly IProductRepository _productRepo;
+        private readonly ISequenceGenerator _sequenceGenerator;
 
-        public OrderService(IOrderRepository repo, IMapper mapper, IOrderRecallService saleService, IProductService productService, IProductRepository productRepo)
+        public OrderService(IOrderRepository repo, IMapper mapper
+            , IOrderRecallService saleService
+            , IProductService productService
+            , IProductRepository productRepo
+            , ISequenceGenerator sequenceGenerator)
             : base(repo, mapper)
         {
             _saleService        = saleService;
             _productService     = productService;
             _productRepo        = productRepo;
+            _sequenceGenerator  = sequenceGenerator;
         }
 
         public override async Task<OrderDetailResponse> CreateAsync(OrderDetailRequest request)
@@ -41,6 +48,7 @@ namespace Service
 
             OrderDetailEntity orderDetail   = _mapper.Map<OrderDetailEntity>(request);                  // 創建訂單
             orderDetail.TotalPrice          = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
+            orderDetail.OrderId             = (await _sequenceGenerator.GetNextSequenceAsync("Order"));   // 生成訂單ID
             orderDetail.CreatedAt           = DateTime.UtcNow;
             orderDetail.UpdatedAt           = DateTime.UtcNow;
             var entity                      = await _repository.CreateAsync(orderDetail);               // 儲存訂單

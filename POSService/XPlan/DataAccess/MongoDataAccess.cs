@@ -12,7 +12,7 @@ namespace XPlan.DataAccess
         private readonly IMongoCollection<TEntity> _collection;
         private static bool _bIndexCreated  = false;
         private static string _searchKey    = "Id";
-        public MongoDataAccess(IMongoDbContext dbContext, IDBSetting dbSettings)
+        public MongoDataAccess(IMongoDbContext dbContext)
         {
             this._collection    = dbContext.GetCollection<TEntity>(typeof(TEntity).Name);
         }

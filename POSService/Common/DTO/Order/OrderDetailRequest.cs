@@ -9,7 +9,6 @@ namespace Common.DTO.Order
 {
     public class OrderDetailRequest
     {
-        public string OrderId { get; set; }                     // 桌號或訂單編號
         public List<string> ProductIds { get; set; }            // 產品ID清單
     }
 }

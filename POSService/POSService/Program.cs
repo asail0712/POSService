@@ -34,6 +34,11 @@ builder.Services.InitialMongoDB(builder.Configuration);
 await builder.Services.InitialMongoDBEntity(builder.Configuration["MongoDbSetting:DatabaseName"]);
 
 /********************************************
+ * 流水號設定
+ * ******************************************/
+builder.Services.AddSingleton<ISequenceGenerator, SequenceGenerator>();
+
+/********************************************
  * 註冊AutoMapper
  * ******************************************/
 builder.Services.AddAutoMapperProfiles(LoggerFactory.Create(builder =>
