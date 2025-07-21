@@ -4,6 +4,13 @@ using XPlan.Entities;
 
 namespace Common.DTO.Product
 {
+    public enum ProductStatus
+    {
+        OnSale,     // 販售中
+        SoldOut,    // 售完
+        Closed,     // 下架
+    }
+
     public class ProductPackageEntity : IDBEntity
     {
         public string Id { get; set; }                  = "";
@@ -21,6 +28,24 @@ namespace Common.DTO.Product
         public List<string> ItemIDs { get; set; }       = new List<string>();           // 菜單項目清單
         public List<DishItemEntity> DishItems           = new List<DishItemEntity>();   // 菜單項目清單
 
+        public ProductStatus ProductState
+        {
+            get
+            {
+                if (DishItems.Any(d => !d.IsAvailable))
+                {
+                    return ProductStatus.Closed;
+                }
+                else if (DishItems.Any(d => d.Stock == 0))
+                {
+                    return DisplayWhenSoldOut ? ProductStatus.SoldOut : ProductStatus.Closed;
+                }
+                else
+                {
+                    return ProductStatus.OnSale;
+                }
+            }
+        }
         public decimal Price
         {
             get

@@ -58,7 +58,7 @@ namespace Service
         {
             var result = await _repository.GetAsync(key);
 
-            if(result.DishItems.Any(d => d.Stock == 0 && !result.DisplayWhenSoldOut || !d.IsAvailable))
+            if(result.ProductState == ProductStatus.Closed)
             {
                 throw new InvalidOperationException("產品中包含已售罄或不可用的項目，無法顯示簡要資訊。請確認所有項目都可用。");
             }
@@ -71,12 +71,7 @@ namespace Service
             var result = await _repository.GetAllAsync();
 
             // 過濾掉包含已售罄或已下架項目的產品
-            var validProducts = result.Where(p =>
-                    !p.DishItems.Any(d =>
-                    (d.Stock == 0 && !p.DisplayWhenSoldOut) || // 賣完且不顯示
-                    !d.IsAvailable                             // 下架
-                    )
-                ).ToList();
+            var validProducts = result.Where(p => p.ProductState != ProductStatus.Closed).ToList();
 
             return _mapper.Map<List<ProductBriefResponse>>(validProducts);
         }

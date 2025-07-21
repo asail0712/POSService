@@ -10,7 +10,5 @@ namespace Service.Interface
 {
     public interface IDishItemService : IService<DishItemRequest, DishItemResponse>
     {
-        Task<DishBriefResponse> GetBriefAsync(string key);
-        Task<List<DishBriefResponse>> GetAllBriefAsync();
     }
 }

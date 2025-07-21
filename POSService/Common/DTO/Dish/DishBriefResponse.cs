@@ -13,8 +13,5 @@ namespace Common.DTO.Dish
         public string Name { get; set; }        = "";   // 餐點名稱
         public string ImageUrl { get; set; }    = "";   // 圖片連結
         public decimal Price { get; set; }              // 原價格
-
-        // 顯示的狀態
-        public DishStatus dishStatus { get; set; }      // 販售狀態
     }
 }

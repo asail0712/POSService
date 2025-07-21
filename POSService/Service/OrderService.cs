@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.DTO.Order;
+using Common.DTO.Product;
 using Repository.Interface;
 using Service.Interface;
 using System;
@@ -12,12 +13,14 @@ namespace Service
     {
         private readonly IOrderRecallService _saleService;
         private readonly IProductService _productService;
+        private readonly IProductRepository _productRepo;
 
-        public OrderService(IOrderRepository repo, IMapper mapper, IOrderRecallService saleService, IProductService productService)
+        public OrderService(IOrderRepository repo, IMapper mapper, IOrderRecallService saleService, IProductService productService, IProductRepository productRepo)
             : base(repo, mapper)
         {
             _saleService        = saleService;
             _productService     = productService;
+            _productRepo        = productRepo;
         }
 
         public override async Task<OrderDetailResponse> CreateAsync(OrderDetailRequest request)
@@ -27,6 +30,13 @@ namespace Service
             {
                 // ED TODO
                 throw new Exception($"Product does not exist.");
+            }
+
+            var entitys = await _productRepo.GetAsync(request.ProductIds);
+
+            if (entitys.Any(p => p.ProductState == ProductStatus.Closed))
+            {
+                throw new Exception($"Product not on sale");
             }
 
             OrderDetailEntity orderDetail   = _mapper.Map<OrderDetailEntity>(request);                  // 創建訂單

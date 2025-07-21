@@ -4,13 +4,6 @@ using XPlan.Entities;
 
 namespace Common.DTO.Dish
 {
-    public enum DishStatus
-    {
-        OnSale,     // 販售中
-        SoldOut,    // 售完
-        Closed,     // 下架
-    }
-
     public class DishItemEntity : IDBEntity
     {        
         public string Id { get; set; }              = "";
@@ -25,25 +18,5 @@ namespace Common.DTO.Dish
         // 顯示的狀態
         public bool IsAvailable { get; set; }               // 販售狀態（true: 上架, false: 下架）
         public int Stock { get; set; }                      // 庫存量
-        public bool DisplayWhenSoldOut { get; set; }        // 庫存歸零後，是否在前台顯示(顯示售完或是不顯示)
-
-        public DishStatus DishState 
-        { 
-            get 
-            {
-                if (!IsAvailable)
-                {
-                    return DishStatus.Closed;
-                }
-                else if (Stock == 0)
-                {
-                    return DisplayWhenSoldOut ? DishStatus.SoldOut : DishStatus.Closed;
-                }
-                else
-                {
-                    return DishStatus.OnSale;
-                }
-            }
-        }
     }
 }
