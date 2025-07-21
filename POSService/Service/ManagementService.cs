@@ -15,6 +15,7 @@ namespace Service
 {
     public class ManagementService : GenericService<StaffDataEntity, StaffDataRequest, StaffDataResponse, IManagementRepository>, IManagementService
     {
+        static private readonly string _salt = "saltt";
         private readonly JwtOptions _jwtOptions;
 
         public ManagementService(IManagementRepository repo, IMapper mapper, JwtOptions jwtOptions)
@@ -37,11 +38,11 @@ namespace Service
                 return loginResponse;
             }
 
-            if (staffData.PasswordHash == Utils.ComputeSha256Hash(request.Password))
+            if (staffData.PasswordHash == Utils.ComputeSha256Hash(request.Password, _salt))
             {
                 loginResponse.Success   = true;
                 loginResponse.Token     = new JwtTokenGenerator(_jwtOptions.Secret, _jwtOptions.Issuer, _jwtOptions.Audience)
-                                            .GenerateToken(staffData.Account, staffData.PasswordHash);
+                                            .GenerateToken(staffData.Id, staffData.Account);
                 return loginResponse;
             }
             else
@@ -52,14 +53,14 @@ namespace Service
             }
         }
 
-        public async Task<ChangePasswordResponse> ChangePassword(ChangePasswordRequest request)
+        public async Task<LoginResponse> ChangePassword(ChangePasswordRequest request)
         {
             // 1. 檢查輸入參數
             if (string.IsNullOrWhiteSpace(request.Account) ||
                 string.IsNullOrWhiteSpace(request.OldPassword) ||
                 string.IsNullOrWhiteSpace(request.NewPassword))
             {
-                return new ChangePasswordResponse
+                return new LoginResponse
                 {
                     Success = false,
                     Message = "請提供完整的資料"
@@ -70,37 +71,39 @@ namespace Service
 
             if (staffData == null)
             {
-                return new ChangePasswordResponse
+                return new LoginResponse
                 {
                     Success = false,
                     Message = "找不到使用者"
                 };
             }
 
-            if(staffData.PasswordHash != Utils.ComputeSha256Hash(request.OldPassword))
+            if(staffData.PasswordHash != Utils.ComputeSha256Hash(request.OldPassword, _salt))
             {
-                return new ChangePasswordResponse
+                return new LoginResponse
                 {
                     Success = false,
                     Message = "舊密碼不正確"
                 };
             }
 
-            staffData.PasswordHash = Utils.ComputeSha256Hash(request.NewPassword);
+            staffData.PasswordHash = Utils.ComputeSha256Hash(request.NewPassword, _salt);
 
             await _repository.UpdateAsync(staffData.Account, staffData);
 
-            return new ChangePasswordResponse
+            return new LoginResponse
             {
                 Success = true,
-                Message = "密碼修改成功"
+                Message = "密碼修改成功",
+                Token   = new JwtTokenGenerator(_jwtOptions.Secret, _jwtOptions.Issuer, _jwtOptions.Audience)
+                                            .GenerateToken(staffData.Id, staffData.Account)
             };
         }
 
         public override async Task<StaffDataResponse> CreateAsync(StaffDataRequest request)
         {
             var entity          = _mapper.Map<StaffDataEntity>(request);
-            entity.PasswordHash = Utils.ComputeSha256Hash(request.Password);
+            entity.PasswordHash = Utils.ComputeSha256Hash(request.Password, _salt);
             entity              = await _repository.CreateAsync(entity);
 
             return _mapper.Map<StaffDataResponse>(entity);

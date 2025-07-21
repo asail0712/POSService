@@ -5,14 +5,14 @@ namespace XPlan.Utility
 {
     public static class Utils
     {
-        public static string ComputeSha256Hash(string rawData)
+        public static string ComputeSha256Hash(string rawData, string salt)
         {
-            // 建立 SHA256
+            // 將原始資料與 salt 合併
+            string saltedData = rawData + salt;
+
             using (SHA256 sha256Hash = SHA256.Create())
             {
-                // 把字串轉成 byte[]
-                byte[] bytes            = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-                // 轉成十六進位字串
+                byte[] bytes            = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(saltedData));
                 StringBuilder builder   = new StringBuilder();
 
                 for (int i = 0; i < bytes.Length; i++)

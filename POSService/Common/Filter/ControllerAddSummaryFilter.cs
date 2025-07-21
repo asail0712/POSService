@@ -19,6 +19,9 @@ namespace Common.Filter
 
                 { "OrderRecallController.GetSalesByTime", "取得銷售總金額" },
                 { "OrderRecallController.GetProductSalesByTime", "取得產品消費總金額" },
+
+                { "ManagementController.Login", "登入" },
+                { "ManagementController.ChangePassword", "變更密碼" },
             
                 // 基本
                 { "SalesController.Create", "新增銷售資料" },
@@ -47,7 +50,7 @@ namespace Common.Filter
 
                 { "ManagementController.Create", "新增後台人員資料" },
                 { "ManagementController.GetAll", "取得所有後台人員資料" },
-                { "ManagementController.GetById", "依據 ID 取得後台人員資料" },
+                { "ManagementController.GetAsync", "依據 ID 取得後台人員資料" },
                 { "ManagementController.Update", "更新後台人員資料" },
                 { "ManagementController.Delete", "刪除後台人員資料" },
             };
