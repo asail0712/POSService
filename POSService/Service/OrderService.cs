@@ -41,6 +41,8 @@ namespace Service
 
             OrderDetailEntity orderDetail   = _mapper.Map<OrderDetailEntity>(request);                  // 創建訂單
             orderDetail.TotalPrice          = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
+            orderDetail.CreatedAt           = DateTime.UtcNow;
+            orderDetail.UpdatedAt           = DateTime.UtcNow;
             var entity                      = await _repository.CreateAsync(orderDetail);               // 儲存訂單
 
             return _mapper.Map<OrderDetailResponse>(entity);                                            // 返回訂單響應
@@ -56,6 +58,7 @@ namespace Service
             }
             
             OrderDetailEntity orderDetail   = _mapper.Map<OrderDetailEntity>(request);                  // 更新訂單
+            orderDetail.UpdatedAt           = DateTime.UtcNow;
             orderDetail.TotalPrice          = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
 
             return await _repository.UpdateAsync(key, orderDetail);
@@ -88,8 +91,9 @@ namespace Service
                     bResult = await _repository.DeleteAsync(orderId);
                     break;
                 default:
-                    orderDetail.Status  = status;
-                    bResult             = await _repository.UpdateAsync(orderId, orderDetail); ;
+                    orderDetail.UpdatedAt   = DateTime.UtcNow;
+                    orderDetail.Status      = status;
+                    bResult                 = await _repository.UpdateAsync(orderId, orderDetail); ;
                     break;
             }
 
