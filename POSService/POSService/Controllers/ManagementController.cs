@@ -26,7 +26,6 @@ namespace POSService.Controllers
         }
 
         [HttpPost("ChangePassword")]
-        [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
             var bResult = await _service.ChangePassword(request);
@@ -34,34 +33,8 @@ namespace POSService.Controllers
             return Ok(bResult);
         }
 
-        [HttpPost]
-        //[Authorize]
-        public override async Task<IActionResult> CreateAsync([FromBody] StaffDataRequest requestDto)
-        {
-            await base.CreateAsync(requestDto);
-
-            return Ok();
-        }
-
-        // R - Read All
-        [HttpGet]
-        //[Authorize]
-        public override async Task<IActionResult> GetAllAsync()
-        {
-            return await base.GetAllAsync();
-        }
-
-        // R - Read by Id
-        [HttpGet("{key}")]
-        [Authorize]
-        public override async Task<IActionResult> GetAsync(string key)
-        {
-            return await base.GetAsync(key);
-        }
-
         // U - Update
         [HttpPut("ChangeData/{key}")]
-        [Authorize]
         public async Task<IActionResult> ChangeData(string key, [FromBody] ChangeStaffDataRequest requestDto)
         {
             StaffDataRequest staffDataRequest = new StaffDataRequest
@@ -71,14 +44,6 @@ namespace POSService.Controllers
                 IsActive  = requestDto.IsActive
             };
             return await base.UpdateAsync(key, staffDataRequest);
-        }
-
-        // D - Delete
-        [HttpDelete("{key}")]
-        [Authorize]
-        public override async Task<IActionResult> DeleteAsync(string key)
-        { 
-            return await base.DeleteAsync(key);
         }
     }
 }

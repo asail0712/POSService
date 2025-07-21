@@ -13,7 +13,8 @@ namespace Common.Filter
                 "OrderRecallController.GetAllAsync",
                 "OrderRecallController.GetAsync",
                 "OrderRecallController.UpdateAsync",
-                "OrderRecallController.DeleteAsync"
+                "OrderRecallController.DeleteAsync",
+                "ManagementController.UpdateAsync"
             };
 
             return hiddenSet;

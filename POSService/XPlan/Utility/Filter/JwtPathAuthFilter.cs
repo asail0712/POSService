@@ -15,88 +15,37 @@ using System.Threading.Tasks;
 
 namespace XPlan.Utility.Filter
 {
-    public class ProtectedApi
+    public class AuthorizeCheckFilter : IOperationFilter
     {
-        public string Method { get; set; }  = "";
-        public string Path { get; set; }    = "";
-    }
-
-    public class JwtPathAuthFilter : IAsyncResourceFilter
-    {
-        private readonly IConfiguration _config;
-        private readonly List<ProtectedApi> _protectedPaths;
-
-        public JwtPathAuthFilter(IConfiguration config)
+        protected virtual HashSet<string> GetAuthorizedApi()
         {
-            _config         = config;
-            _protectedPaths = _config.GetSection("ProtectedApis").Get<List<ProtectedApi>>() ?? new List<ProtectedApi>();
+            // override
+            return new HashSet<string>();
         }
 
-        public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
-        {
-            var requestMethod = context.HttpContext.Request.Method;
-            var requestPath = context.HttpContext.Request.Path.Value?.ToLower();
-
-            bool needsAuth = _protectedPaths.Any(api =>
-            {
-                // Path 使用 Route 模板比對
-                var routePattern = RoutePatternFactory.Parse(api.Path.ToLower());
-                var matcher = new TemplateMatcher(
-                    TemplateParser.Parse(api.Path.ToLower()),
-                    new RouteValueDictionary()
-                );
-
-                bool pathMatches = matcher.TryMatch(requestPath, new RouteValueDictionary());
-
-                // Method 不填則所有 Method 都驗證
-                bool methodMatches = string.IsNullOrWhiteSpace(api.Method) ||
-                                     api.Method.Equals(requestMethod, StringComparison.OrdinalIgnoreCase);
-
-                return pathMatches && methodMatches;
-            });
-
-            if (needsAuth)
-            {
-                var user = context.HttpContext.User;
-
-                if (!user.Identity?.IsAuthenticated ?? true)
-                {
-                    context.Result = new UnauthorizedResult(); // 回 401
-                    return;
-                }
-            }
-
-            await next();
-
-            await next();
-        }
-    }
-
-    public class AuthorizeCheckOperationFilter : IOperationFilter
-    {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            // 檢查 Controller 或 Action 是否有 [Authorize]
-            var hasAuthorize = context.MethodInfo.DeclaringType.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any()
-                               || context.MethodInfo.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any();
+            var authorizedMethods   = GetAuthorizedApi();
+            var controllerName      = context.MethodInfo.ReflectedType.Name; // e.g. UserController
+            var methodName          = context.MethodInfo.Name;                   // e.g. GetUser
+            var fullMethodName      = $"{controllerName}.{methodName}";
 
-            if (hasAuthorize)
+            if (authorizedMethods.Contains(fullMethodName))
             {
-                operation.Security = new List<OpenApiSecurityRequirement>
-            {
-                new OpenApiSecurityRequirement
+                if (operation.Security == null)
                 {
-                    [ new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        }
-                    ] = new List<string>()
+                    operation.Security = new List<OpenApiSecurityRequirement>();
                 }
-            };
+
+                var scheme = new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                };
+
+                operation.Security.Add(new OpenApiSecurityRequirement
+                {
+                    [scheme] = new string[] { }
+                });
             }
         }
     }

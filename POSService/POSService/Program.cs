@@ -21,7 +21,6 @@ var builder = WebApplication.CreateBuilder(args);
  * 加上 Filter 
  * ******************************************/
 builder.Services.AddGlobalExceptionHandling();
-//builder.Services.AddJwtPathAuthFilter();
 
 /********************************************
  * 加上 Settings
@@ -94,12 +93,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 /********************************************
- * 加上Swagger 註解
+ * 加上Swagger 設定
  * ******************************************/
 builder.Services.AddSwaggerGen(c =>
 {
-    c.OperationFilter<ControllerAddSummaryFilter>();
-    c.DocumentFilter<ApiHiddenFilter>();
+    c.OperationFilter<ControllerAddSummaryFilter>();    // 使用 Operation Filter 來給API加上註解
+    c.DocumentFilter<ApiHiddenFilter>();                // 使用 Operation Filter 來給API加上開關
+    c.OperationFilter<AddAuthorizeCheckFilter>();       // 使用 Operation Filter 來給API加上認證
 });
 
 var app = builder.Build();

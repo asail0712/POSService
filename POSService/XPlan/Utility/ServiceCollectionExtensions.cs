@@ -53,16 +53,6 @@ namespace XPlan.Utility
             return services;
         }
 
-        public static IServiceCollection AddJwtPathAuthFilter(this IServiceCollection services)
-        {
-            services.AddControllers(options =>
-            {
-                options.Filters.Add<JwtPathAuthFilter>();
-            });
-
-            return services;
-        }
-
         public static IServiceCollection InitialMongoDB(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MongoDbSettings>(configuration.GetSection("MongoDBSetting"));
@@ -130,23 +120,6 @@ namespace XPlan.Utility
                     Type        = SecuritySchemeType.ApiKey,
                     Scheme      = "Bearer"
                 });
-
-                c.OperationFilter<AuthorizeCheckOperationFilter>();
-
-                //c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                //{
-                //    {
-                //        new OpenApiSecurityScheme
-                //        {
-                //            Reference = new OpenApiReference
-                //            {
-                //                Type    = ReferenceType.SecurityScheme,
-                //                Id      = "Bearer"
-                //            }
-                //        },
-                //        Array.Empty<string>()
-                //    }
-                //});
             });
             return services;
         }
