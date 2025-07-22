@@ -59,7 +59,7 @@ namespace XPlan.Utility
             services.AddSingleton<IMongoClient>((sp) =>
             {
                 var settings    = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-                var client      = new MongoClient(settings.ConnectionString);                
+                var client      = new MongoClient(settings.ConnectionString);
                 return client;
             });
 
@@ -68,9 +68,11 @@ namespace XPlan.Utility
             return services;
         }
 
-        public async static Task InitialMongoDBEntity(this IServiceCollection services, string databaseName)
+        public async static Task InitialMongoDBEntity(this IServiceCollection services, IConfiguration configuration)
         {
-            await DB.InitAsync(databaseName);
+            MongoDbSettings dbSetting = configuration.GetSection("MongoDBSetting").Get<MongoDbSettings>();
+
+            await DB.InitAsync(dbSetting.DatabaseName, MongoClientSettings.FromConnectionString(dbSetting.ConnectionString));
         }
 
         public static IServiceCollection AddAutoMapperProfiles(this IServiceCollection services, ILoggerFactory loggerFactory)
