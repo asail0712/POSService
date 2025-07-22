@@ -37,6 +37,7 @@ namespace XPlan.DataAccess
                 var indexKeys       = Builders<TDocument>.IndexKeys.Ascending(searchKey); // searchKey 是 string
                 var indexOptions    = new CreateIndexOptions { Unique = true };
                 var indexModel      = new CreateIndexModel<TDocument>(indexKeys, indexOptions);
+
                 DB.Collection<TDocument>().Indexes.CreateOne(indexModel);
             }
         }
@@ -55,13 +56,12 @@ namespace XPlan.DataAccess
 
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
-            var doc             = MapToDocument(entity, _mapper);
-
+            var doc= MapToDocument(entity, _mapper);
             await doc.SaveAsync();
             return MapToEntity(doc, _mapper).Result; 
         }
 
-        public virtual async Task<TEntity> QueryAsync(string key)
+        public virtual async Task<TEntity?> QueryAsync(string key)
         {
             // 建立 Key 過濾條件
             var keyFilter       = Builders<TDocument>.Filter.Eq(_searchKey, key);
@@ -73,13 +73,13 @@ namespace XPlan.DataAccess
 
             if (doc == null)
             {
-                throw new KeyNotFoundException($"Document with key '{key}' not found.");
+                return null;
             }
 
             return await MapToEntity(doc, _mapper);
         }
 
-        public virtual async Task<List<TEntity>> QueryAllAsync()
+        public virtual async Task<List<TEntity>?> QueryAllAsync()
         {
             List<TDocument> docs    = await DB.Find<TDocument>()
                                     .Match(_ => true)
@@ -90,11 +90,11 @@ namespace XPlan.DataAccess
             return entities.ToList();
         }
 
-        public virtual async Task<List<TEntity>> QueryAsync(List<string> keys)
+        public virtual async Task<List<TEntity>?> QueryAsync(List<string> keys)
         {
             if (keys == null || keys.Count == 0)
             {
-                return new List<TEntity>();
+                return null;
             }
             // 建立 Key 過濾條件
             var keyFilter       = Builders<TDocument>.Filter.In(_searchKey, keys);
@@ -110,7 +110,7 @@ namespace XPlan.DataAccess
             return entities.ToList();
         }
 
-        public virtual async Task<List<TEntity>> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
+        public virtual async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
         {
             Find<TDocument, TDocument> query = DB.Find<TDocument>();
 
@@ -146,7 +146,9 @@ namespace XPlan.DataAccess
                 .ToDictionary(kv => kv.Name, kv => kv.Value);
 
             if (!updateDict.Any())
+            {
                 return false;
+            }
 
             var update = DB.Update<TDocument>().Match(d => d.Eq(_searchKey, key));
 
@@ -176,20 +178,22 @@ namespace XPlan.DataAccess
         public virtual async Task<bool> ExistsAsync(List<string> keys)
         {
             if (keys == null || keys.Count == 0)
+            {
                 return false;
+            }
 
             var count = await DB.CountAsync<TDocument>(d => d.In(_searchKey, keys));
             return count > 0;
         }
 
-        public virtual async Task<TEntity> FindLastAsync()
+        public virtual async Task<TEntity?> FindLastAsync()
         {
             var doc = await DB.Find<TDocument>()
                               .Sort(d => d.Descending(x => x.UpdatedAt))
                               .ExecuteFirstAsync();
             if (doc == null)
             {
-                throw new KeyNotFoundException($"Document not found.");
+                return null;
             }
 
             return await MapToEntity(doc, _mapper);

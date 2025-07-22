@@ -27,34 +27,35 @@ namespace XPlan.DataAccess
                 var indexKeys       = Builders<TEntity>.IndexKeys.Ascending(searchKey);
                 var indexOptions    = new CreateIndexOptions { Unique = true };
                 var indexModel      = new CreateIndexModel<TEntity>(indexKeys, indexOptions);
+
                 _collection.Indexes.CreateOne(indexModel);                
             }
         }
 
-        public virtual async Task<TEntity> InsertAsync(TEntity entity)
+        public virtual async Task<TEntity?> InsertAsync(TEntity entity)
         {
             await _collection.InsertOneAsync(entity);
 
             return entity;
         }
 
-        public virtual async Task<List<TEntity>> QueryAllAsync()
+        public virtual async Task<List<TEntity>?> QueryAllAsync()
         {
             return await _collection.Find(_ => true).ToListAsync();         
         }
 
-        public virtual async Task<TEntity> QueryAsync(string key)
+        public virtual async Task<TEntity?> QueryAsync(string key)
         {
             var baseFilter      = Builders<TEntity>.Filter.Eq(_searchKey, key);
 
             return await _collection.Find(baseFilter).FirstOrDefaultAsync();
         }
 
-        public virtual async Task<List<TEntity>> QueryAsync(List<string> keys)
+        public virtual async Task<List<TEntity>?> QueryAsync(List<string> keys)
         {
             if (keys == null || keys.Count == 0)
             {
-                return new List<TEntity>();
+                return null;
             }
 
             var baseFilter      = Builders<TEntity>.Filter.In(_searchKey, keys);
@@ -62,7 +63,7 @@ namespace XPlan.DataAccess
             return await _collection.Find(baseFilter).ToListAsync();
         }
 
-        public virtual async Task<List<TEntity>> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
+        public virtual async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
         {
             // 如果 startTime 和 endTime 都沒設定，直接回傳所有資料
             if (startTime == null && endTime == null)
@@ -73,7 +74,7 @@ namespace XPlan.DataAccess
             // 如果兩個時間都有，並且 startTime > endTime，就交換
             if (startTime != null && endTime != null && startTime > endTime)
             {
-                return new List<TEntity>();
+                return null;
             }
 
             // 建立過濾條件
@@ -94,8 +95,8 @@ namespace XPlan.DataAccess
 
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
         {
-            var filter          = Builders<TEntity>.Filter.Eq(_searchKey, key);
-            var bsonDoc         = entity.ToBsonDocument();              // 將 Entity 轉成 BsonDocument
+            var filter      = Builders<TEntity>.Filter.Eq(_searchKey, key);
+            var bsonDoc     = entity.ToBsonDocument();              // 將 Entity 轉成 BsonDocument
 
             // 欄位黑名單：_id、CreatedAt、noUpdateList
             var excludedFields = new HashSet<string>(
@@ -141,20 +142,22 @@ namespace XPlan.DataAccess
             {
                 return false;
             }
+
             var filter = Builders<TEntity>.Filter.In(_searchKey, key);
             var count  = await _collection.CountDocumentsAsync(filter);
+
             return count > 0;
         }
 
-        public virtual async Task<TEntity> FindLastAsync()
+        public virtual async Task<TEntity?> FindLastAsync()
         {
             var sort = Builders<TEntity>.Sort.Descending(nameof(IDBEntity.UpdatedAt));
 
             return await _collection
-                .Find(_ => true)
-                .Sort(sort)
-                .Limit(1)
-                .FirstOrDefaultAsync();
+                            .Find(_ => true)
+                            .Sort(sort)
+                            .Limit(1)
+                            .FirstOrDefaultAsync();
         }
     }
 }
