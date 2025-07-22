@@ -18,9 +18,9 @@ namespace POSService.Controllers
         [HttpPut("{orderId}/Status")]
         public async Task<IActionResult> ModifyOrderStatus(string orderId, [FromBody] OrderStatus status)
         {
-            var bResult = await _service.ModifyOrderStatus(orderId, status);
+            await _service.ModifyOrderStatus(orderId, status);
 
-            return Ok(bResult);
+            return Ok();
         }
     }
 }

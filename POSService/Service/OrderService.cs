@@ -56,7 +56,7 @@ namespace Service
             return _mapper.Map<OrderDetailResponse>(entity);                                            // 返回訂單響應
         }
 
-        public override async Task<bool> UpdateAsync(string key, OrderDetailRequest request)
+        public override async Task UpdateAsync(string key, OrderDetailRequest request)
         {
             // 檢查產品是否存在
             if (!await _productService.IsExists(request.ProductIds))
@@ -69,12 +69,11 @@ namespace Service
             orderDetail.UpdatedAt           = DateTime.UtcNow;
             orderDetail.TotalPrice          = await _productService.GetTotalPrice(request.ProductIds);  // 計算總價
 
-            return await _repository.UpdateAsync(key, orderDetail);
+            await _repository.UpdateAsync(key, orderDetail);
         }
 
-        public async Task<bool> ModifyOrderStatus(string orderId, OrderStatus status)
+        public async Task ModifyOrderStatus(string orderId, OrderStatus status)
         {
-            bool bResult                    = false;
             OrderDetailEntity? orderDetail  = await _repository.GetAsync(orderId);
 
             if (orderDetail == null)
@@ -92,20 +91,16 @@ namespace Service
                         await _repository.DeleteAsync(orderId);
                     }
 
-                    bResult = entity != null;
-
                     break;
                 case OrderStatus.Cancelled:
-                    bResult = await _repository.DeleteAsync(orderId);
+                    await _repository.DeleteAsync(orderId);
                     break;
                 default:
                     orderDetail.UpdatedAt   = DateTime.UtcNow;
                     orderDetail.Status      = status;
-                    bResult                 = await _repository.UpdateAsync(orderId, orderDetail); ;
+                    await _repository.UpdateAsync(orderId, orderDetail); ;
                     break;
             }
-
-            return bResult;
         }
     }
 }

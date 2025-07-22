@@ -13,8 +13,8 @@ namespace XPlan.Service
         Task<TResponse> GetAsync(string key);
         Task<List<TResponse>> GetAsync(List<string> keys);
         Task<List<TResponse>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null);        
-        Task<bool> UpdateAsync(string key, TRequest request);
-        Task<bool> DeleteAsync(string key);
+        Task UpdateAsync(string key, TRequest request);
+        Task DeleteAsync(string key);
         Task<bool> IsExists(List<string> idList);
     }
 }

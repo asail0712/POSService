@@ -48,14 +48,18 @@ namespace XPlan.Controller
         [HttpPut("{key}")]
         public async Task<IActionResult> Update(string key, [FromBody] TRequest requestDto)
         {
-            return Ok(await OnUpdate(key, requestDto));
+            await OnUpdate(key, requestDto);
+
+            return Ok();
         }
 
         // D - Delete
         [HttpDelete("{key}")]
         public async Task<IActionResult> Delete(string key)
-        {            
-            return Ok(await OnDelete(key));
+        {
+            await OnDelete(key);
+
+            return Ok();
         }
 
         protected virtual async Task<TResponse> OnCreate(TRequest request)
@@ -70,13 +74,13 @@ namespace XPlan.Controller
         {
             return await _service.GetAllAsync();
         }
-        protected virtual async Task<bool> OnUpdate(string key, TRequest request)
+        protected virtual async Task OnUpdate(string key, TRequest request)
         {
-            return await _service.UpdateAsync(key, request);
+            await _service.UpdateAsync(key, request);
         }
-        protected virtual async Task<bool> OnDelete(string key)
+        protected virtual async Task OnDelete(string key)
         {
-            return await _service.DeleteAsync(key);
+            await _service.DeleteAsync(key);
         }
     }
 }

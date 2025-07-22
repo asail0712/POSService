@@ -44,9 +44,12 @@ namespace POSService.Controllers
                 IsActive  = requestDto.IsActive
             };
 
-            var result = await base.Update(key, staffDataRequest);
+            var test = new List<Task>();
+            test.Add(_service.UpdateAsync(key, staffDataRequest));
+            //await ;
+            await Task.WhenAll(test);
 
-            return Ok(result);
+            return Ok();
         }
     }
 }

@@ -11,6 +11,6 @@ namespace Service.Interface
 {
     public interface IOrderService : IService<OrderDetailRequest, OrderDetailResponse>
     {
-        Task<bool> ModifyOrderStatus(string orderId, OrderStatus status);
+        Task ModifyOrderStatus(string orderId, OrderStatus status);
     }
 }

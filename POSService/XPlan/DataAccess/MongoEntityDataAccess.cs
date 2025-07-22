@@ -54,7 +54,7 @@ namespace XPlan.DataAccess
             return mapper.Map<TDocument>(entity);
         }
 
-        public virtual async Task<TEntity> InsertAsync(TEntity entity)
+        public virtual async Task<TEntity?> InsertAsync(TEntity entity)
         {
             var doc= MapToDocument(entity, _mapper);
             await doc.SaveAsync();

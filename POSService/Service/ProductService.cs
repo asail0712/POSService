@@ -36,7 +36,7 @@ namespace Service
             return await base.CreateAsync(request);
         }
 
-        public override async Task<bool> UpdateAsync(string key, ProductPackageRequest request)
+        public override async Task UpdateAsync(string key, ProductPackageRequest request)
         {
             // 確認該產品裡面的Item都是存在的
             foreach (string itemId in request.ItemIDs)
@@ -45,13 +45,13 @@ namespace Service
                 if (!bResult)
                 {
                     // ED TODO : Handle the case where the item does not exist
-                    return false;
+                    return;
                 }
             }
 
             var entity = _mapper.Map<ProductPackageEntity>(request);
 
-            return await _repository.UpdateAsync(key, entity);
+            await _repository.UpdateAsync(key, entity);
         }
 
         public async Task<ProductBriefResponse> GetBriefAsync(string key)

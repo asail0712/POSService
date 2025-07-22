@@ -53,7 +53,7 @@ namespace XPlan.Utility
             return services;
         }
 
-        public static IServiceCollection InitialMongodb(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection InitialMongoDB(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MongoDBSettings>(configuration.GetSection("MongoDBSetting"));
             services.AddSingleton<IMongoClient>((sp) =>
@@ -68,9 +68,16 @@ namespace XPlan.Utility
             return services;
         }
 
-        public async static Task InitialMongodbEntity(this IServiceCollection services, IConfiguration configuration)
+        public async static Task InitialMongoDBEntity(this IServiceCollection services, IConfiguration configuration)
         {
-            MongoDBSettings dbSetting = configuration.GetSection("MongoDBSetting").Get<MongoDBSettings>();
+            var section = configuration.GetSection("MongoDBSetting");
+
+            MongoDBSettings? dbSetting = section.Get<MongoDBSettings>();
+
+            if (dbSetting is null)
+            {
+                throw new InvalidOperationException("Missing or invalid MongoDBSetting section in configuration.");
+            }
 
             await DB.InitAsync(dbSetting.DatabaseName, MongoClientSettings.FromConnectionString(dbSetting.ConnectionString));
         }

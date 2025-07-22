@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Entities;
 using SharpCompress.Common;
 using System.Collections.Generic;
 using XPlan.DataAccess;
@@ -32,26 +33,40 @@ namespace XPlan.Repository
 
         public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
-            entity = await _dataAccess.InsertAsync(entity);
+            TEntity? result = await _dataAccess.InsertAsync(entity);
 
-            _cache.Set($"{_cachePrefix}:{entity.Id}", entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+            if(result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
+            _cache.Set($"{_cachePrefix}:{result.Id}", result, TimeSpan.FromMinutes(_cacheDurationMinutes));
             _cache.Remove($"{_cachePrefix}:all");
             _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
 
-            return entity;
+            return result;
         }
 
         public virtual async Task<List<TEntity>> GetAllAsync(bool bCache = true)
         {
-            List<TEntity>? cachedList   = null;
-            var cacheKey                = $"{_cachePrefix}:all";
+            var cacheKey = $"{_cachePrefix}:all";
 
-            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out cachedList))
+            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out List<TEntity>? cachedList))
             {
+                if (cachedList == null)
+                {
+                    throw new InvalidOperationException("");
+                }
+
                 return cachedList;
             }
 
             cachedList = await _dataAccess.QueryAllAsync();
+
+            if (cachedList == null)
+            {
+                throw new ArgumentNullException(cacheKey);
+            }
 
             _cache.Set(cacheKey, cachedList, TimeSpan.FromMinutes(_cacheDurationMinutes));
 
@@ -60,25 +75,38 @@ namespace XPlan.Repository
 
         public virtual async Task<List<TEntity>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
-            return await _dataAccess.QueryByTimeAsync(startTime, endTime);
+            var result = await _dataAccess.QueryByTimeAsync(startTime, endTime);
+
+            if(result == null)
+            {
+                throw new ArgumentNullException("");
+            }
+
+            return result;
         }
 
         public virtual async Task<TEntity> GetAsync(string key, bool bCache = true)
         {
-            TEntity? cachedEntity   = default(TEntity);
-            var cacheKey            = $"{_cachePrefix}:{key}";
+            var cacheKey = $"{_cachePrefix}:{key}";
 
-            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out cachedEntity))
+            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
             {
+                if (cachedEntity == null)
+                {
+                    throw new InvalidOperationException("");
+                }
+
                 return cachedEntity;
             }
 
             cachedEntity = await _dataAccess.QueryAsync(key);
 
-            if (cachedEntity != null)
+            if (cachedEntity == null)
             {
-                _cache.Set(cacheKey, cachedEntity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                throw new ArgumentNullException(cacheKey);
             }
+
+            _cache.Set(cacheKey, cachedEntity, TimeSpan.FromMinutes(_cacheDurationMinutes));
 
             return cachedEntity;
         }
@@ -87,7 +115,7 @@ namespace XPlan.Repository
         {
             if (keys == null || keys.Count == 0)
             {
-                return new List<TEntity>();
+                throw new InvalidOperationException("");
             }
 
             var resultList          = new List<TEntity>();
@@ -98,8 +126,13 @@ namespace XPlan.Repository
                 foreach (var key in keys)
                 {
                     var cacheKey = $"{_cachePrefix}:{key}";
-                    if (_cache.TryGetValue(cacheKey, out TEntity cachedEntity))
+                    if (_cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
                     {
+                        if (cachedEntity == null)
+                        {
+                            throw new InvalidOperationException("");
+                        }
+
                         resultList.Add(cachedEntity);
                     }
                     else
@@ -118,16 +151,18 @@ namespace XPlan.Repository
                 // 假設你的 IDataAccess<TEntity> 有支援批次查詢
                 var dbEntities = await _dataAccess.QueryAsync(keysToFetchFromDb);
 
-                if (dbEntities != null)
+                if (dbEntities == null)
                 {
-                    foreach (var entity in dbEntities)
+                    throw new ArgumentException("");
+                }
+
+                foreach (var entity in dbEntities)
+                {
+                    if (entity != null)
                     {
-                        if (entity != null)
-                        {
-                            var cacheKey = $"{_cachePrefix}:{entity.Id}";
-                            _cache.Set(cacheKey, entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
-                            resultList.Add(entity);
-                        }
+                        var cacheKey = $"{_cachePrefix}:{entity.Id}";
+                        _cache.Set(cacheKey, entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                        resultList.Add(entity);
                     }
                 }
             }
@@ -135,7 +170,7 @@ namespace XPlan.Repository
             return resultList;
         }
 
-        public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
+        public virtual async Task UpdateAsync(string key, TEntity entity)
         {
             bool bResult = await _dataAccess.UpdateAsync(key, entity);
 
@@ -146,11 +181,13 @@ namespace XPlan.Repository
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
                 _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
             }
-
-            return bResult;
+            else
+            {
+                throw new Exception("");
+            }
         }
 
-        public virtual async Task<bool> DeleteAsync(string key)
+        public virtual async Task DeleteAsync(string key)
         {
             bool bResult =await _dataAccess.DeleteAsync(key);
 
@@ -161,8 +198,10 @@ namespace XPlan.Repository
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
                 _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
             }
-
-            return bResult;
+            else
+            {
+                throw new Exception("");
+            }
         }
         public virtual async Task<bool> ExistsAsync(string key, bool bCache = true)
         {
@@ -223,9 +262,15 @@ namespace XPlan.Repository
         public virtual async Task<TEntity> FindLastAsync(bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:findLast";
+
             // 嘗試從快取取得
             if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
             {
+                if (cachedEntity == null)
+                {
+                    throw new InvalidOperationException("");
+                }
+
                 return cachedEntity;
             }
 
@@ -236,6 +281,10 @@ namespace XPlan.Repository
             {
                 // 寫入快取，設定過期時間（例如 30 秒）
                 _cache.Set(cacheKey, lastEntity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+            }
+            else
+            {
+                throw new InvalidOperationException("");
             }
 
             return lastEntity;

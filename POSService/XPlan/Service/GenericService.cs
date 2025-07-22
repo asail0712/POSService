@@ -55,20 +55,20 @@ namespace XPlan.Service
         public virtual async Task<List<TResponse>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
             List<TEntity>? entities = await _repository.GetByTimeAsync();
-            return _mapper.Map<List<TResponse>?>(entities);
+            return _mapper.Map<List<TResponse>>(entities);
         }
 
-        public virtual async Task<bool> UpdateAsync(string key, TRequest request)
+        public virtual async Task UpdateAsync(string key, TRequest request)
         {
             var entity          = _mapper.Map<TEntity>(request);
             entity.UpdatedAt    = DateTime.UtcNow;
 
-            return await _repository.UpdateAsync(key, entity);
+            await _repository.UpdateAsync(key, entity);
         }
 
-        public virtual async Task<bool> DeleteAsync(string key)
+        public virtual async Task DeleteAsync(string key)
         {
-            return await _repository.DeleteAsync(key);
+            await _repository.DeleteAsync(key);
         }
 
         public async Task<bool> IsExists(List<string> idList)
