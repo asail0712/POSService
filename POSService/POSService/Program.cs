@@ -1,17 +1,12 @@
-﻿using AutoMapper;
-using Common.Filter;
-using Common.Profiles;
+﻿using Common.Filter;
 using DataAccess;
 using DataAccess.Interface;
-using Microsoft.OpenApi.Models;
 using Repository;
 using Repository.Interface;
 using Service;
 using Service.Interface;
 
 using XPlan.Utility;
-using XPlan.Utility.Databases;
-using XPlan.Utility.Filter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +27,7 @@ builder.Services.AddJWTSecurity();
  * 加上Database Settings
  * ******************************************/
 builder.Services.InitialMongoDB(builder.Configuration);
-await builder.Services.InitialMongoDBEntity(builder.Configuration["MongoDbSetting:DatabaseName"]);
+await builder.Services.InitialMongoDBEntity(builder.Configuration);
 
 /********************************************
  * 流水號設定
@@ -105,7 +100,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();    
