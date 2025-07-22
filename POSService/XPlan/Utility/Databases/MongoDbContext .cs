@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace XPlan.Utility.Databases
 {
-    public class MongoDbContext : IMongoDbContext
+    public class MongoDBContext : IMongoDbContext
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbContext(IOptions<MongoDbSettings> settings, IMongoClient client)
+        public MongoDBContext(IOptions<MongoDBSettings> settings, IMongoClient client)
         {
             _database = client.GetDatabase(settings.Value.DatabaseName);
         }

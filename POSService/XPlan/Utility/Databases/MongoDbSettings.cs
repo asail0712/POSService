@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XPlan.Utility.Databases
 {
-    public class MongoDbSettings : IDBSetting
+    public class MongoDBSettings : IDBSetting
     {
         public string ConnectionString { get; set; }
         public string DatabaseName { get; set; }

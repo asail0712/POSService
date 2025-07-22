@@ -10,7 +10,6 @@ namespace XPlan.Utility.Filter
             string displayName  = context.ApiDescription.ActionDescriptor.DisplayName;
             var keyValuePairs   = GetSummaryInfo();
 
-
             foreach (var pair in keyValuePairs)
             {
                 if (displayName.Contains(pair.Key))

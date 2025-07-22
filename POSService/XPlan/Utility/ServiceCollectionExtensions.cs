@@ -53,7 +53,7 @@ namespace XPlan.Utility
             return services;
         }
 
-        public static IServiceCollection InitialMongoDB(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection InitialMongodb(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MongoDbSettings>(configuration.GetSection("MongoDBSetting"));
             services.AddSingleton<IMongoClient>((sp) =>
@@ -68,7 +68,7 @@ namespace XPlan.Utility
             return services;
         }
 
-        public async static Task InitialMongoDBEntity(this IServiceCollection services, IConfiguration configuration)
+        public async static Task InitialMongodbEntity(this IServiceCollection services, IConfiguration configuration)
         {
             MongoDbSettings dbSetting = configuration.GetSection("MongoDBSetting").Get<MongoDbSettings>();
 
@@ -77,11 +77,11 @@ namespace XPlan.Utility
 
         public static IServiceCollection AddAutoMapperProfiles(this IServiceCollection services, ILoggerFactory loggerFactory)
         {
-            var configExpression = new MapperConfigurationExpression();
+            var configExpression    = new MapperConfigurationExpression();
             configExpression.AddMaps(AppDomain.CurrentDomain.GetAssemblies());
 
-            var mapperConfig = new MapperConfiguration(configExpression, loggerFactory);
-            var mapper = mapperConfig.CreateMapper();
+            var mapperConfig        = new MapperConfiguration(configExpression, loggerFactory);
+            var mapper              = mapperConfig.CreateMapper();
 
             services.AddSingleton<IMapper>(mapper);
             return services;

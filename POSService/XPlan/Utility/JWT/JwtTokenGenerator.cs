@@ -36,7 +36,8 @@ namespace XPlan.Utility.JWT
                 new Claim("customClaim", "yourValue") // 你可以加入更多
             };
 
-            var token = new JwtSecurityToken(
+            var token = new JwtSecurityToken
+            (
                 issuer:             _issuer,
                 audience:           _audience,
                 claims:             claims,
