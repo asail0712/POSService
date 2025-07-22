@@ -8,6 +8,7 @@ namespace XPlan.Utility.Caches
 {
     public class CacheSettings
     {
-        public int CacheDurationMinutes { get; set; } = 5; // 預設5分鐘
+        public int CacheDurationMinutes { get; set; } = 5;  // 預設5分鐘
+        public bool CacheEnable { get; set; }               // 快取開啟還是關閉
     }
 }

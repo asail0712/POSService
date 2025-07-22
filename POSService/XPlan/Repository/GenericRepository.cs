@@ -20,11 +20,14 @@ namespace XPlan.Repository
         private readonly int _cacheDurationMinutes;
         private readonly string _cachePrefix = typeof(TEntity).Name;
 
+        private bool _bCacheEnable;
+
         public GenericRepository(TDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings)
         {
             _dataAccess             = dataAccess;
             _cache                  = memoryCache;
             _cacheDurationMinutes   = cacheSettings.Value.CacheDurationMinutes;
+            _bCacheEnable           = cacheSettings.Value.CacheEnable;
         }
 
         public virtual async Task<TEntity> CreateAsync(TEntity entity)
@@ -43,7 +46,7 @@ namespace XPlan.Repository
             List<TEntity>? cachedList   = null;
             var cacheKey                = $"{_cachePrefix}:all";
 
-            if (bCache && _cache.TryGetValue(cacheKey, out cachedList))
+            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out cachedList))
             {
                 return cachedList;
             }
@@ -65,7 +68,7 @@ namespace XPlan.Repository
             TEntity? cachedEntity   = default(TEntity);
             var cacheKey            = $"{_cachePrefix}:{key}";
 
-            if (bCache && _cache.TryGetValue(cacheKey, out cachedEntity))
+            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out cachedEntity))
             {
                 return cachedEntity;
             }
@@ -90,7 +93,7 @@ namespace XPlan.Repository
             var resultList          = new List<TEntity>();
             var keysToFetchFromDb   = new List<string>();
 
-            if (bCache)
+            if (_bCacheEnable && bCache)
             {
                 foreach (var key in keys)
                 {
@@ -165,7 +168,7 @@ namespace XPlan.Repository
         {
             var cacheKey = $"{_cachePrefix}:exists:{key}";
 
-            if (bCache && _cache.TryGetValue(cacheKey, out bool cachedExists))
+            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out bool cachedExists))
             {
                 return cachedExists;
             }
@@ -186,7 +189,7 @@ namespace XPlan.Repository
 
             // 批次快取檢查（全部 keys 都有快取時直接回傳）
             var missingKeys = new List<string>();
-            if (bCache)
+            if (_bCacheEnable && bCache)
             {
                 foreach (var key in keys)
                 {
@@ -217,11 +220,11 @@ namespace XPlan.Repository
             return allExist;
         }
 
-        public virtual async Task<TEntity> FindLastAsync()
+        public virtual async Task<TEntity> FindLastAsync(bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:findLast";
             // 嘗試從快取取得
-            if (_cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
+            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
             {
                 return cachedEntity;
             }
