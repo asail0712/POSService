@@ -55,22 +55,22 @@ namespace XPlan.Utility
 
         public static IServiceCollection InitialMongodb(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<MongoDbSettings>(configuration.GetSection("MongoDBSetting"));
+            services.Configure<MongoDBSettings>(configuration.GetSection("MongoDBSetting"));
             services.AddSingleton<IMongoClient>((sp) =>
             {
-                var settings    = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+                var settings    = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
                 var client      = new MongoClient(settings.ConnectionString);
                 return client;
             });
 
-            services.AddSingleton<IMongoDbContext, MongoDbContext>();
+            services.AddSingleton<IMongoDbContext, MongoDBContext>();
 
             return services;
         }
 
         public async static Task InitialMongodbEntity(this IServiceCollection services, IConfiguration configuration)
         {
-            MongoDbSettings dbSetting = configuration.GetSection("MongoDBSetting").Get<MongoDbSettings>();
+            MongoDBSettings dbSetting = configuration.GetSection("MongoDBSetting").Get<MongoDBSettings>();
 
             await DB.InitAsync(dbSetting.DatabaseName, MongoClientSettings.FromConnectionString(dbSetting.ConnectionString));
         }
