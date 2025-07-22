@@ -1,19 +1,15 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
-using MongoDB.Driver;
 using MongoDB.Entities;
-using SharpCompress.Common;
-using System.Collections.Generic;
+using System.Xml.Linq;
 using XPlan.DataAccess;
 using XPlan.Entities;
 using XPlan.Utility.Caches;
+using XPlan.Utility.Exceptions;
 
 namespace XPlan.Repository
 {
-    public class GenericRepository<TEntity, TDataAccess>// : IRepository<TEntity> 
+    public class GenericRepository<TEntity, TDataAccess>
         where TEntity : IDBEntity where TDataAccess : IDataAccess<TEntity>
     {
         protected readonly TDataAccess _dataAccess;
@@ -33,176 +29,273 @@ namespace XPlan.Repository
 
         public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
-            TEntity? result = await _dataAccess.InsertAsync(entity);
-
-            if(result == null)
+            try
             {
-                throw new ArgumentNullException(nameof(result));
+                TEntity? result = await _dataAccess.InsertAsync(entity);
+
+                if (result == null)
+                {
+                    throw new InvalidEntityException(typeof(TEntity).Name);
+                }
+
+                _cache.Set($"{_cachePrefix}:{result.Id}", result, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                _cache.Remove($"{_cachePrefix}:all");
+                _cache.Remove($"{_cachePrefix}:findLast");
+
+                return result;
             }
-
-            _cache.Set($"{_cachePrefix}:{result.Id}", result, TimeSpan.FromMinutes(_cacheDurationMinutes));
-            _cache.Remove($"{_cachePrefix}:all");
-            _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
-
-            return result;
+            catch (RepositoryException)
+            {
+                throw; // 不包自家 RepositoryException
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException("Create", typeof(TEntity).Name, ex);
+            }
         }
 
         public virtual async Task<List<TEntity>> GetAllAsync(bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:all";
 
-            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out List<TEntity>? cachedList))
+            try
             {
-                if (cachedList == null)
+                if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out List<TEntity>? cachedList))
                 {
-                    throw new InvalidOperationException("");
+                    if (cachedList == null)
+                    {
+                        throw new CacheMissException(cacheKey);
+                    }
+
+                    return cachedList;
                 }
 
-                return cachedList;
+                var list = await _dataAccess.QueryAllAsync();
+
+                if (list == null)
+                {
+                    throw new EntityNotFoundException(typeof(TEntity).Name, "All");
+                }
+
+                _cache.Set(cacheKey, list, TimeSpan.FromMinutes(_cacheDurationMinutes));
+
+                return list;
             }
-
-            cachedList = await _dataAccess.QueryAllAsync();
-
-            if (cachedList == null)
+            catch (RepositoryException)
             {
-                throw new ArgumentNullException(cacheKey);
+                throw; // 不包自家 RepositoryException
             }
-
-            _cache.Set(cacheKey, cachedList, TimeSpan.FromMinutes(_cacheDurationMinutes));
-
-            return cachedList;
-        }
-
-        public virtual async Task<List<TEntity>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
-        {
-            var result = await _dataAccess.QueryByTimeAsync(startTime, endTime);
-
-            if(result == null)
+            catch (Exception ex)
             {
-                throw new ArgumentNullException("");
+                throw new DatabaseOperationException("GetAll", typeof(TEntity).Name, ex);
             }
-
-            return result;
         }
 
         public virtual async Task<TEntity> GetAsync(string key, bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:{key}";
 
-            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
+            try
             {
-                if (cachedEntity == null)
+                if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
                 {
-                    throw new InvalidOperationException("");
+                    if (cachedEntity == null)
+                    {
+                        throw new CacheMissException(cacheKey);
+                    }
+
+                    return cachedEntity;
                 }
 
-                return cachedEntity;
+                var entity = await _dataAccess.QueryAsync(key);
+
+                if (entity == null)
+                {
+                    throw new EntityNotFoundException(typeof(TEntity).Name, key);
+                }
+
+                _cache.Set(cacheKey, entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+
+                return entity;
             }
-
-            cachedEntity = await _dataAccess.QueryAsync(key);
-
-            if (cachedEntity == null)
+            catch (RepositoryException)
             {
-                throw new ArgumentNullException(cacheKey);
+                throw; // 不包自家 RepositoryException
             }
-
-            _cache.Set(cacheKey, cachedEntity, TimeSpan.FromMinutes(_cacheDurationMinutes));
-
-            return cachedEntity;
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException("Get", typeof(TEntity).Name, ex);
+            }
         }
 
         public virtual async Task<List<TEntity>> GetAsync(List<string> keys, bool bCache = true)
         {
             if (keys == null || keys.Count == 0)
             {
-                throw new InvalidOperationException("");
+                throw new InvalidRepositoryArgumentException(nameof(keys), "Keys list cannot be null or empty");
             }
 
             var resultList          = new List<TEntity>();
             var keysToFetchFromDb   = new List<string>();
 
-            if (_bCacheEnable && bCache)
+            try
             {
-                foreach (var key in keys)
+                if (_bCacheEnable && bCache)
                 {
-                    var cacheKey = $"{_cachePrefix}:{key}";
-                    if (_cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
+                    foreach (var key in keys)
                     {
-                        if (cachedEntity == null)
+                        var cacheKey = $"{_cachePrefix}:{key}";
+                        if (_cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
                         {
-                            throw new InvalidOperationException("");
+                            if (cachedEntity == null)
+                            {
+                                throw new CacheMissException(cacheKey);
+                            }
+
+                            resultList.Add(cachedEntity);
                         }
-
-                        resultList.Add(cachedEntity);
-                    }
-                    else
-                    {
-                        keysToFetchFromDb.Add(key);
+                        else
+                        {
+                            keysToFetchFromDb.Add(key);
+                        }
                     }
                 }
-            }
-            else
-            {
-                keysToFetchFromDb = keys;
-            }
-
-            if (keysToFetchFromDb.Count > 0)
-            {
-                // 假設你的 IDataAccess<TEntity> 有支援批次查詢
-                var dbEntities = await _dataAccess.QueryAsync(keysToFetchFromDb);
-
-                if (dbEntities == null)
+                else
                 {
-                    throw new ArgumentException("");
+                    keysToFetchFromDb = keys;
                 }
 
-                foreach (var entity in dbEntities)
+                if (keysToFetchFromDb.Count > 0)
                 {
-                    if (entity != null)
+                    // 📝 假設 _dataAccess 支援批次查詢
+                    var dbEntities = await _dataAccess.QueryAsync(keysToFetchFromDb);
+
+                    if (dbEntities == null || dbEntities.Count == 0)
                     {
-                        var cacheKey = $"{_cachePrefix}:{entity.Id}";
-                        _cache.Set(cacheKey, entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
-                        resultList.Add(entity);
+                        throw new EntityNotFoundException(typeof(TEntity).Name, string.Join(", ", keysToFetchFromDb));
+                    }
+
+                    foreach (var entity in dbEntities)
+                    {
+                        if (entity != null)
+                        {
+                            var cacheKey = $"{_cachePrefix}:{entity.Id}";
+                            _cache.Set(cacheKey, entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                            resultList.Add(entity);
+                        }
                     }
                 }
+
+                if (resultList.Count != keys.Count)
+                {
+                    // 檢查是否有缺失
+                    var missingKeys = keys.Except(resultList.Select(e => e.Id)).ToList();
+
+                    if (missingKeys.Any())
+                    {
+                        throw new EntityNotFoundException(typeof(TEntity).Name, string.Join(", ", missingKeys));
+                    }
+                }
+
+                return resultList;
+            }
+            catch (RepositoryException)
+            {
+                throw; // 不包自家 RepositoryException
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException("Get(List)", typeof(TEntity).Name, ex);
+            }
+        }
+
+        public virtual async Task<List<TEntity>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
+        {
+            if (startTime.HasValue && endTime.HasValue && startTime > endTime)
+            {
+                throw new InvalidRepositoryArgumentException(
+                    "startTime, endTime",
+                    "Start time cannot be later than end time"
+                );
             }
 
-            return resultList;
+            try
+            {
+                var result = await _dataAccess.QueryByTimeAsync(startTime, endTime);
+
+                if (result == null || result.Count == 0)
+                {
+                    string rangeDescription = (startTime.HasValue && endTime.HasValue)
+                        ? $"{startTime.Value:yyyy-MM-dd HH:mm:ss} ~ {endTime.Value:yyyy-MM-dd HH:mm:ss}"
+                        : "specified time range";
+
+                    throw new EntityNotFoundException(typeof(TEntity).Name, rangeDescription);
+                }
+
+                return result;
+            }
+            catch (RepositoryException)
+            {
+                throw; // 不包自家 RepositoryException
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException("GetByTime", typeof(TEntity).Name, ex);
+            }
         }
 
         public virtual async Task UpdateAsync(string key, TEntity entity)
         {
-            bool bResult = await _dataAccess.UpdateAsync(key, entity);
-
-            if (bResult)
+            try
             {
+                bool bResult = await _dataAccess.UpdateAsync(key, entity);
+
+                if (!bResult)
+                {
+                    throw new EntityNotFoundException(typeof(TEntity).Name, key);
+                }
+
                 _cache.Set($"{_cachePrefix}:{key}", entity, TimeSpan.FromMinutes(_cacheDurationMinutes));
                 _cache.Remove($"{_cachePrefix}:all");
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
-                _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
+                _cache.Remove($"{_cachePrefix}:findLast");
             }
-            else
+            catch (RepositoryException)
             {
-                throw new Exception("");
+                throw; // 不包自家 RepositoryException
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException("Update", typeof(TEntity).Name, ex);
             }
         }
 
         public virtual async Task DeleteAsync(string key)
         {
-            bool bResult =await _dataAccess.DeleteAsync(key);
-
-            if (bResult)
+            try
             {
+                bool bResult = await _dataAccess.DeleteAsync(key);
+
+                if (!bResult)
+                {
+                    throw new EntityNotFoundException(typeof(TEntity).Name, key);
+                }
+
                 _cache.Remove($"{_cachePrefix}:{key}");
                 _cache.Remove($"{_cachePrefix}:all");
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
-                _cache.Remove($"{_cachePrefix}:findLast"); // 🆕 新增資料後，移除 FindLast 快取
+                _cache.Remove($"{_cachePrefix}:findLast");
             }
-            else
+            catch (RepositoryException)
             {
-                throw new Exception("");
+                throw; // 不包自家 RepositoryException
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException("Delete", typeof(TEntity).Name, ex);
             }
         }
+
         public virtual async Task<bool> ExistsAsync(string key, bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:exists:{key}";
@@ -212,11 +305,22 @@ namespace XPlan.Repository
                 return cachedExists;
             }
 
-            bool exists = await _dataAccess.ExistsAsync(key);
+            try
+            {
+                bool exists = await _dataAccess.ExistsAsync(key);
 
-            _cache.Set(cacheKey, exists, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                _cache.Set(cacheKey, exists, TimeSpan.FromMinutes(_cacheDurationMinutes));
 
-            return exists;
+                return exists;
+            }
+            catch (RepositoryException)
+            {
+                throw; // 不包自家 RepositoryException
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException("Exist", typeof(TEntity).Name, ex);
+            }
         }
 
         public virtual async Task<bool> ExistsAsync(List<string> keys, bool bCache = true)
@@ -228,6 +332,7 @@ namespace XPlan.Repository
 
             // 批次快取檢查（全部 keys 都有快取時直接回傳）
             var missingKeys = new List<string>();
+
             if (_bCacheEnable && bCache)
             {
                 foreach (var key in keys)
@@ -249,45 +354,68 @@ namespace XPlan.Repository
                 missingKeys = keys;
             }
 
-            // 用批次查詢檢查缺少的 keys
-            bool allExist = await _dataAccess.ExistsAsync(missingKeys);
-            foreach (var key in missingKeys)
+            try
             {
-                _cache.Set($"{_cachePrefix}:exists:{key}", allExist, TimeSpan.FromMinutes(_cacheDurationMinutes));
-            }
+                // 用批次查詢檢查缺少的 keys
+                bool allExist = await _dataAccess.ExistsAsync(missingKeys);
 
-            return allExist;
+                foreach (var key in missingKeys)
+                {
+                    _cache.Set($"{_cachePrefix}:exists:{key}", allExist, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                }
+
+                return allExist;
+            }
+            catch (RepositoryException)
+            {
+                throw; // 不包自家 RepositoryException
+            }
+            catch (Exception ex)
+            {
+                throw new DatabaseOperationException("Exists", typeof(TEntity).Name, ex);
+            }
         }
 
         public virtual async Task<TEntity> FindLastAsync(bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:findLast";
 
-            // 嘗試從快取取得
-            if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
+            try
             {
-                if (cachedEntity == null)
+                // 嘗試從快取取得
+                if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
+                {
+                    if (cachedEntity == null)
+                    {
+                        throw new CacheMissException(cacheKey);
+                    }
+
+                    return cachedEntity;
+                }
+
+                // 如果快取沒有，從資料庫查詢
+                var lastEntity = await _dataAccess.FindLastAsync();
+
+                if (lastEntity != null)
+                {
+                    // 寫入快取，設定過期時間（例如 30 秒）
+                    _cache.Set(cacheKey, lastEntity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                }
+                else
                 {
                     throw new InvalidOperationException("");
                 }
 
-                return cachedEntity;
+                return lastEntity;
             }
-
-            // 如果快取沒有，從資料庫查詢
-            var lastEntity = await _dataAccess.FindLastAsync();
-
-            if (lastEntity != null)
+            catch (RepositoryException)
             {
-                // 寫入快取，設定過期時間（例如 30 秒）
-                _cache.Set(cacheKey, lastEntity, TimeSpan.FromMinutes(_cacheDurationMinutes));
+                throw; // 不包自家 RepositoryException
             }
-            else
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("");
+                throw new DatabaseOperationException("FindLastAsync", typeof(TEntity).Name, ex);
             }
-
-            return lastEntity;
         }
     }
 }
