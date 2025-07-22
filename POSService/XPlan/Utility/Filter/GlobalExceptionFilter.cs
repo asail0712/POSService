@@ -44,7 +44,7 @@ namespace XPlan.Utility.Exceptions
                     break;
 
                 case CacheMissException cacheEx:
-                    statusCode      = StatusCodes.Status404NotFound; // 或改 500 視你的需求
+                    statusCode      = StatusCodes.Status404NotFound;
                     errorResponse   = new
                     {
                         code    = 404,
