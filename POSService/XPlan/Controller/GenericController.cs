@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,47 +26,58 @@ namespace XPlan.Controller
 
         // C - Create
         [HttpPost]
-        public virtual async Task<IActionResult> CreateAsync([FromBody] TRequest requestDto)
+        public async Task<IActionResult> Create([FromBody] TRequest requestDto)
         {
-            var response = await _service.CreateAsync(requestDto);
-
-            return Ok(response);
+            return Ok(await OnCreate(requestDto));
         }
 
         // R - Read All
         [HttpGet]
-        public virtual async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAll()
         {
-            var result = await _service.GetAllAsync();
-
-            return Ok(result);
+            return Ok(await OnGetAll());
         }
 
         // R - Read by Id
         [HttpGet("{key}")]
-        public virtual async Task<IActionResult> GetAsync(string key)
+        public async Task<IActionResult> Get(string key)
         {
-            var result = await _service.GetAsync(key);
-
-            return Ok(result);
+            return Ok(await OnGet(key));
         }
 
         // U - Update
         [HttpPut("{key}")]
-        public virtual async Task<IActionResult> UpdateAsync(string key, [FromBody] TRequest requestDto)
+        public async Task<IActionResult> Update(string key, [FromBody] TRequest requestDto)
         {
-            bool bResult = await _service.UpdateAsync(key, requestDto);
-            
-            return Ok(bResult);
+            return Ok(await OnUpdate(key, requestDto));
         }
 
         // D - Delete
         [HttpDelete("{key}")]
-        public virtual async Task<IActionResult> DeleteAsync(string key)
-        {
-            bool bDeleted = await _service.DeleteAsync(key);
+        public async Task<IActionResult> Delete(string key)
+        {            
+            return Ok(await OnDelete(key));
+        }
 
-            return Ok(bDeleted);
+        protected virtual async Task<TResponse> OnCreate(TRequest request)
+        {
+            return await _service.CreateAsync(request);
+        }
+        protected virtual async Task<TResponse> OnGet(string key)
+        {
+            return await _service.GetAsync(key);
+        }
+        protected virtual async Task<List<TResponse>> OnGetAll()
+        {
+            return await _service.GetAllAsync();
+        }
+        protected virtual async Task<bool> OnUpdate(string key, TRequest request)
+        {
+            return await _service.UpdateAsync(key, request);
+        }
+        protected virtual async Task<bool> OnDelete(string key)
+        {
+            return await _service.DeleteAsync(key);
         }
     }
 }

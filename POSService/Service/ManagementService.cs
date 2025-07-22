@@ -1,7 +1,6 @@
 ﻿
 using AutoMapper;
-using Common.DTO;
-using Common.Entities;
+using Common.DTO.Management;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;

@@ -1,5 +1,5 @@
-﻿using Common.DTO;
-using Common.Entities;
+﻿using Common.DTO.Management;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
@@ -43,7 +43,10 @@ namespace POSService.Controllers
                 Name      = requestDto.Name,
                 IsActive  = requestDto.IsActive
             };
-            return await base.UpdateAsync(key, staffDataRequest);
+
+            var result = await base.Update(key, staffDataRequest);
+
+            return Ok(result);
         }
     }
 }

@@ -14,11 +14,11 @@ namespace Common.Filter
             HashSet<string> hiddenSet = new HashSet<string>()
             {
                 "ManagementController.ChangePassword",
-                "ManagementController.CreateAsync",
-                "ManagementController.GetAllAsync",
-                "ManagementController.GetAsync",
+                "ManagementController.Create",
+                "ManagementController.GetAll",
+                "ManagementController.Get",
                 "ManagementController.ChangeData",
-                "ManagementController.DeleteAsync"
+                "ManagementController.Delete"
             };
 
             return hiddenSet;

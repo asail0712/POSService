@@ -8,13 +8,13 @@ namespace Common.Filter
         {
             HashSet<string> hiddenSet = new HashSet<string>()
             {
-                "OrderController.DeleteAsync",
-                "OrderRecallController.CreateAsync",
-                "OrderRecallController.GetAllAsync",
-                "OrderRecallController.GetAsync",
-                "OrderRecallController.UpdateAsync",
-                "OrderRecallController.DeleteAsync",
-                "ManagementController.UpdateAsync"
+                "OrderController.Delete",
+                "OrderRecallController.Create",
+                "OrderRecallController.GetAll",
+                "OrderRecallController.Get",
+                "OrderRecallController.Update",
+                "OrderRecallController.Delete",
+                "ManagementController.Update"
             };
 
             return hiddenSet;

@@ -1,5 +1,4 @@
-﻿using Common.Entities;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Entities;
 using XPlan.Entities;
