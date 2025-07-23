@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using System.Linq.Expressions;
+
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 using XPlan.DataAccess;
@@ -208,6 +210,11 @@ namespace XPlan.Repository
             }
         }
 
+        public virtual async Task<List<TEntity>?> GetAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _dataAccess.QueryAsync(predicate);
+        }
+
         public virtual async Task<List<TEntity>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
             if (startTime.HasValue && endTime.HasValue && startTime > endTime)
@@ -220,7 +227,11 @@ namespace XPlan.Repository
 
             try
             {
-                var result = await _dataAccess.QueryByTimeAsync(startTime, endTime);
+                Expression<Func<TEntity, bool>> predicate = e =>
+                            (!startTime.HasValue || e.CreatedAt >= startTime.Value) &&
+                            (!endTime.HasValue || e.CreatedAt <= endTime.Value);
+                // 查詢
+                var result = await _dataAccess.QueryAsync(predicate);
 
                 if (result == null || result.Count == 0)
                 {

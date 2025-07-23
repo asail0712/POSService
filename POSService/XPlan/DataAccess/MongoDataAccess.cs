@@ -1,8 +1,9 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
-
-using XPlan.Utility.Databases;
+using MongoDB.Entities;
+using System.Linq.Expressions;
 using XPlan.Entities;
+using XPlan.Utility.Databases;
 
 namespace XPlan.DataAccess
 {
@@ -70,6 +71,14 @@ namespace XPlan.DataAccess
             var baseFilter      = Builders<TEntity>.Filter.In(_searchKey, keys);
 
             return await _collection.Find(baseFilter).ToListAsync();
+        }
+
+        public virtual async Task<List<TEntity>?> QueryAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            var entities = await _collection.Find(predicate)
+                                       .ToListAsync();
+
+            return entities;
         }
 
         public virtual async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)

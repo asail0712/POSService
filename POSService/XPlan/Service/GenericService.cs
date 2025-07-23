@@ -1,11 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using XPlan.Entities;
 using XPlan.Repository;
@@ -50,12 +43,6 @@ namespace XPlan.Service
         {
             var entity = await _repository.GetAsync(keys);
             return _mapper.Map<List<TResponse>>(entity);
-        }
-
-        public virtual async Task<List<TResponse>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
-        {
-            List<TEntity>? entities = await _repository.GetByTimeAsync();
-            return _mapper.Map<List<TResponse>>(entities);
         }
 
         public virtual async Task UpdateAsync(string key, TRequest request)

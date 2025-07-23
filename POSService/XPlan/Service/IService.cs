@@ -11,8 +11,7 @@ namespace XPlan.Service
         Task<TResponse> CreateAsync(TRequest request);
         Task<List<TResponse>> GetAllAsync();
         Task<TResponse> GetAsync(string key);
-        Task<List<TResponse>> GetAsync(List<string> keys);
-        Task<List<TResponse>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null);        
+        Task<List<TResponse>> GetAsync(List<string> keys);  
         Task UpdateAsync(string key, TRequest request);
         Task DeleteAsync(string key);
         Task<bool> IsExists(List<string> idList);

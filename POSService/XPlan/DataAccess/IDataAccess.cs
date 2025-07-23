@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Linq.Expressions;
 using XPlan.Entities;
 
 namespace XPlan.DataAccess
@@ -10,6 +11,7 @@ namespace XPlan.DataAccess
         Task<List<TEntity>?> QueryAllAsync();
         Task<TEntity?> QueryAsync(string key);
         Task<List<TEntity>?> QueryAsync(List<string> key);
+        Task<List<TEntity>?> QueryAsync(Expression<Func<TEntity, bool>> predicate);
         Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime);
         Task<bool> UpdateAsync(string key, TEntity entity);
         Task<bool> DeleteAsync(string key);
