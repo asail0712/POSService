@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using Common.DTO.Management;
+using Common.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
@@ -32,9 +33,7 @@ namespace Service
 
             if (staffData == null)
             {
-                loginResponse.Success   = false;
-                loginResponse.Message   = "無此帳號";
-                return loginResponse;
+                throw new StaffNotFoundException(request.Account);
             }
 
             if (staffData.PasswordHash == Utils.ComputeSha256Hash(request.Password, _salt))
@@ -46,9 +45,7 @@ namespace Service
             }
             else
             {
-                loginResponse.Success   = false;
-                loginResponse.Message   = "密碼錯誤";
-                return loginResponse;
+                throw new InvalidStaffPasswordException();
             }
         }
 
@@ -59,31 +56,19 @@ namespace Service
                 string.IsNullOrWhiteSpace(request.OldPassword) ||
                 string.IsNullOrWhiteSpace(request.NewPassword))
             {
-                return new LoginResponse
-                {
-                    Success = false,
-                    Message = "請提供完整的資料"
-                };
+                throw new InvalidChangePasswordRequestException();
             }
 
             var staffData = await _repository.GetAsync(request.Account);
 
             if (staffData == null)
             {
-                return new LoginResponse
-                {
-                    Success = false,
-                    Message = "找不到使用者"
-                };
+                throw new StaffNotFoundException(request.Account);
             }
 
             if(staffData.PasswordHash != Utils.ComputeSha256Hash(request.OldPassword, _salt))
             {
-                return new LoginResponse
-                {
-                    Success = false,
-                    Message = "舊密碼不正確"
-                };
+                throw new InvalidStaffPasswordException();
             }
 
             staffData.PasswordHash = Utils.ComputeSha256Hash(request.NewPassword, _salt);

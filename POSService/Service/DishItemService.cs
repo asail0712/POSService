@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.DTO.Dish;
+using Common.Exceptions;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Repository.Interface;
 using Service.Interface;
@@ -23,7 +24,24 @@ namespace Service
 
         public async Task<int> ReduceStock(string key, int numOfReduce)
         {
-            return await _repository.ReduceStock(key, numOfReduce);
+            var dishItem = await _repository.GetAsync(key);
+            if (dishItem == null)
+            {
+                throw new DishItemNotFoundException(key);
+            }
+
+            if (dishItem.Stock < numOfReduce)
+            {
+                throw new DishItemOutOfStockException(key, numOfReduce, dishItem.Stock);
+            }
+
+            int reduced = await _repository.ReduceStock(key, numOfReduce);
+            if (reduced <= 0)
+            {
+                throw new InvalidDishItemOperationException("Failed to reduce stock.");
+            }
+
+            return reduced;
         }
     }
 }

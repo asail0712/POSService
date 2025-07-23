@@ -8,27 +8,30 @@ using XPlan.Utility.Exceptions;
 
 namespace Common.Exceptions
 {
-    public class POSServiceErrorCode
+    // Management
+    public class StaffNotFoundException : CustomException
     {
-        // Product
-        public const int ProductNotFound                = 100001;
-        public const int InvalidProductItem             = 100002;
-        public const int ProductStockReduceFailed       = 100003;
-        public const int ProductDatabaseOperation       = 100004;
-
-        // Order
-        public const int OrderNotFound                  = 200001;
-        public const int InvalidOrderProduct            = 200002;
-        public const int OrderStatusUpdate              = 200003;
-        public const int OrderDatabaseOperation         = 200004;
-
-        // OrderRecall
-        public const int OrderRecallNotFound            = 300001;
-        public const int InvalidOrderRecallRequest      = 300002;
-        public const int OrderRecallDatabaseOperation   = 300003;
-        public const int OrderRecallAggregation         = 300004;
+        public StaffNotFoundException(string account)
+            : base($"Staff with account '{account}' was not found.") { }
     }
 
+    public class InvalidStaffPasswordException : CustomException
+    {
+        public InvalidStaffPasswordException()
+            : base("The provided password is incorrect.") { }
+    }
+
+    public class InvalidChangePasswordRequestException : CustomException
+    {
+        public InvalidChangePasswordRequestException()
+            : base("The change password request is invalid. Please check the provided data.") { }
+    }
+
+    public class ManagementDatabaseOperationException : CustomException
+    {
+        public ManagementDatabaseOperationException(string operation, Exception inner)
+            : base($"Management database operation '{operation}' failed.", inner) { }
+    }
 
     // Product
     public class ProductNotFoundException : CustomException
@@ -103,5 +106,30 @@ namespace Common.Exceptions
     {
         public OrderRecallAggregationException(string reason)
             : base($"Failed to aggregate sales data: {reason}") { }
+    }
+
+    // Dish
+    public class DishItemNotFoundException : CustomException
+    {
+        public DishItemNotFoundException(string id)
+            : base($"Dish item with ID '{id}' was not found.") { }
+    }
+
+    public class InvalidDishItemOperationException : CustomException
+    {
+        public InvalidDishItemOperationException(string reason)
+            : base($"Invalid operation on dish item: {reason}") { }
+    }
+
+    public class DishItemOutOfStockException : CustomException
+    {
+        public DishItemOutOfStockException(string id, int requested, int available)
+            : base($"Dish item '{id}' out of stock. Requested: {requested}, Available: {available}") { }
+    }
+
+    public class DishItemDatabaseOperationException : CustomException
+    {
+        public DishItemDatabaseOperationException(string operation, Exception inner)
+            : base($"Database operation '{operation}' failed in DishItemService. Because: {inner.Message}", inner) { }
     }
 }

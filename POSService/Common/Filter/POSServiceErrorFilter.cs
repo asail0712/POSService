@@ -6,6 +6,39 @@ using XPlan.Utility.Exceptions;
 
 namespace Common.Filter
 {
+    public class POSServiceErrorCode
+    {
+        // Product
+        public const int ProductNotFound            = 100001;
+        public const int InvalidProductItem         = 100002;
+        public const int ProductStockReduceFailed   = 100003;
+        public const int ProductDatabaseOperation   = 100004;
+
+        // Order
+        public const int OrderNotFound              = 200001;
+        public const int InvalidOrderProduct        = 200002;
+        public const int OrderStatusUpdate          = 200003;
+        public const int OrderDatabaseOperation     = 200004;
+
+        // OrderRecall
+        public const int OrderRecallNotFound            = 300001;
+        public const int InvalidOrderRecallRequest      = 300002;
+        public const int OrderRecallDatabaseOperation   = 300003;
+        public const int OrderRecallAggregation         = 300004;
+
+        // Dish
+        public const int DishItemNotFound               = 400001;
+        public const int DishItemOutOfStock             = 400002;
+        public const int InvalidDishItemOperation       = 400003;
+        public const int DishItemDatabaseOperation      = 400004;
+
+        // Management
+        public const int StaffNotFound              = 500001;
+        public const int InvalidPassword            = 500002;
+        public const int InvalidChangePassword      = 500003;
+        public const int DatabaseOperation          = 500004;
+    }
+
     public class POSServiceErrorFilter : GlobalExceptionFilter
     {
         protected override CustomErrorResponse FilterOtherError(CustomException customException)
@@ -14,6 +47,34 @@ namespace Common.Filter
          
             switch (customException)
             {
+                case StaffNotFoundException exStaffNotFound:
+                    response.StatusCode = StatusCodes.Status404NotFound;
+                    response.ErrorCode  = POSServiceErrorCode.StaffNotFound;
+                    response.Message    = "Staff account not found.";
+                    response.Detail     = exStaffNotFound.Message;
+                    return response;
+
+                case InvalidStaffPasswordException exInvalidPwd:
+                    response.StatusCode = StatusCodes.Status400BadRequest;
+                    response.ErrorCode  = POSServiceErrorCode.InvalidPassword;
+                    response.Message    = "Incorrect password.";
+                    response.Detail     = exInvalidPwd.Message;
+                    return response;
+
+                case InvalidChangePasswordRequestException exInvalidChangeReq:
+                    response.StatusCode = StatusCodes.Status400BadRequest;
+                    response.ErrorCode  = POSServiceErrorCode.InvalidChangePassword;
+                    response.Message    = "Invalid change password request.";
+                    response.Detail     = exInvalidChangeReq.Message;
+                    return response;
+
+                case ManagementDatabaseOperationException exMgmtDb:
+                    response.StatusCode = StatusCodes.Status500InternalServerError;
+                    response.ErrorCode  = POSServiceErrorCode.DatabaseOperation;
+                    response.Message    = "Management database operation failed.";
+                    response.Detail     = exMgmtDb.Message;
+                    return response;
+
                 case ProductNotFoundException notFoundEx:
                     response.StatusCode = StatusCodes.Status404NotFound;
                     response.ErrorCode  = POSServiceErrorCode.ProductNotFound;
@@ -95,6 +156,35 @@ namespace Common.Filter
                     response.ErrorCode  = POSServiceErrorCode.OrderRecallDatabaseOperation;
                     response.Message    = "Order recall database operation failed.";
                     response.Detail     = dbEx.Message;
+                    return response;
+
+                // 🍱 DishItemService exceptions
+                case DishItemNotFoundException exDishNotFound:
+                    response.StatusCode = StatusCodes.Status404NotFound;
+                    response.ErrorCode  = POSServiceErrorCode.DishItemNotFound;
+                    response.Message    = "Dish item not found.";
+                    response.Detail     = exDishNotFound.Message;
+                    return response;
+
+                case DishItemOutOfStockException exOutOfStock:
+                    response.StatusCode = StatusCodes.Status409Conflict;
+                    response.ErrorCode  = POSServiceErrorCode.DishItemOutOfStock;
+                    response.Message    = "Dish item out of stock.";
+                    response.Detail     = exOutOfStock.Message;
+                    return response;
+
+                case InvalidDishItemOperationException exInvalidDishOp:
+                    response.StatusCode = StatusCodes.Status400BadRequest;
+                    response.ErrorCode  = POSServiceErrorCode.InvalidDishItemOperation;
+                    response.Message    = "Invalid dish item operation.";
+                    response.Detail     = exInvalidDishOp.Message;
+                    return response;
+
+                case DishItemDatabaseOperationException exDishDb:
+                    response.StatusCode = StatusCodes.Status500InternalServerError;
+                    response.ErrorCode  = POSServiceErrorCode.DishItemDatabaseOperation;
+                    response.Message    = "Dish item database operation failed.";
+                    response.Detail     = exDishDb.Message;
                     return response;
 
                 default:
