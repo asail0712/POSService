@@ -2,8 +2,7 @@
 using Common.DTO.Dish;
 using Common.DTO.Product;
 using DataAccess.Interface;
-using MongoDB.Driver;
-using MongoDB.Entities;
+
 using XPlan.DataAccess;
 
 namespace DataAccess
@@ -17,7 +16,7 @@ namespace DataAccess
 
         protected async override Task<ProductPackageEntity> MapToEntity(ProductPackageDocument doc, IMapper mapper)
         {
-            List<DishItemDocument> dishList = (await Task.WhenAll(doc.ItemDocs.Select(item => item.ToEntityAsync()))).ToList();
+            List<DishItemDocument> dishList = (await Task.WhenAll(doc.ItemDocs.Select(item => item.LoadEntityAsync()))).ToList();
 
             return new ProductPackageEntity 
             {
@@ -49,7 +48,7 @@ namespace DataAccess
                 Discount            = entity.Discount,
                 OverridePrice       = entity.OverridePrice,
                 Description         = entity.Description,
-                ItemDocs            = entity.ItemIDs.Select(id => new One<DishItemDocument>(id)).ToList()
+                ItemDocs            = entity.ItemIDs.Select(id => id.ToOne<DishItemDocument>()).ToList()
             };
         }
     }

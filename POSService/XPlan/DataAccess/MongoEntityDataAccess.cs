@@ -199,4 +199,43 @@ namespace XPlan.DataAccess
             return await MapToEntity(doc, _mapper);
         }
     }
+
+    public static class OneReferenceHelper
+    {
+        public static string? GetId<TDocument>(One<TDocument> one)
+            where TDocument : IEntity
+        {
+            return one?.ID;
+        }
+
+       public static One<TDocument> ToOne<TDocument>(this string id)
+            where TDocument : IEntity
+        {
+            return new One<TDocument>(id);
+        }
+
+        public static async Task<TDocument> LoadEntityAsync<TDocument>(this One<TDocument> one)
+            where TDocument : IEntity
+        {
+            return await one.ToEntityAsync();
+        }
+
+        public static async Task<List<TDocument>> LoadEntitysAsync<TDocument>(this List<One<TDocument>> ones)
+            where TDocument : IEntity
+        {
+            return (await Task.WhenAll(ones.Select(one => one.ToEntityAsync()))).ToList();
+        }
+
+        public static One<TDocument> ToRef<TDocument>(this TDocument entity)
+            where TDocument : IEntity
+        {
+            return entity.ToReference();
+        }
+
+        public static List<One<TDocument>> ToRef<TDocument>(this List<TDocument> docs)
+            where TDocument : IEntity
+        {
+            return docs.Select(doc => doc.ToReference()).ToList();
+        }
+    }
 }
