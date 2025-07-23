@@ -12,9 +12,18 @@ namespace XPlan.DataAccess
         private readonly IMongoCollection<TEntity> _collection;
         private static bool _bIndexCreated  = false;
         private static string _searchKey    = "Id";
+        private List<string> _noUpdateList;
+
         public MongoDataAccess(IMongoDbContext dbContext)
         {
             this._collection    = dbContext.GetCollection<TEntity>(typeof(TEntity).Name);
+            this._noUpdateList  = new List<string>();
+        }
+
+        protected void AddNoUpdateKey(string noUpdateKey)
+        {
+            _noUpdateList.Add(noUpdateKey);
+            _noUpdateList.Distinct();
         }
 
         protected void EnsureIndexCreated(string searchKey)
@@ -93,7 +102,7 @@ namespace XPlan.DataAccess
             return await _collection.Find(filter).ToListAsync();
         }
 
-        public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
+        public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
         {
             var filter      = Builders<TEntity>.Filter.Eq(_searchKey, key);
             var bsonDoc     = entity.ToBsonDocument();              // 將 Entity 轉成 BsonDocument
@@ -101,7 +110,7 @@ namespace XPlan.DataAccess
             // 欄位黑名單：_id、CreatedAt、noUpdateList
             var excludedFields = new HashSet<string>(
                 new[] { "_id", "CreatedAt"}
-                .Concat(noUpdateList ?? Enumerable.Empty<string>())
+                .Concat(_noUpdateList ?? Enumerable.Empty<string>())
             );
 
             // 過濾要更新的欄位

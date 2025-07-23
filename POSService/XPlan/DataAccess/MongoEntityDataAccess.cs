@@ -5,6 +5,8 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Entities;
 
+using System.Linq.Expressions;
+
 using XPlan.Entities;
 
 namespace XPlan.DataAccess
@@ -16,10 +18,18 @@ namespace XPlan.DataAccess
         private readonly IMapper _mapper;
         private static bool _bIndexCreated  = false;
         private static string _searchKey    = "Id";
+        private List<string> _noUpdateList;
 
         protected MongoEntityDataAccess(IMapper mapper)
         {
-            _mapper = mapper;
+            this._mapper        = mapper;
+            this._noUpdateList  = new List<string>();
+        }
+
+        protected void AddNoUpdateKey(string noUpdateKey)
+        {
+            _noUpdateList.Add(noUpdateKey);
+            _noUpdateList.Distinct();
         }
 
         /// <summary>
@@ -110,6 +120,19 @@ namespace XPlan.DataAccess
             return entities.ToList();
         }
 
+        public virtual async Task<List<TEntity>?> QueryAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            // 先把 predicate 映射成 Document 的條件
+            var documentPredicate = _mapper.Map<Expression<Func<TDocument, bool>>>(predicate);
+
+            var docs                = await DB.Find<TDocument>()
+                                       .Match(documentPredicate)
+                                       .ExecuteAsync();
+
+            var entities            = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
+            return entities.ToList();
+        }
+
         public virtual async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
         {
             Find<TDocument, TDocument> query = DB.Find<TDocument>();
@@ -130,12 +153,12 @@ namespace XPlan.DataAccess
             return entities.ToList();
         }
 
-        public virtual async Task<bool> UpdateAsync(string key, TEntity entity, List<string>? noUpdateList = null)
+        public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
         {
             var doc             = MapToDocument(entity, _mapper);
             var excludedFields  = new HashSet<string>(
                 new[] { "_id", "CreatedAt", _searchKey }
-                .Concat(noUpdateList ?? Enumerable.Empty<string>())
+                .Concat(_noUpdateList ?? Enumerable.Empty<string>())
             );
 
 

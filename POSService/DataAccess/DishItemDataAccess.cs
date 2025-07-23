@@ -38,11 +38,6 @@ namespace DataAccess
             var updatedDoc = await DB.Collection<DishItemDocument>()
                                      .FindOneAndUpdateAsync(filter, update, options);
 
-            if (updatedDoc == null)
-            {
-                throw new Exception("庫存不足或產品不存在");
-            }
-
             return updatedDoc.Stock;
         }
     }

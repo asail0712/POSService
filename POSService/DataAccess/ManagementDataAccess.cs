@@ -18,12 +18,7 @@ namespace DataAccess
             : base(dbContext)
         {
             EnsureIndexCreated("Account");
+            AddNoUpdateKey("PasswordHash");
         }
-
-        public override async Task<bool> UpdateAsync(string key, StaffDataEntity staffData, List<string>? noUpdateList = null)
-        {
-            return await base.UpdateAsync(key, staffData, new List<string> { "PasswordHash" });
-        }
-
     }
 }
