@@ -1,12 +1,7 @@
 ﻿using Common.Extens;
 using Common.Filter;
-using DataAccess;
-using DataAccess.Interface;
-using Microsoft.AspNetCore.Builder;
-using Repository;
-using Repository.Interface;
-using Service;
-using Service.Interface;
+using POSService.Extension;
+
 using XPlan.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,30 +55,21 @@ builder.Services.AddJwtAuthentication(new JwtOptions()
 /********************************************
  * 加上Data Access
  * ******************************************/
-builder.Services.AddScoped<IDishItemDataAccess, DishItemDataAccess>();
-builder.Services.AddScoped<IManagementDataAccess, ManagementDataAccess>();
-builder.Services.AddScoped<IOrderDataAccess, OrderDataAccess>();
-builder.Services.AddScoped<IProductDataAccess, ProductDataAccess>();
-builder.Services.AddScoped<ISalesDataAccess, OrderRecallDataAccess>();
+builder.Services.AddDataAccesses();
 
 /********************************************
  * 加上Repository
  * ******************************************/
-builder.Services.AddScoped<IDishItemRepository, DishItemRepository>();
-builder.Services.AddScoped<IManagementRepository, ManagementRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ISalesRepository, OrderRecallRepository>();
+builder.Services.AddRepositorys();
 
 /********************************************
- * 加上Services
+ * 加上Service
  * ******************************************/
-builder.Services.AddScoped<IDishItemService, DishItemService>();
-builder.Services.AddScoped<IManagementService, ManagementService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IOrderRecallService, OrderRecallService>();
+builder.Services.AddServices();
 
+/********************************************
+ * 加上Controller
+ * ******************************************/
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -114,8 +100,8 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-// 由中介層加上JSON驗證
-app.UseJwtPathAuth();
+app.UseAuthentication();              // 先認證身分
+app.UseAuthorization();               // 再授權權限
 
 app.MapControllers();
 
