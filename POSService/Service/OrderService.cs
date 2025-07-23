@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Common.DTO.Order;
 using Common.DTO.Product;
+using Common.Exceptions;
 using Repository.Interface;
 using Service.Interface;
 using System;
@@ -35,15 +36,14 @@ namespace Service
             // 檢查產品是否存在
             if (!await _productService.IsExists(request.ProductIds))
             {
-                // ED TODO
-                throw new Exception($"Product does not exist.");
+                throw new InvalidOrderProductException("One or more products in the order do not exist.");
             }
 
             var entitys = await _productRepo.GetAsync(request.ProductIds);
 
             if (entitys.Any(p => p.ProductState == ProductStatus.Closed))
             {
-                throw new Exception($"Product not on sale");
+                throw new InvalidOrderProductException("One or more products in the order are not on sale.");
             }
 
             OrderDetailEntity orderDetail   = _mapper.Map<OrderDetailEntity>(request);                  // 創建訂單
@@ -61,8 +61,7 @@ namespace Service
             // 檢查產品是否存在
             if (!await _productService.IsExists(request.ProductIds))
             {
-                // ED TODO
-                throw new Exception($"Product does not exist.");
+                throw new InvalidOrderProductException("One or more products in the updated order do not exist.");
             }
             
             OrderDetailEntity orderDetail   = _mapper.Map<OrderDetailEntity>(request);                  // 更新訂單
@@ -78,7 +77,7 @@ namespace Service
 
             if (orderDetail == null)
             {
-                throw new Exception($"Order with ID {orderId} does not exist.");
+                throw new OrderNotFoundException(orderId);
             }
 
             switch (status)
@@ -89,6 +88,10 @@ namespace Service
                     if (entity != null)
                     {
                         await _repository.DeleteAsync(orderId);
+                    }
+                    else
+                    {
+                        throw new OrderStatusUpdateException(orderId, status);
                     }
 
                     break;

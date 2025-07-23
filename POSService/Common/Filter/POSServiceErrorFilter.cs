@@ -41,7 +41,33 @@ namespace Common.Filter
                     response.Message    = "Database operation failed in ProductService.";
                     response.Detail     = dbOpEx.Message;
                     return response;
+                case OrderNotFoundException notFoundEx:
+                    response.StatusCode = StatusCodes.Status404NotFound;
+                    response.ErrorCode  = POSServiceErrorCode.OrderNotFound;
+                    response.Message    = "Order not found.";
+                    response.Detail     = notFoundEx.Message;
+                    return response;
 
+                case InvalidOrderProductException invalidProductEx:
+                    response.StatusCode = StatusCodes.Status400BadRequest;
+                    response.ErrorCode  = POSServiceErrorCode.InvalidOrderProduct;
+                    response.Message    = "Invalid product in order.";
+                    response.Detail     = invalidProductEx.Message;
+                    return response;
+
+                case OrderStatusUpdateException statusEx:
+                    response.StatusCode = StatusCodes.Status409Conflict;
+                    response.ErrorCode  = POSServiceErrorCode.OrderStatusUpdate;
+                    response.Message    = "Failed to update order status.";
+                    response.Detail     = statusEx.Message;
+                    return response;
+
+                case OrderDatabaseOperationException dbEx:
+                    response.StatusCode = StatusCodes.Status500InternalServerError;
+                    response.ErrorCode  = POSServiceErrorCode.OrderDatabaseOperation;
+                    response.Message    = "Order database operation failed.";
+                    response.Detail     = dbEx.Message;
+                    return response;
                 default:
                     // 沒有命中，讓 GlobalExceptionFilter 處理
                     return base.FilterOtherError(customException);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DTO.Order;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,12 @@ namespace Common.Exceptions
         public const int InvalidProductItem         = 100002;
         public const int ProductStockReduceFailed   = 100003;
         public const int ProductDatabaseOperation   = 100004;
+
+        // Order
+        public const int OrderNotFound              = 200001;
+        public const int InvalidOrderProduct        = 200002;
+        public const int OrderStatusUpdate          = 200003;
+        public const int OrderDatabaseOperation     = 200004;
     }
 
 
@@ -40,5 +47,30 @@ namespace Common.Exceptions
     {
         public ProductDatabaseOperationException(string operation, Exception inner)
             : base($"Database operation '{operation}' failed in ProductService. Because: {inner.Message}", inner) { }
+    }
+
+    // Order
+    public class OrderNotFoundException : CustomException
+    {
+        public OrderNotFoundException(string orderId)
+            : base($"Order with ID '{orderId}' was not found.") { }
+    }
+
+    public class InvalidOrderProductException : CustomException
+    {
+        public InvalidOrderProductException(string message)
+            : base($"Invalid product in order: {message}") { }
+    }
+
+    public class OrderDatabaseOperationException : CustomException
+    {
+        public OrderDatabaseOperationException(string operation, Exception inner)
+            : base($"Database operation '{operation}' failed in OrderService. Because: {inner.Message}", inner) { }
+    }
+
+    public class OrderStatusUpdateException : CustomException
+    {
+        public OrderStatusUpdateException(string orderId, OrderStatus status)
+            : base($"Failed to update status for order '{orderId}' to '{status}'.") { }
     }
 }
