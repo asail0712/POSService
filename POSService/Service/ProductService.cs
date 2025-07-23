@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using Common.DTO.Dish;
+
 using Common.DTO.Product;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using MongoDB.Driver;
-using Repository;
+using Common.Exceptions;
 using Repository.Interface;
+
 using Service.Interface;
-using System;
-using System.Collections.Generic;
 using XPlan.Service;
 
 namespace Service
@@ -29,8 +26,7 @@ namespace Service
 
             if(!bResult)
             {
-                // ED TODO : Handle the case where the item does not exist
-                throw new InvalidOperationException("產品中的某些項目不存在。請確認所有項目都已正確添加。");
+                throw new InvalidProductItemException("One or more items in the product do not exist.");
             }
 
             return await base.CreateAsync(request);
@@ -44,8 +40,7 @@ namespace Service
                 bool bResult = await _dishItemRepository.ExistsAsync(itemId);
                 if (!bResult)
                 {
-                    // ED TODO : Handle the case where the item does not exist
-                    return;
+                    throw new ProductNotFoundException(key);
                 }
             }
 
@@ -60,7 +55,7 @@ namespace Service
 
             if(result.ProductState == ProductStatus.Closed)
             {
-                throw new InvalidOperationException("產品中包含已售罄或不可用的項目，無法顯示簡要資訊。請確認所有項目都可用。");
+                throw new InvalidProductItemException("Product contains unavailable or sold-out items.");
             }
             
             return _mapper.Map<ProductBriefResponse>(result);
@@ -69,6 +64,11 @@ namespace Service
         public async Task<List<ProductBriefResponse>> GetAllBriefAsync()
         {            
             var result = await _repository.GetAllAsync();
+            
+            if (result == null || !result.Any())
+            {
+                throw new ProductNotFoundException("All Products");
+            }
 
             // 過濾掉包含已售罄或已下架項目的產品
             var validProducts = result.Where(p => p.ProductState != ProductStatus.Closed).ToList();
@@ -80,11 +80,22 @@ namespace Service
         {
             var tasks   = idList.Select(id => _repository.GetAsync(id));    // 先準備多個非同步任務
             var results = await Task.WhenAll(tasks);                        // 等待全部完成
+
+            if (results.Any(r => r == null))
+            {
+                throw new ProductNotFoundException(string.Join(",", idList));
+            }
+
             return results.Sum(item => item.Price);                         // 加總價格
         }
         public async Task ReduceStock(string key, int numOfReduce)
         {
             var product = await _repository.GetAsync(key);
+
+            if (product == null)
+            {
+                throw new ProductNotFoundException(key);
+            }
 
             foreach (var itemId in product.ItemIDs)
             {

@@ -1,13 +1,51 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using MongoDB.Entities;
-using System;
-using System.Text.RegularExpressions;
 
 namespace XPlan.Utility.Exceptions
 {
+    public class CustomException : Exception
+    {
+        public CustomException(string message)
+            : base(message)
+        { }
+
+        public CustomException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
+    }
+
+    public class EntityNotFoundException : CustomException
+    {
+        public EntityNotFoundException(string entityName, string key)
+            : base($"{entityName} with key '{key}' was not found.") { }
+    }
+
+    public class CacheMissException : CustomException
+    {
+        public CacheMissException(string cacheKey)
+            : base($"Cache miss for key '{cacheKey}'.") { }
+    }
+
+    public class InvalidEntityException : CustomException
+    {
+        public InvalidEntityException(string entityName)
+            : base($"Invalid or null entity of type '{entityName}' encountered.")
+        { }
+    }
+
+    public class DatabaseOperationException : CustomException
+    {
+        public DatabaseOperationException(string operation, string entityName, Exception inner)
+            : base($"Database operation '{operation}' failed for entity '{entityName}'. Becuz {inner.Message}", inner) { }
+    }
+
+    public class InvalidRepositoryArgumentException : CustomException
+    {
+        public InvalidRepositoryArgumentException(string parameterName, string reason)
+            : base($"Invalid argument '{parameterName}': {reason}.")
+        { }
+    }
     public class CustomErrorCode
     {
         public const int EntityNotFound             = 800001;
@@ -15,18 +53,19 @@ namespace XPlan.Utility.Exceptions
         public const int InvalidEntity              = 800003;
         public const int DatabaseOperation          = 800004;
         public const int InvalidRepositoryArgument  = 800005;
+        public const int UnknowErrorHappen          = 800006;
     }
 
     public class CustomErrorResponse
     {
-        public int ErrorCode { get; set; }  = 999999;
+        public int ErrorCode { get; set; }  = CustomErrorCode.UnknowErrorHappen;
         public int StatusCode { get; set; } = StatusCodes.Status500InternalServerError;
         public string Message { get; set; } = "An unexpected error occurred.";
         public string Detail { get; set; }  = "";
         public CustomErrorResponse() { }
         public CustomErrorResponse(Exception exception) 
         {
-            ErrorCode   = 999999;
+            ErrorCode   = CustomErrorCode.UnknowErrorHappen;
             StatusCode  = 500;
             Message     = "An unexpected error occurred.";
             Detail      = exception.Message;
@@ -35,10 +74,9 @@ namespace XPlan.Utility.Exceptions
 
     public class GlobalExceptionFilter : IAsyncExceptionFilter
     {
-        protected virtual CustomErrorResponse FilterOtherError(CustomException customException, out int errorCode)
+        protected virtual CustomErrorResponse FilterOtherError(CustomException customException)
         {
             // for override
-            errorCode = 0;
             return new CustomErrorResponse(customException);
         }
 
@@ -88,7 +126,7 @@ namespace XPlan.Utility.Exceptions
 
                 case CustomException otherEx:
                     // 捕捉其他 CustomException 子類別
-                    response = FilterOtherError(otherEx, out statusCode);
+                    response = FilterOtherError(otherEx);
                     break;
                 default:
                     // 未知錯誤
