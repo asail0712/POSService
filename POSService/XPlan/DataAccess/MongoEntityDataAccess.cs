@@ -16,14 +16,14 @@ namespace XPlan.DataAccess
         where TDocument : IEntity, IDBEntity, new() // 👈 注意繼承 Entity
     {
         private readonly IMapper _mapper;
-        private static bool _bIndexCreated  = false;
-        private static string _searchKey    = "Id";
+        private static bool _bIndexCreated = false;
+        private static string _searchKey = "Id";
         private List<string> _noUpdateList;
 
         protected MongoEntityDataAccess(IMapper mapper)
         {
-            this._mapper        = mapper;
-            this._noUpdateList  = new List<string>();
+            this._mapper = mapper;
+            this._noUpdateList = new List<string>();
         }
 
         protected void AddNoUpdateKey(string noUpdateKey)
@@ -41,12 +41,12 @@ namespace XPlan.DataAccess
             // 當需要從外部設定時 就用回MongoDB.Driver去設定索引
             if (!_bIndexCreated)
             {
-                _bIndexCreated      = true;
-                _searchKey          = searchKey;
+                _bIndexCreated = true;
+                _searchKey = searchKey;
 
-                var indexKeys       = Builders<TDocument>.IndexKeys.Ascending(searchKey); // searchKey 是 string
-                var indexOptions    = new CreateIndexOptions { Unique = true };
-                var indexModel      = new CreateIndexModel<TDocument>(indexKeys, indexOptions);
+                var indexKeys = Builders<TDocument>.IndexKeys.Ascending(searchKey); // searchKey 是 string
+                var indexOptions = new CreateIndexOptions { Unique = true };
+                var indexModel = new CreateIndexModel<TDocument>(indexKeys, indexOptions);
 
                 DB.Collection<TDocument>().Indexes.CreateOne(indexModel);
             }
@@ -66,15 +66,15 @@ namespace XPlan.DataAccess
 
         public virtual async Task<TEntity?> InsertAsync(TEntity entity)
         {
-            var doc= MapToDocument(entity, _mapper);
+            var doc = MapToDocument(entity, _mapper);
             await doc.SaveAsync();
-            return MapToEntity(doc, _mapper).Result; 
+            return MapToEntity(doc, _mapper).Result;
         }
 
         public virtual async Task<TEntity?> QueryAsync(string key)
         {
             // 建立 Key 過濾條件
-            var keyFilter       = Builders<TDocument>.Filter.Eq(_searchKey, key);
+            var keyFilter = Builders<TDocument>.Filter.Eq(_searchKey, key);
 
             // 執行查詢
             var doc = await DB.Find<TDocument>()
@@ -91,12 +91,12 @@ namespace XPlan.DataAccess
 
         public virtual async Task<List<TEntity>?> QueryAllAsync()
         {
-            List<TDocument> docs    = await DB.Find<TDocument>()
+            List<TDocument> docs = await DB.Find<TDocument>()
                                     .Match(_ => true)
                                     .ExecuteAsync();
 
             // 非同步轉換所有文件 → Entity
-            var entities            = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
+            var entities = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
             return entities.ToList();
         }
 
@@ -107,7 +107,7 @@ namespace XPlan.DataAccess
                 return null;
             }
             // 建立 Key 過濾條件
-            var keyFilter       = Builders<TDocument>.Filter.In(_searchKey, keys);
+            var keyFilter = Builders<TDocument>.Filter.In(_searchKey, keys);
 
 
             // 執行查詢
@@ -116,7 +116,7 @@ namespace XPlan.DataAccess
                                     .ExecuteAsync();
 
             // 非同步轉換所有文件 → Entity
-            var entities    = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
+            var entities = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
             return entities.ToList();
         }
 
@@ -125,46 +125,26 @@ namespace XPlan.DataAccess
             // 先把 predicate 映射成 Document 的條件
             var documentPredicate = _mapper.Map<Expression<Func<TDocument, bool>>>(predicate);
 
-            var docs                = await DB.Find<TDocument>()
+            var docs = await DB.Find<TDocument>()
                                        .Match(documentPredicate)
                                        .ExecuteAsync();
 
-            var entities            = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
-            return entities.ToList();
-        }
-
-        public virtual async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
-        {
-            Find<TDocument, TDocument> query = DB.Find<TDocument>();
-
-            if (startTime.HasValue)
-            {
-                query = query.Match(d => d.CreatedAt >= startTime.Value);
-            }
-
-            if (endTime.HasValue)
-            {
-                query = query.Match(d => d.CreatedAt <= endTime.Value);
-            }
-
-            var docs        = await query.ExecuteAsync();
-            // 非同步轉換所有文件 → Entity
-            var entities    = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
+            var entities = await Task.WhenAll(docs.Select(doc => MapToEntity(doc, _mapper)));
             return entities.ToList();
         }
 
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
         {
-            var doc             = MapToDocument(entity, _mapper);
-            var excludedFields  = new HashSet<string>(
+            var doc = MapToDocument(entity, _mapper);
+            var excludedFields = new HashSet<string>(
                 new[] { "_id", "CreatedAt", _searchKey }
                 .Concat(_noUpdateList ?? Enumerable.Empty<string>())
             );
 
 
-            doc.Id              = ObjectId.GenerateNewId().ToString();// 隨便產生 因為不會進入資料庫 只是要能順利ToBsonDocument
-            var bsonDoc         = doc.ToBsonDocument();
-            var updateDict      = bsonDoc
+            doc.Id = ObjectId.GenerateNewId().ToString();// 隨便產生 因為不會進入資料庫 只是要能順利ToBsonDocument
+            var bsonDoc = doc.ToBsonDocument();
+            var updateDict = bsonDoc
                 .Where(kv => !excludedFields.Contains(kv.Name))
                 .ToDictionary(kv => kv.Name, kv => kv.Value);
 
@@ -220,6 +200,38 @@ namespace XPlan.DataAccess
             }
 
             return await MapToEntity(doc, _mapper);
+        }
+
+        public virtual async Task<TEntity?> FindOneAndUpdateAsync(
+                Expression<Func<TEntity, bool>> predicate,
+                Action<TEntity> updateAction)
+        {
+            // 將 TEntity 的 predicate 映射到 TDocument
+            var docPredicate = _mapper.Map<Expression<Func<TDocument, bool>>>(predicate);
+
+            // 查詢符合條件的 Document
+            var doc = await DB.Find<TDocument>()
+                              .Match(docPredicate)
+                              .ExecuteFirstAsync();
+
+            if (doc == null)
+            {
+                return default(TEntity);
+            }
+
+            // 映射成 Domain Entity
+            var entity = _mapper.Map<TEntity>(doc);
+
+            // 執行更新邏輯
+            updateAction(entity);
+
+            // 映射回 Document
+            _mapper.Map(entity, doc);
+
+            // 儲存修改後的 Document
+            await doc.SaveAsync();
+
+            return entity;
         }
     }
 

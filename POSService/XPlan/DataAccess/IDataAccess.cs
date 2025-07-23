@@ -12,11 +12,11 @@ namespace XPlan.DataAccess
         Task<TEntity?> QueryAsync(string key);
         Task<List<TEntity>?> QueryAsync(List<string> key);
         Task<List<TEntity>?> QueryAsync(Expression<Func<TEntity, bool>> predicate);
-        Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime);
         Task<bool> UpdateAsync(string key, TEntity entity);
         Task<bool> DeleteAsync(string key);
         Task<bool> ExistsAsync(string key);
         Task<bool> ExistsAsync(List<string> key);
         Task<TEntity?> FindLastAsync();
+        Task<TEntity?> FindOneAndUpdateAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> updateAction);
     }
 }

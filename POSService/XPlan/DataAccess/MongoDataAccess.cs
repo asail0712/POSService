@@ -81,36 +81,6 @@ namespace XPlan.DataAccess
             return entities;
         }
 
-        public virtual async Task<List<TEntity>?> QueryByTimeAsync(DateTime? startTime, DateTime? endTime)
-        {
-            // 如果 startTime 和 endTime 都沒設定，直接回傳所有資料
-            if (startTime == null && endTime == null)
-            {
-                return await _collection.Find(_ => true).ToListAsync();
-            }
-
-            // 如果兩個時間都有，並且 startTime > endTime，就交換
-            if (startTime != null && endTime != null && startTime > endTime)
-            {
-                return null;
-            }
-
-            // 建立過濾條件
-            var builder                         = Builders<TEntity>.Filter;
-            FilterDefinition<TEntity> filter    = builder.Empty;
-
-            if (startTime != null)
-            {
-                filter = builder.And(filter, builder.Gte(e => e.CreatedAt, startTime.Value));
-            }
-            if (endTime != null)
-            {
-                filter = builder.And(filter, builder.Lte(e => e.CreatedAt, endTime.Value));
-            }
-
-            return await _collection.Find(filter).ToListAsync();
-        }
-
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
         {
             var filter      = Builders<TEntity>.Filter.Eq(_searchKey, key);
@@ -176,6 +146,28 @@ namespace XPlan.DataAccess
                             .Sort(sort)
                             .Limit(1)
                             .FirstOrDefaultAsync();
+        }
+
+        public virtual async Task<TEntity?> FindOneAndUpdateAsync(
+                        Expression<Func<TEntity, bool>> predicate,
+                        Action<TEntity> updateAction)
+        {
+            // 查詢符合條件的 Entity
+            var entity = await _collection.Find(predicate).FirstOrDefaultAsync();
+
+            if (entity == null)
+            {
+                return default(TEntity);
+            }
+
+            // 執行更新邏輯
+            updateAction(entity);
+
+            // 更新資料庫
+            var filter = Builders<TEntity>.Filter.Where(predicate);
+            await _collection.ReplaceOneAsync(filter, entity);
+
+            return entity;
         }
     }
 }

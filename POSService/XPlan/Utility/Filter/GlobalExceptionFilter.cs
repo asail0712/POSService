@@ -84,7 +84,6 @@ namespace XPlan.Utility.Exceptions
         {
             var exception   = context.Exception;
             var response    = new CustomErrorResponse(context.Exception);
-            int statusCode  = StatusCodes.Status500InternalServerError;
 
             // 🎯 根據 Exception 類型決定 HTTP 狀態碼 & 訊息
             switch (exception)
