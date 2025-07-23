@@ -17,7 +17,7 @@ namespace POSService.Controllers
         }
 
         [HttpGet("GetAllBrief")]
-        public async Task<IActionResult> GetAllBriefAsync()
+        public async Task<IActionResult> GetAllBrief()
         {
             var result = await _service.GetAllBriefAsync();
 
@@ -25,7 +25,7 @@ namespace POSService.Controllers
         }
 
         [HttpGet("{key}/GetBrief")]
-        public async Task<IActionResult> GetBriefAsync(string key)
+        public async Task<IActionResult> GetBrief(string key)
         {
             var result = await _service.GetBriefAsync(key);
 

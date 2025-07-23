@@ -1,11 +1,12 @@
-﻿using Common.Filter;
+﻿using Common.Extens;
+using Common.Filter;
 using DataAccess;
 using DataAccess.Interface;
+using Microsoft.AspNetCore.Builder;
 using Repository;
 using Repository.Interface;
 using Service;
 using Service.Interface;
-
 using XPlan.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -92,6 +93,8 @@ builder.Services.AddEndpointsApiExplorer();
  * ******************************************/
 builder.Services.AddSwaggerGen(c =>
 {
+    c.GenerateSwaggerDoc(builder.Environment);
+
     c.OperationFilter<ControllerAddSummaryFilter>();    // 使用 Operation Filter 來給API加上註解
     c.DocumentFilter<ApiHiddenFilter>();                // 使用 Operation Filter 來給API加上開關
     c.OperationFilter<AddAuthorizeCheckFilter>();       // 使用 Operation Filter 來給API加上認證
@@ -103,7 +106,10 @@ var app = builder.Build();
 //if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();    
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoints();
+    });    
 }
 
 app.UseHttpsRedirection();
