@@ -43,7 +43,7 @@ namespace XPlan.Repository
 
                 return result;
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -80,7 +80,7 @@ namespace XPlan.Repository
 
                 return list;
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -117,7 +117,7 @@ namespace XPlan.Repository
 
                 return entity;
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -198,7 +198,7 @@ namespace XPlan.Repository
 
                 return resultList;
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -233,7 +233,7 @@ namespace XPlan.Repository
 
                 return result;
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -259,7 +259,7 @@ namespace XPlan.Repository
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
                 _cache.Remove($"{_cachePrefix}:findLast");
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -285,7 +285,7 @@ namespace XPlan.Repository
                 _cache.Remove($"{_cachePrefix}:exists:{key}");
                 _cache.Remove($"{_cachePrefix}:findLast");
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -312,7 +312,7 @@ namespace XPlan.Repository
 
                 return exists;
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -365,7 +365,7 @@ namespace XPlan.Repository
 
                 return allExist;
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }
@@ -407,7 +407,7 @@ namespace XPlan.Repository
 
                 return lastEntity;
             }
-            catch (RepositoryException)
+            catch (CustomException)
             {
                 throw; // 不包自家 RepositoryException
             }

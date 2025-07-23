@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 /********************************************
  * 加上 Filter 
  * ******************************************/
-builder.Services.AddGlobalExceptionHandling();
+builder.Services.AddExceptionHandling<POSServiceErrorFilter>();
 
 /********************************************
  * 加上 Settings

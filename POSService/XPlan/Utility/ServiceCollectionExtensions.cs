@@ -36,11 +36,11 @@ namespace XPlan.Utility
 
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddGlobalExceptionHandling(this IServiceCollection services)
+        public static IServiceCollection AddExceptionHandling<T>(this IServiceCollection services) where T : GlobalExceptionFilter
         {
             services.Configure<MvcOptions>(options =>
             {
-                options.Filters.Add<GlobalExceptionFilter>();
+                options.Filters.Add<T>();
             });
 
             return services;
