@@ -11,16 +11,22 @@ namespace Common.Exceptions
     public class POSServiceErrorCode
     {
         // Product
-        public const int ProductNotFound            = 100001;
-        public const int InvalidProductItem         = 100002;
-        public const int ProductStockReduceFailed   = 100003;
-        public const int ProductDatabaseOperation   = 100004;
+        public const int ProductNotFound                = 100001;
+        public const int InvalidProductItem             = 100002;
+        public const int ProductStockReduceFailed       = 100003;
+        public const int ProductDatabaseOperation       = 100004;
 
         // Order
-        public const int OrderNotFound              = 200001;
-        public const int InvalidOrderProduct        = 200002;
-        public const int OrderStatusUpdate          = 200003;
-        public const int OrderDatabaseOperation     = 200004;
+        public const int OrderNotFound                  = 200001;
+        public const int InvalidOrderProduct            = 200002;
+        public const int OrderStatusUpdate              = 200003;
+        public const int OrderDatabaseOperation         = 200004;
+
+        // OrderRecall
+        public const int OrderRecallNotFound            = 300001;
+        public const int InvalidOrderRecallRequest      = 300002;
+        public const int OrderRecallDatabaseOperation   = 300003;
+        public const int OrderRecallAggregation         = 300004;
     }
 
 
@@ -72,5 +78,30 @@ namespace Common.Exceptions
     {
         public OrderStatusUpdateException(string orderId, OrderStatus status)
             : base($"Failed to update status for order '{orderId}' to '{status}'.") { }
+    }
+
+    // OrderRecall
+    public class OrderRecallNotFoundException : CustomException
+    {
+        public OrderRecallNotFoundException(string id)
+            : base($"Order recall record with ID '{id}' was not found.") { }
+    }
+
+    public class InvalidOrderRecallRequestException : CustomException
+    {
+        public InvalidOrderRecallRequestException(string message)
+            : base($"Invalid request in OrderRecallService: {message}") { }
+    }
+
+    public class OrderRecallDatabaseOperationException : CustomException
+    {
+        public OrderRecallDatabaseOperationException(string operation, Exception inner)
+            : base($"Database operation '{operation}' failed in OrderRecallService. Because: {inner.Message}", inner) { }
+    }
+
+    public class OrderRecallAggregationException : CustomException
+    {
+        public OrderRecallAggregationException(string reason)
+            : base($"Failed to aggregate sales data: {reason}") { }
     }
 }

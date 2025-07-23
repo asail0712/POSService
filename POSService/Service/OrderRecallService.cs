@@ -2,6 +2,7 @@
 using Common.DTO.Order;
 using Common.DTO.OrderRecall;
 using Common.DTO.Product;
+using Common.Exceptions;
 using MongoDB.Bson;
 using Repository.Interface;
 using Service.Interface;
@@ -21,12 +22,28 @@ namespace Service
 
         public async Task<List<OrderRecallResponse>> GetSalesByTime(TimeRangeSalesRequest request)
         {
+            if (request.StartTime > request.EndTime)
+            {
+                throw new InvalidOrderRecallRequestException("StartTime must be earlier than EndTime.");
+            }
+
             List<OrderRecallEntity>? allSold = await _repository.GetByTimeAsync(request.StartTime, request.EndTime);
+
+            if (allSold == null || !allSold.Any())
+            {
+                throw new OrderRecallNotFoundException("TimeRange");
+            }
+
             return _mapper.Map<List<OrderRecallResponse>>(allSold);
         }
 
         public async Task<TimeRangeProductSalesResponse> GetProductSalesByTime(TimeRangeProductSalesRequest request)
         {
+            if (request.StartTime > request.EndTime)
+            {
+                throw new InvalidOrderRecallRequestException("StartTime must be earlier than EndTime.");
+            }
+
             var allSold         = await _repository.GetByTimeAsync(request.StartTime, request.EndTime)?? new List<OrderRecallEntity>();
 
             // 過濾出所有產品並展平
@@ -34,7 +51,11 @@ namespace Service
 
             // 過濾出目標產品
             var targetProducts  = allProducts.Where(p => p.Id == request.ProductId);
-
+            
+            if (!targetProducts.Any())
+            {
+                throw new OrderRecallNotFoundException(request.ProductId);
+            }
             // 統計次數和總金額
             int purchaseCount   = targetProducts.Count();
             decimal totalAmount = targetProducts.Sum(p => p.Price);

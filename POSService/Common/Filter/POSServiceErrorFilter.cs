@@ -68,6 +68,35 @@ namespace Common.Filter
                     response.Message    = "Order database operation failed.";
                     response.Detail     = dbEx.Message;
                     return response;
+
+                case OrderRecallNotFoundException notFoundEx:
+                    response.StatusCode = StatusCodes.Status404NotFound;
+                    response.ErrorCode  = POSServiceErrorCode.OrderRecallNotFound;
+                    response.Message    = "Order recall data not found.";
+                    response.Detail     = notFoundEx.Message;
+                    return response;
+
+                case InvalidOrderRecallRequestException invalidReqEx:
+                    response.StatusCode = StatusCodes.Status400BadRequest;
+                    response.ErrorCode  = POSServiceErrorCode.InvalidOrderRecallRequest;
+                    response.Message    = "Invalid order recall request.";
+                    response.Detail     = invalidReqEx.Message;
+                    return response;
+
+                case OrderRecallAggregationException aggEx:
+                    response.StatusCode = StatusCodes.Status500InternalServerError;
+                    response.ErrorCode  = POSServiceErrorCode.OrderRecallAggregation;
+                    response.Message    = "Failed to aggregate order recall data.";
+                    response.Detail     = aggEx.Message;
+                    return response;
+
+                case OrderRecallDatabaseOperationException dbEx:
+                    response.StatusCode = StatusCodes.Status500InternalServerError;
+                    response.ErrorCode  = POSServiceErrorCode.OrderRecallDatabaseOperation;
+                    response.Message    = "Order recall database operation failed.";
+                    response.Detail     = dbEx.Message;
+                    return response;
+
                 default:
                     // 沒有命中，讓 GlobalExceptionFilter 處理
                     return base.FilterOtherError(customException);
