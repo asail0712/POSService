@@ -69,7 +69,7 @@ dotnet add package AutoMapper
 ## 聯絡方式
 
 如果你喜歡這個專案，或有任何問題歡迎聯絡我：  
-**asail chen** (台灣軟體工程師)  
+Email: asail0712@gmail.com
 
 ---
 
