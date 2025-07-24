@@ -4,7 +4,7 @@
   "classifications": [ "DB", "DataAccess", "Repository", "Service" ],
   "identity": "XPlan.Template",
   "name": "Add XPlan Framework",
-  "shortName": "Add XPlan Framework",
+  "shortName": "xplan-fw",
   "tags": {
     "language": "C#",
     "type": "project"
