@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPlan", "XPlan\XPlan.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{57DC69BC-CD15-44E6-9A33-EF5F444F9314}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPlanTemplates", "Templates\XPlanTemplates.csproj", "{C66242FA-9C08-4D23-9A91-B79618B41873}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPlanTemplates", "XPlanTemplates\XPlanTemplates.csproj", "{AF1F567A-8B28-C70D-751F-068A4F685CB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{57DC69BC-CD15-44E6-9A33-EF5F444F9314}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57DC69BC-CD15-44E6-9A33-EF5F444F9314}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57DC69BC-CD15-44E6-9A33-EF5F444F9314}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C66242FA-9C08-4D23-9A91-B79618B41873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C66242FA-9C08-4D23-9A91-B79618B41873}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C66242FA-9C08-4D23-9A91-B79618B41873}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C66242FA-9C08-4D23-9A91-B79618B41873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF1F567A-8B28-C70D-751F-068A4F685CB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF1F567A-8B28-C70D-751F-068A4F685CB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF1F567A-8B28-C70D-751F-068A4F685CB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF1F567A-8B28-C70D-751F-068A4F685CB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
