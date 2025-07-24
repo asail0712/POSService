@@ -1,0 +1,14 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "XPlan",
+  "classifications": [ "DB", "DataAccess", "Repository", "Service" ],
+  "identity": "XPlan.Template",
+  "name": "Add XPlan Framework",
+  "shortName": "Add XPlan Framework",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "TEMPLATE_NAME",
+  "preferNameDirectory": false
+}
