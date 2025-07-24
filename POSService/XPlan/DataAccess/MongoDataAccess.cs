@@ -148,26 +148,26 @@ namespace XPlan.DataAccess
                             .FirstOrDefaultAsync();
         }
 
-        public virtual async Task<TEntity?> FindOneAndUpdateAsync(
-                        Expression<Func<TEntity, bool>> predicate,
-                        Action<TEntity> updateAction)
+        public virtual async Task<List<TEntity>?> QueryAndUpdateAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> updateAction)
         {
-            // 查詢符合條件的 Entity
-            var entity = await _collection.Find(predicate).FirstOrDefaultAsync();
+            // 查詢所有符合條件的 Entity
+            var entities = await _collection.Find(predicate).ToListAsync();
 
-            if (entity == null)
+            if (entities == null || entities.Count == 0)
             {
-                return default(TEntity);
+                return new List<TEntity>();
             }
 
-            // 執行更新邏輯
-            updateAction(entity);
+            // 執行更新邏輯並逐一更新資料庫
+            foreach (var entity in entities)
+            {
+                updateAction(entity);
 
-            // 更新資料庫
-            var filter = Builders<TEntity>.Filter.Where(predicate);
-            await _collection.ReplaceOneAsync(filter, entity);
+                var filter = Builders<TEntity>.Filter.Eq(e => e.Id, entity.Id); // 假設有 Id 屬性
+                await _collection.ReplaceOneAsync(filter, entity);
+            }
 
-            return entity;
+            return entities;
         }
     }
 }

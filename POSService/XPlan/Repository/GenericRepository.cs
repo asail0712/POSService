@@ -427,5 +427,10 @@ namespace XPlan.Repository
                 throw new DatabaseOperationException("FindLastAsync", typeof(TEntity).Name, ex);
             }
         }
+
+        public virtual async Task<List<TEntity>?> QueryAndUpdateAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> updateAction)
+        {
+            return await _dataAccess.QueryAndUpdateAsync(predicate, updateAction);
+        }
     }
 }

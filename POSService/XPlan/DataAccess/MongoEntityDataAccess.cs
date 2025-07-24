@@ -202,36 +202,37 @@ namespace XPlan.DataAccess
             return await MapToEntity(doc, _mapper);
         }
 
-        public virtual async Task<TEntity?> FindOneAndUpdateAsync(
-                Expression<Func<TEntity, bool>> predicate,
-                Action<TEntity> updateAction)
+        public virtual async Task<List<TEntity>?> QueryAndUpdateAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> updateAction)
         {
             // 將 TEntity 的 predicate 映射到 TDocument
             var docPredicate = _mapper.Map<Expression<Func<TDocument, bool>>>(predicate);
 
             // 查詢符合條件的 Document
-            var doc = await DB.Find<TDocument>()
+            var docs = await DB.Find<TDocument>()
                               .Match(docPredicate)
-                              .ExecuteFirstAsync();
+                              .ExecuteAsync();
 
-            if (doc == null)
+            if (docs == null || docs.Count == 0)
             {
-                return default(TEntity);
+                return new List<TEntity>();
             }
 
             // 映射成 Domain Entity
-            var entity = _mapper.Map<TEntity>(doc);
+            var entities = _mapper.Map<List<TEntity>>(docs);
 
-            // 執行更新邏輯
-            updateAction(entity);
+            foreach (var entity in entities)
+            {
+                // 執行更新邏輯
+                updateAction(entity);
 
-            // 映射回 Document
-            _mapper.Map(entity, doc);
+                // 映射回 Document
+                var doc = _mapper.Map<TDocument>(entity);
 
-            // 儲存修改後的 Document
-            await doc.SaveAsync();
+                // 儲存修改後的 Document
+                await doc.SaveAsync();
+            }
 
-            return entity;
+            return entities;
         }
     }
 
