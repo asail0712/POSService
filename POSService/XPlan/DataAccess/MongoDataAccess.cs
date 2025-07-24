@@ -11,8 +11,8 @@ namespace XPlan.DataAccess
         where TEntity : IDBEntity
     {
         private readonly IMongoCollection<TEntity> _collection;
-        private static bool _bIndexCreated  = false;
-        private static string _searchKey    = "Id";
+        private static bool _bIndexCreated          = false;
+        private static string _searchFieldName      = "Id";
         private List<string> _noUpdateList;
 
         public MongoDataAccess(IMongoDbContext dbContext)
@@ -27,14 +27,14 @@ namespace XPlan.DataAccess
             _noUpdateList.Distinct();
         }
 
-        protected void EnsureIndexCreated(string searchKey)
+        protected void EnsureIndexCreated(string searchFieldName)
         {
             if (!_bIndexCreated)
             {
                 _bIndexCreated      = true;
-                _searchKey          = searchKey;
+                _searchFieldName    = searchFieldName;
 
-                var indexKeys       = Builders<TEntity>.IndexKeys.Ascending(searchKey);
+                var indexKeys       = Builders<TEntity>.IndexKeys.Ascending(searchFieldName);
                 var indexOptions    = new CreateIndexOptions { Unique = true };
                 var indexModel      = new CreateIndexModel<TEntity>(indexKeys, indexOptions);
 
@@ -56,7 +56,7 @@ namespace XPlan.DataAccess
 
         public virtual async Task<TEntity?> QueryAsync(string key)
         {
-            var baseFilter      = Builders<TEntity>.Filter.Eq(_searchKey, key);
+            var baseFilter = Builders<TEntity>.Filter.Eq(_searchFieldName, key);
 
             return await _collection.Find(baseFilter).FirstOrDefaultAsync();
         }
@@ -68,7 +68,7 @@ namespace XPlan.DataAccess
                 return null;
             }
 
-            var baseFilter      = Builders<TEntity>.Filter.In(_searchKey, keys);
+            var baseFilter      = Builders<TEntity>.Filter.In(_searchFieldName, keys);
 
             return await _collection.Find(baseFilter).ToListAsync();
         }
@@ -83,19 +83,19 @@ namespace XPlan.DataAccess
 
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
         {
-            var filter      = Builders<TEntity>.Filter.Eq(_searchKey, key);
-            var bsonDoc     = entity.ToBsonDocument();              // 將 Entity 轉成 BsonDocument
+            var filter          = Builders<TEntity>.Filter.Eq(_searchFieldName, key);
+            var bsonDoc         = entity.ToBsonDocument();              // 將 Entity 轉成 BsonDocument
 
             // 欄位黑名單：_id、CreatedAt、noUpdateList
-            var excludedFields = new HashSet<string>(
-                new[] { "_id", "CreatedAt"}
-                .Concat(_noUpdateList ?? Enumerable.Empty<string>())
-            );
+            var excludedFields  = new HashSet<string>(
+                            new[] { "_id", "CreatedAt", _searchFieldName }
+                            .Concat(_noUpdateList ?? Enumerable.Empty<string>())
+                        ).Distinct();
 
             // 過濾要更新的欄位
-            var updateFields = bsonDoc
-                .Where(kv => !excludedFields.Contains(kv.Name))
-                .ToDictionary(kv => kv.Name, kv => kv.Value);
+            var updateFields    = bsonDoc
+                        .Where(kv => !excludedFields.Contains(kv.Name))
+                        .ToDictionary(kv => kv.Name, kv => kv.Value);
 
             if (!updateFields.Any())
             {
@@ -111,7 +111,7 @@ namespace XPlan.DataAccess
 
         public virtual async Task<bool> DeleteAsync(string key)
         {
-            var filter  = Builders<TEntity>.Filter.Eq(_searchKey, key);
+            var filter  = Builders<TEntity>.Filter.Eq(_searchFieldName, key);
             var result  = await _collection.DeleteOneAsync(filter);
 
             return result.DeletedCount > 0;
@@ -119,7 +119,7 @@ namespace XPlan.DataAccess
 
         public virtual async Task<bool> ExistsAsync(string key)
         {
-            var filter  = Builders<TEntity>.Filter.Eq(_searchKey, key);
+            var filter  = Builders<TEntity>.Filter.Eq(_searchFieldName, key);
             var count   = await _collection.CountDocumentsAsync(filter);
             return count > 0;
         }
@@ -131,7 +131,7 @@ namespace XPlan.DataAccess
                 return false;
             }
 
-            var filter = Builders<TEntity>.Filter.In(_searchKey, key);
+            var filter = Builders<TEntity>.Filter.In(_searchFieldName, key);
             var count  = await _collection.CountDocumentsAsync(filter);
 
             return count > 0;
