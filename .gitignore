@@ -70,3 +70,6 @@ TestResults/
 
 # Optional: remove if you commit migrations
 Migrations/
+
+# Optional: remove if you want appsettings.json in repo
+#**/appsettings.json
