@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
@@ -13,13 +12,15 @@ namespace XPlan.Repository
     public class GenericRepository<TEntity, TDataAccess>
         where TEntity : IDBEntity where TDataAccess : IDataAccess<TEntity>
     {
+        private readonly string _cachePrefix = typeof(TEntity).Name;
+
         protected readonly TDataAccess _dataAccess;
         private readonly IMemoryCache _cache;
         private readonly int _cacheDurationMinutes;
-        private readonly string _cachePrefix = typeof(TEntity).Name;
 
         private bool _bCacheEnable;
 
+        // 建構子，注入資料存取層、快取系統與設定檔
         public GenericRepository(TDataAccess dataAccess, IMemoryCache memoryCache, IOptions<CacheSettings> cacheSettings)
         {
             _dataAccess             = dataAccess;
@@ -28,6 +29,7 @@ namespace XPlan.Repository
             _bCacheEnable           = cacheSettings.Value.CacheEnable;
         }
 
+        // 建立實體並寫入快取
         public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
             try
@@ -55,6 +57,7 @@ namespace XPlan.Repository
             }
         }
 
+        // 取得所有實體（支援快取）
         public virtual async Task<List<TEntity>> GetAllAsync(bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:all";
@@ -84,7 +87,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -92,6 +95,7 @@ namespace XPlan.Repository
             }
         }
 
+        // 依照主鍵查詢（支援快取）
         public virtual async Task<TEntity> GetAsync(string key, bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:{key}";
@@ -121,7 +125,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -129,6 +133,7 @@ namespace XPlan.Repository
             }
         }
 
+        // 根據多個 key 查詢多筆（快取友善）
         public virtual async Task<List<TEntity>> GetAsync(List<string> keys, bool bCache = true)
         {
             if (keys == null || keys.Count == 0)
@@ -136,8 +141,8 @@ namespace XPlan.Repository
                 throw new InvalidRepositoryArgumentException(nameof(keys), "Keys list cannot be null or empty");
             }
 
-            var resultList          = new List<TEntity>();
-            var keysToFetchFromDb   = new List<string>();
+            var resultList = new List<TEntity>();
+            var keysToFetchFromDb = new List<string>();
 
             try
             {
@@ -168,7 +173,6 @@ namespace XPlan.Repository
 
                 if (keysToFetchFromDb.Count > 0)
                 {
-                    // 📝 假設 _dataAccess 支援批次查詢
                     var dbEntities = await _dataAccess.QueryAsync(keysToFetchFromDb);
 
                     if (dbEntities == null || dbEntities.Count == 0)
@@ -189,7 +193,6 @@ namespace XPlan.Repository
 
                 if (resultList.Count != keys.Count)
                 {
-                    // 檢查是否有缺失
                     var missingKeys = keys.Except(resultList.Select(e => e.Id)).ToList();
 
                     if (missingKeys.Any())
@@ -202,7 +205,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -210,11 +213,13 @@ namespace XPlan.Repository
             }
         }
 
+        // 使用 LINQ 條件式查詢
         public virtual async Task<List<TEntity>?> GetAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _dataAccess.QueryAsync(predicate);
         }
 
+        // 用時間篩選查詢建立時間區間內的資料
         public virtual async Task<List<TEntity>> GetByTimeAsync(DateTime? startTime = null, DateTime? endTime = null)
         {
             if (startTime.HasValue && endTime.HasValue && startTime > endTime)
@@ -230,7 +235,7 @@ namespace XPlan.Repository
                 Expression<Func<TEntity, bool>> predicate = e =>
                             (!startTime.HasValue || e.CreatedAt >= startTime.Value) &&
                             (!endTime.HasValue || e.CreatedAt <= endTime.Value);
-                // 查詢
+
                 var result = await _dataAccess.QueryAsync(predicate);
 
                 if (result == null || result.Count == 0)
@@ -246,7 +251,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -254,6 +259,7 @@ namespace XPlan.Repository
             }
         }
 
+        // 更新實體，同步更新快取
         public virtual async Task UpdateAsync(string key, TEntity entity)
         {
             try
@@ -272,7 +278,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -280,6 +286,7 @@ namespace XPlan.Repository
             }
         }
 
+        // 刪除實體並清除快取
         public virtual async Task DeleteAsync(string key)
         {
             try
@@ -298,7 +305,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -306,6 +313,7 @@ namespace XPlan.Repository
             }
         }
 
+        // 判斷某 key 是否存在（支援快取）
         public virtual async Task<bool> ExistsAsync(string key, bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:exists:{key}";
@@ -325,7 +333,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -333,14 +341,14 @@ namespace XPlan.Repository
             }
         }
 
+        // 判斷多個 key 是否皆存在（支援快取）
         public virtual async Task<bool> ExistsAsync(List<string> keys, bool bCache = true)
         {
             if (keys == null || keys.Count == 0)
-            { 
+            {
                 return false;
             }
 
-            // 批次快取檢查（全部 keys 都有快取時直接回傳）
             var missingKeys = new List<string>();
 
             if (_bCacheEnable && bCache)
@@ -356,7 +364,7 @@ namespace XPlan.Repository
 
                 if (missingKeys.Count == 0)
                 {
-                    return true; // 全部 keys 都在快取且存在
+                    return true;
                 }
             }
             else
@@ -366,7 +374,6 @@ namespace XPlan.Repository
 
             try
             {
-                // 用批次查詢檢查缺少的 keys
                 bool allExist = await _dataAccess.ExistsAsync(missingKeys);
 
                 foreach (var key in missingKeys)
@@ -378,7 +385,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -386,13 +393,13 @@ namespace XPlan.Repository
             }
         }
 
+        // 取得最新一筆資料（可快取）
         public virtual async Task<TEntity> FindLastAsync(bool bCache = true)
         {
             var cacheKey = $"{_cachePrefix}:findLast";
 
             try
             {
-                // 嘗試從快取取得
                 if (_bCacheEnable && bCache && _cache.TryGetValue(cacheKey, out TEntity? cachedEntity))
                 {
                     if (cachedEntity == null)
@@ -403,12 +410,10 @@ namespace XPlan.Repository
                     return cachedEntity;
                 }
 
-                // 如果快取沒有，從資料庫查詢
                 var lastEntity = await _dataAccess.FindLastAsync();
 
                 if (lastEntity != null)
                 {
-                    // 寫入快取，設定過期時間（例如 30 秒）
                     _cache.Set(cacheKey, lastEntity, TimeSpan.FromMinutes(_cacheDurationMinutes));
                 }
                 else
@@ -420,7 +425,7 @@ namespace XPlan.Repository
             }
             catch (CustomException)
             {
-                throw; // 不包自家 RepositoryException
+                throw;
             }
             catch (Exception ex)
             {
@@ -428,6 +433,7 @@ namespace XPlan.Repository
             }
         }
 
+        // 查詢並更新（支援 LINQ 條件式與內部更新邏輯）
         public virtual async Task<List<TEntity>?> QueryAndUpdateAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> updateAction)
         {
             return await _dataAccess.QueryAndUpdateAsync(predicate, updateAction);

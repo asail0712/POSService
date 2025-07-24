@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XPlan.Entities
 {
+    // 所有資料實體需實作的基本資料結構
     public interface IDBEntity
     {
-        string Id { get; set; }
+        string Id { get; set; }             // 唯一識別碼
         DateTime CreatedAt { get; set; }    // 建立時間
-        DateTime UpdatedAt { get; set; }    // 更新時間
+        DateTime UpdatedAt { get; set; }    // 最後更新時間
     }
 }

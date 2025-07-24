@@ -1,19 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XPlan.Utility.Filter
 {
+    // 用於 Swagger 文件中隱藏特定 API 的 DocumentFilter
     public class HiddenApiDocumentFilter : IDocumentFilter
     {
+        // 可覆寫取得欲隱藏的 API 清單（格式為 ControllerName.MethodName）
         protected virtual HashSet<string> GetHiddenList()
         {
-            // override
             return new HashSet<string>();
         }
 
@@ -22,23 +18,29 @@ namespace XPlan.Utility.Filter
             var closedApis      = GetHiddenList();
             var pathsToRemove   = new List<string>();
 
+            // 逐一檢查 swaggerDoc 中的路徑
             foreach (var path in swaggerDoc.Paths)
             {
                 var operationsToRemove = new List<OperationType>();
 
+                // 逐一檢查該路徑下的 HTTP 操作 (GET, POST...)
                 foreach (var operation in path.Value.Operations)
                 {
-                    // 找出這個 API 的描述
+                    // 取得對應的 API 描述
                     var apiDesc = context.ApiDescriptions.FirstOrDefault(d =>
-                        d.RelativePath.Equals(path.Key.TrimStart('/'), StringComparison.OrdinalIgnoreCase)
-                        && d.HttpMethod.Equals(operation.Key.ToString(), StringComparison.OrdinalIgnoreCase));
+                        d.RelativePath!.Equals(path.Key.TrimStart('/'), StringComparison.OrdinalIgnoreCase)
+                        && d.HttpMethod!.Equals(operation.Key.ToString(), StringComparison.OrdinalIgnoreCase));
 
                     if (apiDesc != null)
-                    {                        
-                        var controllerName  = apiDesc.ActionDescriptor.RouteValues["controller"] + "Controller";            // Controller 名稱（例如 UserController）
-                        var methodName      = (apiDesc.ActionDescriptor as ControllerActionDescriptor)?.MethodInfo.Name;    // Method 名稱（例如 GetUser）
+                    {
+                        // 取得 Controller 名稱（加上 Controller 後綴）
+                        var controllerName  = apiDesc.ActionDescriptor.RouteValues["controller"] + "Controller";
+                        // 取得方法名稱
+                        var methodName      = (apiDesc.ActionDescriptor as ControllerActionDescriptor)?.MethodInfo.Name;
+                        // 組合完整方法名稱字串
                         var fullMethodName  = $"{controllerName}.{methodName}";
 
+                        // 如果該方法名稱在隱藏清單中，標記該 Operation 待移除
                         if (closedApis.Contains(fullMethodName))
                         {
                             operationsToRemove.Add(operation.Key);
@@ -46,20 +48,20 @@ namespace XPlan.Utility.Filter
                     }
                 }
 
-                // 移除該路徑下被隱藏的所有 Operation
+                // 移除指定要隱藏的 Operation
                 foreach (var op in operationsToRemove)
                 {
                     path.Value.Operations.Remove(op);
                 }
 
-                // 如果該路徑已無任何 Operation，則整條路徑移除
+                // 如果該路徑沒有任何 Operation，則整條路徑標記為待移除
                 if (!path.Value.Operations.Any())
                 {
                     pathsToRemove.Add(path.Key);
                 }
             }
 
-            // 移除路徑
+            // 移除所有無 Operation 的路徑
             foreach (var pathKey in pathsToRemove)
             {
                 swaggerDoc.Paths.Remove(pathKey);

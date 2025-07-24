@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace XPlan.Utility.Exceptions
 {
+    // 自訂基底例外類別，繼承自 System.Exception
     public class CustomException : Exception
     {
         public CustomException(string message)
@@ -15,18 +16,21 @@ namespace XPlan.Utility.Exceptions
         { }
     }
 
+    // 資料不存在例外
     public class EntityNotFoundException : CustomException
     {
         public EntityNotFoundException(string entityName, string key)
             : base($"{entityName} with key '{key}' was not found.") { }
     }
 
+    // 快取未命中例外
     public class CacheMissException : CustomException
     {
         public CacheMissException(string cacheKey)
             : base($"Cache miss for key '{cacheKey}'.") { }
     }
 
+    // 無效的實體例外
     public class InvalidEntityException : CustomException
     {
         public InvalidEntityException(string entityName)
@@ -34,18 +38,22 @@ namespace XPlan.Utility.Exceptions
         { }
     }
 
+    // 資料庫操作失敗例外
     public class DatabaseOperationException : CustomException
     {
         public DatabaseOperationException(string operation, string entityName, Exception inner)
             : base($"Database operation '{operation}' failed for entity '{entityName}'. Becuz {inner.Message}", inner) { }
     }
 
+    // 無效的儲存庫參數例外
     public class InvalidRepositoryArgumentException : CustomException
     {
         public InvalidRepositoryArgumentException(string parameterName, string reason)
             : base($"Invalid argument '{parameterName}': {reason}.")
         { }
     }
+
+    // 自訂錯誤代碼常數
     public class CustomErrorCode
     {
         public const int EntityNotFound             = 800001;
@@ -56,14 +64,18 @@ namespace XPlan.Utility.Exceptions
         public const int UnknowErrorHappen          = 800006;
     }
 
+    // 錯誤回應結構
     public class CustomErrorResponse
     {
         public int ErrorCode { get; set; }  = CustomErrorCode.UnknowErrorHappen;
         public int StatusCode { get; set; } = StatusCodes.Status500InternalServerError;
         public string Message { get; set; } = "An unexpected error occurred.";
         public string Detail { get; set; }  = "";
+
         public CustomErrorResponse() { }
-        public CustomErrorResponse(Exception exception) 
+
+        // 依 Exception 初始化錯誤訊息
+        public CustomErrorResponse(Exception exception)
         {
             ErrorCode   = CustomErrorCode.UnknowErrorHappen;
             StatusCode  = 500;
@@ -72,11 +84,12 @@ namespace XPlan.Utility.Exceptions
         }
     }
 
+    // 全域例外攔截器，實作 IAsyncExceptionFilter
     public class GlobalExceptionFilter : IAsyncExceptionFilter
     {
+        // 可覆寫用於處理其他自訂例外的邏輯
         protected virtual CustomErrorResponse FilterOtherError(CustomException customException)
         {
-            // for override
             return new CustomErrorResponse(customException);
         }
 
@@ -85,7 +98,7 @@ namespace XPlan.Utility.Exceptions
             var exception   = context.Exception;
             var response    = new CustomErrorResponse(context.Exception);
 
-            // 🎯 根據 Exception 類型決定 HTTP 狀態碼 & 訊息
+            // 根據例外類型設定回應狀態碼與訊息
             switch (exception)
             {
                 case InvalidEntityException entEx:
@@ -124,11 +137,12 @@ namespace XPlan.Utility.Exceptions
                     break;
 
                 case CustomException otherEx:
-                    // 捕捉其他 CustomException 子類別
+                    // 處理其他自訂例外
                     response = FilterOtherError(otherEx);
                     break;
+
                 default:
-                    // 未知錯誤
+                    // 未知例外
                     response.StatusCode = StatusCodes.Status500InternalServerError;
                     response.ErrorCode  = 500;
                     response.Message    = "Internal Server Error";
@@ -136,6 +150,7 @@ namespace XPlan.Utility.Exceptions
                     break;
             }
 
+            // 設定回傳結果與狀態碼
             context.Result = new ObjectResult(response)
             {
                 StatusCode = response.StatusCode
