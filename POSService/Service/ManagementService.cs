@@ -87,8 +87,8 @@ namespace Service
         public override async Task<StaffDataResponse> CreateAsync(StaffDataRequest request)
         {
             var entity          = _mapper.Map<StaffDataEntity>(request);
-            entity.CreatedAt    = DateTime.UtcNow;
-            entity.UpdatedAt    = DateTime.UtcNow;
+            //entity.CreatedAt    = DateTime.UtcNow;
+            //entity.UpdatedAt    = DateTime.UtcNow;
             entity.PasswordHash = Utils.ComputeSha256Hash(request.Password, _salt);
             entity              = await _repository.CreateAsync(entity);
 

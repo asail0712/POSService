@@ -121,6 +121,7 @@ namespace XPlan.DataAccess
         // 根據 key 更新實體，排除不更新欄位
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
         {
+            entity.UpdatedAt    = DateTime.UtcNow;
             var doc             = MapToDocument(entity, _mapper);
 
             // 排除更新欄位（Id、CreatedAt、自訂欄位）

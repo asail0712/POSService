@@ -18,5 +18,11 @@ namespace Common.DTO.Dish
         // 顯示的狀態
         public bool IsAvailable { get; set; }               // 販售狀態（true: 上架, false: 下架）
         public int Stock { get; set; }                      // 庫存量
+
+        public DishItemEntity()
+        {
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

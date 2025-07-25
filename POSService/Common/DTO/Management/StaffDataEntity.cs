@@ -16,5 +16,11 @@ namespace Common.DTO.Management
         public string PasswordHash { get; set; }    // 密碼（記得存 Hash，不存明文）
         public string Name { get; set; }            // 名字
         public bool IsActive { get; set; }          // 帳號是否啟用
+
+        public StaffDataEntity()
+        {
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

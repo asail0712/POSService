@@ -91,6 +91,7 @@ namespace XPlan.DataAccess
         public virtual async Task<bool> UpdateAsync(string key, TEntity entity)
         {
             var filter          = Builders<TEntity>.Filter.Eq(_searchFieldName, key);
+            entity.UpdatedAt    = DateTime.UtcNow;
             var bsonDoc         = entity.ToBsonDocument(); // 將 Entity 轉成 BsonDocument
 
             // 欄位黑名單：_id、CreatedAt、自定義排除欄位

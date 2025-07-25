@@ -32,6 +32,9 @@ namespace Common.DTO.Order
             OrderId     = "";
             ProductIds  = new List<string>();
             Status      = OrderStatus.Pending;
+
+            CreatedAt   = DateTime.UtcNow;
+            UpdatedAt   = DateTime.UtcNow;
         }
     }
 }

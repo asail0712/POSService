@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Common.DTO.Order;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using XPlan.Entities;
 
@@ -29,5 +30,11 @@ namespace Common.DTO.OrderRecall
         public string OrderId { get; set; }                     // 桌號或訂單編號
         public List<ProductBrief> ProductItemList { get; set; } // 關聯的餐點 ID
         public decimal Price { get; set; }                      // 銷售金額     
+
+        public OrderRecallEntity()
+        {
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

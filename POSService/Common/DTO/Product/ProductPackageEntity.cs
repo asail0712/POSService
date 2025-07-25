@@ -28,6 +28,12 @@ namespace Common.DTO.Product
         public List<string> ItemIDs { get; set; }       = new List<string>();           // 菜單項目清單
         public List<DishItemEntity> DishItems           = new List<DishItemEntity>();   // 菜單項目清單
 
+        public ProductPackageEntity()
+        {
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
         public ProductStatus ProductState
         {
             get
