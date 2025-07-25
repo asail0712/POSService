@@ -27,15 +27,20 @@ namespace XPlan.Utility.Filter
                     operation.Security = new List<OpenApiSecurityRequirement>();
                 }
 
-                var scheme = new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-                };
-
                 // 加入 Bearer 權限需求 (無 scopes)
                 operation.Security.Add(new OpenApiSecurityRequirement
                 {
-                    [scheme] = new string[] { }
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type    = ReferenceType.SecurityScheme,
+                                Id      = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
                 });
             }
         }

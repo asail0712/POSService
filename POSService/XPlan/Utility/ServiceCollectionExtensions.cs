@@ -141,11 +141,12 @@ namespace XPlan.Utility
                 // 加入 JWT 認證設定
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "請輸入 JWT Token，格式: Bearer {token}",
-                    Name        = "Authorization",
-                    In          = ParameterLocation.Header,
-                    Type        = SecuritySchemeType.ApiKey,
-                    Scheme      = "Bearer"
+                    Description     = "請輸入 JWT Token，格式: Bearer {token}",
+                    Name            = "Authorization",
+                    In              = ParameterLocation.Header,
+                    Type            = SecuritySchemeType.ApiKey,
+                    Scheme          = "Bearer",
+                    BearerFormat    = "JWT"
                 });
             });
             return services;
